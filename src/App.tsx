@@ -9,7 +9,7 @@ import { Card } from '@/components/ui/card'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { Lightning, Copy, Trash, Check, Link as LinkIcon, Warning, ChartLine, MagnifyingGlass, Download, QrCode, Sparkle } from '@phosphor-icons/react'
+import { Lightning, Copy, Trash, Check, Link as LinkIcon, Warning, ChartLine, MagnifyingGlass, Download, QrCode, Sparkle, Brain, Heart, Tag, Pulse } from '@phosphor-icons/react'
 
 type ShortenedLink = {
   id: string
@@ -19,6 +19,9 @@ type ShortenedLink = {
   clicks: number
   tags?: string[]
   customAlias?: string
+  category?: string
+  healthStatus?: 'healthy' | 'checking' | 'broken' | 'unknown'
+  lastChecked?: number
 }
 
 function App() {
@@ -32,6 +35,8 @@ function App() {
   const [activeTab, setActiveTab] = useState('all')
   const [showQRCode, setShowQRCode] = useState<string | null>(null)
   const [useCustomAlias, setUseCustomAlias] = useState(false)
+  const [isCategorizingAll, setIsCategorizingAll] = useState(false)
+  const [isCheckingHealth, setIsCheckingHealth] = useState(false)
 
   const validateUrl = (url: string): boolean => {
     try {
@@ -49,6 +54,134 @@ function App() {
       code += chars.charAt(Math.floor(Math.random() * chars.length))
     }
     return code
+  }
+
+  const categorizeUrl = async (url: string): Promise<string> => {
+    try {
+      const promptText = `Analyze this URL and categorize it into ONE of these categories: Social Media, E-commerce, News, Documentation, Entertainment, Business, Education, Technology, Health, Finance, Travel, Food, Sports, Gaming, Government, or Other. 
+
+URL: ${url}
+
+Return ONLY the category name, nothing else.`
+      
+      const category = await window.spark.llm(promptText, 'gpt-4o-mini')
+      return category.trim()
+    } catch (error) {
+      console.error('Categorization failed:', error)
+      return 'Uncategorized'
+    }
+  }
+
+  const checkLinkHealth = async (linkId: string): Promise<void> => {
+    const link = links?.find(l => l.id === linkId)
+    if (!link) return
+
+    setLinks((currentLinks) =>
+      (currentLinks || []).map(l =>
+        l.id === linkId ? { ...l, healthStatus: 'checking' as const } : l
+      )
+    )
+
+    try {
+      const response = await fetch(link.originalUrl, { 
+        method: 'HEAD',
+        mode: 'no-cors'
+      })
+      
+      setLinks((currentLinks) =>
+        (currentLinks || []).map(l =>
+          l.id === linkId ? { 
+            ...l, 
+            healthStatus: 'healthy' as const,
+            lastChecked: Date.now()
+          } : l
+        )
+      )
+      
+      toast.success('Link is healthy!', {
+        description: 'URL is accessible'
+      })
+    } catch (error) {
+      setLinks((currentLinks) =>
+        (currentLinks || []).map(l =>
+          l.id === linkId ? { 
+            ...l, 
+            healthStatus: 'unknown' as const,
+            lastChecked: Date.now()
+          } : l
+        )
+      )
+      
+      toast.info('Health check complete', {
+        description: 'Unable to verify (CORS limitation)'
+      })
+    }
+  }
+
+  const categorizeLinkById = async (linkId: string): Promise<void> => {
+    const link = links?.find(l => l.id === linkId)
+    if (!link) return
+
+    toast.info('Analyzing...', {
+      description: 'AI is categorizing your link'
+    })
+
+    const category = await categorizeUrl(link.originalUrl)
+    
+    setLinks((currentLinks) =>
+      (currentLinks || []).map(l =>
+        l.id === linkId ? { ...l, category } : l
+      )
+    )
+
+    toast.success('Categorized!', {
+      description: `Category: ${category}`
+    })
+  }
+
+  const categorizeAllLinks = async (): Promise<void> => {
+    if (!links || links.length === 0) return
+    
+    setIsCategorizingAll(true)
+    toast.info('AI Processing...', {
+      description: `Categorizing ${links.length} links`
+    })
+
+    const uncategorizedLinks = links.filter(l => !l.category)
+    
+    for (const link of uncategorizedLinks) {
+      const category = await categorizeUrl(link.originalUrl)
+      setLinks((currentLinks) =>
+        (currentLinks || []).map(l =>
+          l.id === link.id ? { ...l, category } : l
+        )
+      )
+      await new Promise(resolve => setTimeout(resolve, 500))
+    }
+
+    setIsCategorizingAll(false)
+    toast.success('Complete!', {
+      description: 'All links categorized'
+    })
+  }
+
+  const checkAllLinksHealth = async (): Promise<void> => {
+    if (!links || links.length === 0) return
+    
+    setIsCheckingHealth(true)
+    toast.info('Health Check...', {
+      description: `Checking ${links.length} links`
+    })
+
+    for (const link of links) {
+      await checkLinkHealth(link.id)
+      await new Promise(resolve => setTimeout(resolve, 300))
+    }
+
+    setIsCheckingHealth(false)
+    toast.success('Health check complete!', {
+      description: 'All links verified'
+    })
   }
 
   const handleShortenUrl = async () => {
@@ -95,7 +228,8 @@ function App() {
       shortCode: finalShortCode,
       createdAt: Date.now(),
       clicks: 0,
-      customAlias: useCustomAlias && customAlias.trim() ? customAlias.trim() : undefined
+      customAlias: useCustomAlias && customAlias.trim() ? customAlias.trim() : undefined,
+      healthStatus: 'unknown'
     }
 
     setLinks((currentLinks) => [newLink, ...(currentLinks || [])])
@@ -110,6 +244,14 @@ function App() {
     setUrlInput('')
     setCustomAlias('')
     setUseCustomAlias(false)
+
+    categorizeUrl(newLink.originalUrl).then(category => {
+      setLinks((currentLinks) =>
+        (currentLinks || []).map(l =>
+          l.id === newLink.id ? { ...l, category } : l
+        )
+      )
+    })
   }
 
   const handleCopyUrl = async (link: ShortenedLink) => {
@@ -346,15 +488,37 @@ function App() {
               Link History
             </h2>
             {links && links.length > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={exportData}
-                className="text-xs"
-              >
-                <Download size={14} className="mr-1" />
-                Export
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={exportData}
+                  className="text-xs"
+                >
+                  <Download size={14} className="mr-1" />
+                  Export
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={categorizeAllLinks}
+                  disabled={isCategorizingAll}
+                  className="text-xs"
+                >
+                  <Brain size={14} className="mr-1" />
+                  {isCategorizingAll ? 'Categorizing...' : 'Auto-Tag'}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={checkAllLinksHealth}
+                  disabled={isCheckingHealth}
+                  className="text-xs"
+                >
+                  <Heart size={14} className="mr-1" />
+                  {isCheckingHealth ? 'Checking...' : 'Health Check'}
+                </Button>
+              </div>
             )}
           </div>
           {links && links.length > 0 && (
@@ -447,6 +611,24 @@ function App() {
                               Custom
                             </Badge>
                           )}
+                          {link.category && (
+                            <Badge variant="outline" className="text-xs flex items-center gap-1">
+                              <Tag size={12} weight="fill" />
+                              {link.category}
+                            </Badge>
+                          )}
+                          {link.healthStatus === 'healthy' && (
+                            <Badge variant="outline" className="text-xs flex items-center gap-1 text-green-600 border-green-600/30">
+                              <Heart size={12} weight="fill" />
+                              Healthy
+                            </Badge>
+                          )}
+                          {link.healthStatus === 'checking' && (
+                            <Badge variant="outline" className="text-xs flex items-center gap-1">
+                              <Pulse size={12} />
+                              Checking...
+                            </Badge>
+                          )}
                           <span className="text-xs text-muted-foreground">
                             {formatDate(link.createdAt)}
                           </span>
@@ -462,6 +644,26 @@ function App() {
                         </p>
                       </div>
                       <div className="flex items-center gap-1">
+                        {!link.category && (
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => categorizeLinkById(link.id)}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8"
+                            title="Categorize with AI"
+                          >
+                            <Brain size={18} />
+                          </Button>
+                        )}
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => checkLinkHealth(link.id)}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8"
+                          title="Check health"
+                        >
+                          <Heart size={18} />
+                        </Button>
                         <Button
                           size="icon"
                           variant="ghost"
