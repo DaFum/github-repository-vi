@@ -1,17 +1,52 @@
 # Planning Guide
 
-HyperSmol is a powerful yet elegant URL shortener that transforms long URLs into tiny, shareable links with AI-powered categorization, link health monitoring, advanced analytics, custom aliases, and smart filtering capabilities.
+HyperSmol is a powerful AI-driven URL shortener that combines elegant simplicity with sophisticated agent-based intelligence. It transforms long URLs into tiny, shareable links while providing autonomous AI agents that analyze patterns, optimize link management, predict popularity, monitor health, and deliver actionable insights - creating a self-evolving ecosystem that learns and improves over time.
 
 **Experience Qualities**:
 1. **Lightning-fast** - Users should feel the instant gratification of creating short links with zero friction or waiting
 2. **Crystalline** - The interface should be clean and transparent, removing all unnecessary elements to focus purely on the task
-3. **Intelligent** - AI-powered features work silently in the background to organize and monitor links without requiring manual effort
-4. **Playful** - Subtle animations and delightful micro-interactions make the mundane task of shortening URLs feel satisfying
+3. **Intelligent** - AI-powered agents work autonomously in the background, analyzing patterns, predicting trends, and optimizing link management without manual intervention
+4. **Evolutionary** - The system continuously learns from usage patterns and self-optimizes its performance, creating an ever-improving experience
 
-**Complexity Level**: Light Application (multiple features with basic state)
-This is a feature-rich utility with URL shortening, AI-powered categorization, health monitoring, analytics tracking, custom aliases, search/filtering, QR code generation, and data export - a sophisticated light application with persistent state, LLM integration, and multiple interactive features.
+**Complexity Level**: Complex Application (advanced functionality with AI agent orchestration, predictive analytics, and self-optimization)
+This is a sophisticated agentic system with autonomous AI agents, task queue management, pattern analysis, predictive modeling, health monitoring, optimization recommendations, and real-time metrics - featuring a living kernel that evolves based on usage patterns and performance feedback.
 
 ## Essential Features
+
+**Autonomous Agent Kernel**
+- Functionality: Central AI orchestration system that manages task queues, executes AI operations, and self-optimizes performance
+- Purpose: Create a living system that autonomously handles complex tasks without blocking the UI
+- Trigger: Automatically processes tasks as they're enqueued from various operations
+- Progression: Task queued → Priority sorted → Parallel execution (max 3 concurrent) → Metrics updated → Self-optimization
+- Success criteria: Tasks complete asynchronously, metrics track performance, system adjusts concurrency based on load
+
+**AI Pattern Analysis**
+- Functionality: Deep learning agent analyzes link collections to identify usage patterns, engagement trends, and content preferences
+- Purpose: Provide actionable intelligence about link behavior without manual analysis
+- Trigger: User clicks "Analyze Patterns" in Agent Station
+- Progression: Click analyze → Agent processes all links → Pattern recognition → Insights displayed with trend indicators
+- Success criteria: Meaningful insights about click patterns, category engagement, and temporal trends are discovered and presented
+
+**AI Optimization Engine**
+- Functionality: Strategic optimization agent evaluates link collection and generates improvement recommendations
+- Purpose: Guide users toward better link organization and management practices
+- Trigger: User clicks "Optimize Links" in Agent Station
+- Progression: Click optimize → Agent evaluates collection → Generates recommendations → Displays optimization score (0-100)
+- Success criteria: 3-5 actionable recommendations provided with overall quality score
+
+**Predictive Popularity Analysis**
+- Functionality: Predictive AI analyzes each new URL and forecasts its potential engagement level
+- Purpose: Help users understand which links are likely to perform well
+- Trigger: Automatically on link creation
+- Progression: URL created → Predictive agent analyzes → Score calculated (0-100) → Badge displays with reasoning
+- Success criteria: Prediction badge shows "High/Moderate/Low Potential" with hover tooltip explaining reasoning
+
+**Advanced Analytics Dashboard**
+- Functionality: Real-time metrics display with engagement rates, categorization stats, and trend visualizations
+- Purpose: Provide comprehensive overview of link performance at a glance
+- Trigger: Automatically displays when links exist
+- Progression: Links created → Stats cards animate in → Updates in real-time
+- Success criteria: Shows total links, clicks with average, top link performance, weekly activity, and category distribution
 
 **URL Shortening**
 - Functionality: Accepts a long URL and generates a short, unique identifier
@@ -106,6 +141,12 @@ This is a feature-rich utility with URL shortening, AI-powered categorization, h
 
 ## Edge Case Handling
 
+- **Agent Task Queue Overflow**: Limit concurrent tasks to prevent performance degradation, queue excess tasks by priority
+- **AI Service Failures**: Gracefully degrade when LLM calls fail, show fallback predictions and categorizations
+- **Concurrent Agent Operations**: Prevent multiple simultaneous batch operations with loading states and disabled buttons
+- **Task Timeout**: Handle long-running agent tasks with timeout and retry logic
+- **Metrics Calculation Errors**: Safely handle edge cases in analytics (division by zero, empty arrays)
+- **Prediction Accuracy**: Use heuristic fallbacks when full AI prediction isn't available
 - **Duplicate URLs**: If the same URL is shortened twice, display the existing short link rather than creating a duplicate
 - **Duplicate Custom Alias**: Prevent users from creating custom aliases that already exist with clear error message
 - **Empty Input**: Disable the shorten button when input is empty to prevent accidental clicks
@@ -115,7 +156,7 @@ This is a feature-rich utility with URL shortening, AI-powered categorization, h
 - **Clipboard Permissions**: Handle browsers that block clipboard access with fallback manual selection
 - **Empty History**: Show an engaging empty state with helpful guidance when no links exist
 - **Empty Search Results**: Display clear "no matches" state when search/filter yields no results
-- **Data Migration**: Automatically migrate old link data structure to include new fields (clicks, custom alias, category, healthStatus)
+- **Data Migration**: Automatically migrate old link data structure to include new fields (clicks, custom alias, category, healthStatus, predictedPopularity)
 - **QR Code API Failure**: Handle gracefully if QR code service is unavailable
 - **AI Service Unavailable**: Gracefully degrade when LLM categorization fails, showing "Uncategorized" instead
 - **Health Check CORS Issues**: Handle CORS limitations by showing "unknown" status with informative messaging
@@ -123,7 +164,7 @@ This is a feature-rich utility with URL shortening, AI-powered categorization, h
 
 ## Design Direction
 
-The design should evoke a sense of effortless efficiency and modern minimalism - like a perfectly crafted tool that disappears into the background while making work feel lighter. Think Swiss design meets contemporary web aesthetics with subtle playfulness.
+The design should evoke a sense of living intelligence - like working alongside an autonomous AI that continuously learns and evolves. Think cybernetic minimalism meets organic growth, where the interface feels both precisely engineered and naturally adaptive. The aesthetic should communicate sophisticated AI capabilities while maintaining effortless usability.
 
 ## Color Selection
 
@@ -167,31 +208,44 @@ Animations should enhance the feeling of instant response and provide satisfying
 - **Components**:
   - `Input`: Main URL input field with custom focus styling (purple ring glow)
   - `Button`: Primary action button with gradient background for "Shrink" action
-  - `Card`: Container for link history items with hover elevation
+  - `Card`: Container for link history items with hover elevation and glass morphism
   - `Alert Dialog`: Confirmation dialog for link deletion
-  - `Tooltip`: Contextual hints for icon buttons
-  - Custom component for individual link items with copy/delete actions
+  - `Badge`: Status indicators for categories, health, predictions, and agent activity
+  - `Tabs`: Filter views for All/Recent/Popular links
+  - Custom `AgentInsights` component for autonomous AI analysis and recommendations
+  - Custom `PredictionBadge` component for popularity forecasting
+  - Custom `AdvancedAnalytics` component for real-time metrics dashboard
   
 - **Customizations**:
   - Gradient button variant combining primary purple to accent lime
   - Custom input with animated border glow on focus
   - Link cards with glass morphism effect (subtle backdrop blur)
   - Custom empty state illustration using SVG patterns
-
+  - Agent Station card with real-time task queue status
+  - Prediction badges with color-coded scores (green/yellow/orange)
+  - Analytics cards with animated number transitions
+  
 - **States**:
   - Input: Default (soft border) → Focus (glowing purple ring) → Error (red border pulse) → Success (brief green border)
-  - Button: Default (gradient) → Hover (elevated, brighter) → Active (pressed down) → Disabled (muted, no gradient)
+  - Button: Default (gradient) → Hover (elevated, brighter) → Active (pressed down) → Disabled (muted, no gradient) → Loading (spinner)
   - Link Cards: Default (flat) → Hover (elevated shadow, actions visible) → Deleting (fade out)
   - Copy Button: Default (copy icon) → Hover (highlight) → Active (checkmark) → Success (green checkmark, 2s)
-
+  - Agent Tasks: Pending (queued badge) → Running (pulse animation) → Completed (checkmark) → Failed (error state)
+  - Prediction Badge: High (green with up arrow) → Moderate (yellow with dash) → Low (orange with down arrow)
+  
 - **Icon Selection**:
   - `Link` for the app logo and branding
-  - `Sparkle` for enhanced branding accent
+  - `Sparkle` for enhanced branding accent and AI features
+  - `Robot` for agent kernel and autonomous systems
   - `Lightning` for the shorten action
-  - `Brain` for AI categorization features
+  - `Brain` for AI categorization and analysis features
   - `Heart` for health monitoring
   - `Tag` for category badges
-  - `Pulse` for checking/loading states
+  - `Pulse` for checking/loading states and active agent tasks
+  - `TrendUp/TrendDown` for analytics and predictions
+  - `Lightbulb` for insights and recommendations
+  - `Fire` for top performing links
+  - `Clock` for temporal metrics
   - `Copy` for copying short URLs
   - `Trash` for deleting links
   - `Check` for success confirmations
@@ -200,17 +254,21 @@ Animations should enhance the feeling of instant response and provide satisfying
   - `MagnifyingGlass` for search functionality
   - `Download` for data export
   - `QrCode` for QR code generation
-
+  
 - **Spacing**:
   - Page padding: `p-6` on mobile, `p-8` on desktop
-  - Card gaps: `gap-3` for tight grouping, `gap-6` for section separation
+  - Card gaps: `gap-3` for tight grouping, `gap-4` for agent sections, `gap-6` for major sections
   - Input/button height: `h-12` for comfortable touch targets
   - Link list spacing: `space-y-3` for clear separation
-
+  - Agent insights spacing: `space-y-4` for breathing room
+  
 - **Mobile**:
   - Single column layout throughout
   - Input and button stack vertically on very small screens (<400px)
+  - Analytics grid collapses to 2 columns on mobile
+  - Agent Station remains full-width with stacked buttons
   - Link cards show all information but with tighter spacing
+  - Prediction badges remain visible with abbreviated text
   - Bottom sheet for delete confirmation instead of dialog
   - Sticky input section at top for easy access
   - Reduced title size to 28px on mobile

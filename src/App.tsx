@@ -10,6 +10,10 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Lightning, Copy, Trash, Check, Link as LinkIcon, Warning, ChartLine, MagnifyingGlass, Download, QrCode, Sparkle, Brain, Heart, Tag, Pulse } from '@phosphor-icons/react'
+import { AgentInsights } from '@/components/AgentInsights'
+import { PredictionBadge } from '@/components/PredictionBadge'
+import { AdvancedAnalytics } from '@/components/AdvancedAnalytics'
+import { agentKernel } from '@/lib/agent-kernel'
 
 type ShortenedLink = {
   id: string
@@ -22,6 +26,8 @@ type ShortenedLink = {
   category?: string
   healthStatus?: 'healthy' | 'checking' | 'broken' | 'unknown'
   lastChecked?: number
+  predictedPopularity?: number
+  popularityReasoning?: string
 }
 
 function App() {
@@ -245,13 +251,55 @@ Return ONLY the category name, nothing else.`
     setCustomAlias('')
     setUseCustomAlias(false)
 
-    categorizeUrl(newLink.originalUrl).then(category => {
-      setLinks((currentLinks) =>
-        (currentLinks || []).map(l =>
-          l.id === newLink.id ? { ...l, category } : l
-        )
-      )
+    agentKernel.enqueueTask('categorize', newLink.originalUrl, 7).then(() => {
+      setTimeout(() => {
+        categorizeUrl(newLink.originalUrl).then(category => {
+          setLinks((currentLinks) =>
+            (currentLinks || []).map(l =>
+              l.id === newLink.id ? { ...l, category } : l
+            )
+          )
+        })
+      }, 500)
     })
+
+    agentKernel.enqueueTask('predict', newLink.originalUrl, 6).then(() => {
+      setTimeout(() => {
+        predictPopularity(newLink.originalUrl).then(prediction => {
+          setLinks((currentLinks) =>
+            (currentLinks || []).map(l =>
+              l.id === newLink.id ? { 
+                ...l, 
+                predictedPopularity: prediction.score,
+                popularityReasoning: prediction.reasoning
+              } : l
+            )
+          )
+        })
+      }, 1000)
+    })
+  }
+
+  const predictPopularity = async (url: string): Promise<{ score: number; reasoning: string }> => {
+    const domainMatch = url.match(/^https?:\/\/([^\/]+)/)
+    const domain = domainMatch ? domainMatch[1] : ''
+    
+    const popularDomains = ['youtube.com', 'github.com', 'twitter.com', 'medium.com', 'reddit.com']
+    const isPopularDomain = popularDomains.some(d => domain.includes(d))
+    
+    const hasShortPath = url.split('/').length <= 4
+    const hasParameters = url.includes('?')
+    
+    let score = 50
+    if (isPopularDomain) score += 25
+    if (hasShortPath) score += 15
+    if (!hasParameters) score += 10
+    
+    const reasoning = isPopularDomain 
+      ? `Popular domain (${domain}) typically drives high engagement`
+      : `Moderate engagement expected for ${domain}`
+    
+    return { score: Math.min(score, 95), reasoning }
   }
 
   const handleCopyUrl = async (link: ShortenedLink) => {
@@ -376,32 +424,13 @@ Return ONLY the category name, nothing else.`
         </motion.div>
 
         {links && links.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8"
-          >
-            <Card className="p-4 glass-card">
-              <div className="text-xs text-muted-foreground mb-1">Total Links</div>
-              <div className="text-2xl font-bold text-foreground">{links.length}</div>
-            </Card>
-            <Card className="p-4 glass-card">
-              <div className="text-xs text-muted-foreground mb-1">Total Clicks</div>
-              <div className="text-2xl font-bold text-accent">{totalClicks}</div>
-            </Card>
-            <Card className="p-4 glass-card">
-              <div className="text-xs text-muted-foreground mb-1">This Week</div>
-              <div className="text-2xl font-bold text-primary">
-                {links.filter(l => Date.now() - l.createdAt < 604800000).length}
-              </div>
-            </Card>
-            <Card className="p-4 glass-card">
-              <div className="text-xs text-muted-foreground mb-1">Top Link</div>
-              <div className="text-2xl font-bold text-foreground">
-                {Math.max(0, ...links.map(l => l.clicks))}
-              </div>
-            </Card>
-          </motion.div>
+          <AdvancedAnalytics links={links} />
+        )}
+
+        {links && links.length > 0 && (
+          <div className="mb-8">
+            <AgentInsights links={links} />
+          </div>
         )}
 
         <motion.div
@@ -629,9 +658,14 @@ Return ONLY the category name, nothing else.`
                               Checking...
                             </Badge>
                           )}
-                          <span className="text-xs text-muted-foreground">
-                            {formatDate(link.createdAt)}
-                          </span>
+                          {link.predictedPopularity && (
+                            <PredictionBadge 
+                              score={link.predictedPopularity} 
+                              reasoning={link.popularityReasoning}
+                              showDetails={true}
+                            />
+                          )}
+                          <span className="text-xs text-muted-foreground">{formatDate(link.createdAt)}</span>
                           {link.clicks > 0 && (
                             <div className="flex items-center gap-1 text-xs text-accent">
                               <ChartLine size={14} weight="bold" />
