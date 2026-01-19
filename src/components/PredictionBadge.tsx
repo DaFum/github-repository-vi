@@ -13,21 +13,21 @@ export function PredictionBadge({ score, reasoning, showDetails = false }: Predi
   const [isHovered, setIsHovered] = useState(false)
 
   const getScoreColor = (score: number): string => {
-    if (score >= 75) return 'text-green-600 border-green-600/30 bg-green-50/50'
-    if (score >= 50) return 'text-yellow-600 border-yellow-600/30 bg-yellow-50/50'
-    return 'text-orange-600 border-orange-600/30 bg-orange-50/50'
+    if (score >= 75) return 'text-green-400 border-green-400/50 bg-green-400/10'
+    if (score >= 50) return 'text-yellow-400 border-yellow-400/50 bg-yellow-400/10'
+    return 'text-orange-400 border-orange-400/50 bg-orange-400/10'
   }
 
   const getScoreIcon = (score: number) => {
-    if (score >= 75) return <TrendUp size={12} weight="bold" />
-    if (score >= 50) return <Minus size={12} weight="bold" />
-    return <TrendDown size={12} weight="bold" />
+    if (score >= 75) return <TrendUp size={10} weight="bold" />
+    if (score >= 50) return <Minus size={10} weight="bold" />
+    return <TrendDown size={10} weight="bold" />
   }
 
   const getScoreLabel = (score: number): string => {
-    if (score >= 75) return 'High Potential'
-    if (score >= 50) return 'Moderate'
-    return 'Low Potential'
+    if (score >= 75) return 'HIGH'
+    if (score >= 50) return 'MED'
+    return 'LOW'
   }
 
   return (
@@ -38,9 +38,9 @@ export function PredictionBadge({ score, reasoning, showDetails = false }: Predi
     >
       <Badge
         variant="outline"
-        className={`text-xs flex items-center gap-1 cursor-help ${getScoreColor(score)}`}
+        className={`text-[10px] flex items-center gap-1 cursor-help font-mono font-bold uppercase ${getScoreColor(score)}`}
       >
-        <Sparkle size={12} weight="fill" />
+        <Sparkle size={10} weight="fill" />
         <span>{getScoreLabel(score)}</span>
         {getScoreIcon(score)}
       </Badge>
@@ -49,10 +49,10 @@ export function PredictionBadge({ score, reasoning, showDetails = false }: Predi
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="absolute z-50 top-full mt-2 left-0 w-64 p-3 rounded-lg bg-popover border border-border shadow-lg"
+          className="absolute z-50 top-full mt-2 left-0 w-64 p-3 bg-popover border-2 border-primary shadow-lg"
         >
-          <div className="text-xs font-medium mb-1">AI Prediction ({score}/100)</div>
-          <div className="text-xs text-muted-foreground">{reasoning}</div>
+          <div className="text-xs font-black mb-1 uppercase tracking-wider">AI_PREDICTION [{score}/100]</div>
+          <div className="text-xs text-muted-foreground font-mono leading-relaxed">{reasoning}</div>
         </motion.div>
       )}
     </div>

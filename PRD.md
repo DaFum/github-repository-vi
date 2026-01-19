@@ -164,111 +164,108 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 
 ## Design Direction
 
-The design should evoke a sense of living intelligence - like working alongside an autonomous AI that continuously learns and evolves. Think cybernetic minimalism meets organic growth, where the interface feels both precisely engineered and naturally adaptive. The aesthetic should communicate sophisticated AI capabilities while maintaining effortless usability.
+The design evokes a living, breathing AI system - **Neo-Brutalist Cyber** aesthetic where raw technical precision meets neon-lit intelligence. Think terminal interfaces elevated to art: monochromatic foundations punctuated by electric glows, scanline effects suggesting active processing, and typography that screams precision engineering. The interface feels like you're working directly with the AI kernel - no abstraction, just pure computational power presented beautifully.
 
 ## Color Selection
 
-A vibrant, high-contrast color scheme that feels energetic and modern while maintaining excellent readability.
+An unapologetically bold, high-contrast scheme that embodies cybernetic intelligence.
 
-- **Primary Color**: Electric Violet `oklch(0.55 0.25 285)` - A striking purple that communicates innovation and digital energy, used for primary actions and brand identity
+- **Primary Color**: Electric Cyan `oklch(0.78 0.25 168)` - A vivid cyan that glows like active circuitry, representing AI processing and digital energy. Used for primary actions, agent status, and living systems.
 - **Secondary Colors**: 
-  - Deep Space `oklch(0.15 0.02 285)` - Nearly black with a subtle violet tint for backgrounds, creating depth
-  - Soft Cloud `oklch(0.97 0.01 285)` - Off-white with barely perceptible warmth for cards and surfaces
-- **Accent Color**: Cyber Lime `oklch(0.75 0.20 130)` - A bright, energetic lime for success states and attention-grabbing elements
+  - Deep Black `oklch(0.08 0 0)` - Pure darkness for backgrounds, creating infinite depth and focus
+  - Carbon Gray `oklch(0.12 0 0)` - Slightly elevated surfaces for cards and modals
+  - Steel Gray `oklch(0.22 0 0)` - Borders and subtle dividers
+- **Accent Color**: Hot Magenta `oklch(0.75 0.28 330)` - An aggressive magenta for AI agent operations, pulsing indicators, and autonomous systems
+- **Tertiary Accent**: Cyber Yellow `oklch(0.85 0.20 95)` - Warning states and high-performance indicators
 - **Foreground/Background Pairings**:
-  - Primary (Electric Violet): White text `oklch(1 0 0)` - Ratio 7.2:1 ✓
-  - Deep Space (Background): Soft Cloud text `oklch(0.97 0.01 285)` - Ratio 14.8:1 ✓
-  - Soft Cloud (Card): Deep Space text `oklch(0.15 0.02 285)` - Ratio 14.8:1 ✓
-  - Accent (Cyber Lime): Deep Space text `oklch(0.15 0.02 285)` - Ratio 11.5:1 ✓
+  - Primary (Electric Cyan): Deep Black text `oklch(0.08 0 0)` - Ratio 11.2:1 ✓
+  - Deep Black (Background): Pure White text `oklch(0.98 0 0)` - Ratio 19.5:1 ✓
+  - Carbon Gray (Card): White text `oklch(0.98 0 0)` - Ratio 15.3:1 ✓
+  - Accent (Hot Magenta): White text `oklch(0.98 0 0)` - Ratio 8.1:1 ✓
 
 ## Font Selection
 
-Typography should feel crisp, technical, and slightly futuristic to match the "hyper-efficient" nature of the tool, while remaining highly readable.
+Typography that communicates uncompromising technical precision with bold, architectural confidence.
 
-- **Primary Font**: Space Grotesk - A geometric sans-serif with distinct character that feels modern and technical without being cold
+- **Primary Font**: JetBrains Mono - A technical monospace font designed for code, bringing authenticity and precision to every character
+- **Display Font**: Archivo Black - Ultra-bold, geometric display font for headers that commands attention
 - **Typographic Hierarchy**:
-  - H1 (App Title): Space Grotesk Bold / 36px / -0.02em letter spacing / 1.1 line height
-  - H2 (Section Headers): Space Grotesk SemiBold / 18px / -0.01em letter spacing / 1.3 line height
-  - Body (URLs, Labels): Space Grotesk Regular / 14px / normal letter spacing / 1.5 line height
-  - Small (Metadata): Space Grotesk Medium / 12px / 0.01em letter spacing / 1.4 line height
+  - H1 (App Title): Archivo Black / 48px desktop, 56px mobile / 0.02em letter spacing / 1.0 line height / UPPERCASE / cyan neon text-shadow
+  - H2 (Section Headers): Archivo Black / 18px / 0.05em letter spacing / 1.2 line height / UPPERCASE
+  - Body (URLs, Content): JetBrains Mono Regular / 12-14px / -0.01em letter spacing / 1.5 line height
+  - Small (Metadata, Labels): JetBrains Mono Bold / 10px / 0.05em letter spacing / 1.4 line height / UPPERCASE / increased tracking for terminal feel
 
 ## Animations
 
-Animations should enhance the feeling of instant response and provide satisfying feedback without slowing down the workflow. Think snappy transitions and delightful micro-interactions.
+Animations communicate system responsiveness and AI processing - snappy, purposeful, never decorative.
 
-- **Button Press**: Quick scale-down (0.95) on click with 100ms spring animation for tactile feedback
-- **Link Creation**: New links slide in from the top with a subtle fade (300ms ease-out) to draw attention
-- **Copy Action**: Icon transforms to checkmark with a small bounce (200ms) to confirm success
-- **URL Input Focus**: Subtle glow effect pulses in (150ms) to indicate active state
-- **Delete Confirmation**: Gentle shake animation (250ms) on the link before removal
-- **Empty State**: Gentle floating animation on the illustration (2s infinite) for visual interest
+- **Glow Pulse**: Agent cards pulse with magenta glow (2s infinite) to show autonomous processing
+- **Scanline Sweep**: Horizontal scanlines animate across surfaces suggesting active monitoring
+- **Button Sweep**: Light sweep animation on hover (600ms) like energy flowing through circuits
+- **Terminal Flicker**: Subtle 0.15s flicker on primary icon to evoke CRT terminals
+- **Number Transitions**: Analytics numbers spring in with physics-based animation (spring stiffness: 200)
+- **Card Entrance**: Links slide in with fade (200ms cubic-bezier) - fast and precise
+- **Border Pulse**: Hover states thicken borders (2px to 4px) instantly for tactile feedback
+- **Neon Focus**: Input focus blooms with cyan glow (box-shadow transition 150ms)
 
 ## Component Selection
 
 - **Components**:
-  - `Input`: Main URL input field with custom focus styling (purple ring glow)
-  - `Button`: Primary action button with gradient background for "Shrink" action
-  - `Card`: Container for link history items with hover elevation and glass morphism
-  - `Alert Dialog`: Confirmation dialog for link deletion
-  - `Badge`: Status indicators for categories, health, predictions, and agent activity
-  - `Tabs`: Filter views for All/Recent/Popular links
-  - Custom `AgentInsights` component for autonomous AI analysis and recommendations
-  - Custom `PredictionBadge` component for popularity forecasting
-  - Custom `AdvancedAnalytics` component for real-time metrics dashboard
+  - `Input`: Terminal-style inputs with sharp borders, monospace font, cyan glow on focus, 2px borders
+  - `Button`: Gradient button with cyan glow, light sweep animation, uppercase mono labels
+  - `Card`: Glass-morphism cards with scanline overlay, sharp corners (minimal radius), left border accents
+  - `Alert Dialog`: Terminal-style modals with 2px colored borders, uppercase headers
+  - `Badge`: Minimal badges with uppercase mono text, 1px borders, color-coded categories
+  - `Tabs`: Brutalist tabs with active state background, uppercase labels, tabular data format
+  - Custom `AgentInsights` with pulsing magenta border showing living AI system
+  - Custom `PredictionBadge` with color-coded intensity (green/yellow/orange)
+  - Custom `AdvancedAnalytics` with left-border color coding and tabular numbers
   
 - **Customizations**:
-  - Gradient button variant combining primary purple to accent lime
-  - Custom input with animated border glow on focus
-  - Link cards with glass morphism effect (subtle backdrop blur)
-  - Custom empty state illustration using SVG patterns
-  - Agent Station card with real-time task queue status
-  - Prediction badges with color-coded scores (green/yellow/orange)
-  - Analytics cards with animated number transitions
+  - Cyber grid background (repeating-linear-gradient) at 20px intervals
+  - Scanline overlay on cards (repeating gradient at 3px)
+  - Neon glow effects using multiple box-shadows
+  - Terminal flicker animation on key icons
+  - Agent pulse animation on AI operation cards
+  - Minimal border-radius (0.125rem) for brutalist sharpness
+  - Uppercase tracking-wide labels throughout
+  - Tabular numbers for metrics
   
 - **States**:
-  - Input: Default (soft border) → Focus (glowing purple ring) → Error (red border pulse) → Success (brief green border)
-  - Button: Default (gradient) → Hover (elevated, brighter) → Active (pressed down) → Disabled (muted, no gradient) → Loading (spinner)
-  - Link Cards: Default (flat) → Hover (elevated shadow, actions visible) → Deleting (fade out)
-  - Copy Button: Default (copy icon) → Hover (highlight) → Active (checkmark) → Success (green checkmark, 2s)
-  - Agent Tasks: Pending (queued badge) → Running (pulse animation) → Completed (checkmark) → Failed (error state)
-  - Prediction Badge: High (green with up arrow) → Moderate (yellow with dash) → Low (orange with down arrow)
+  - Input: Default (2px steel border) → Focus (cyan glow + scanline) → Error (red border pulse) → Success (brief green)
+  - Button: Default (cyan glow) → Hover (light sweep + elevation) → Active (no translate) → Loading (pulse)
+  - Link Cards: Default (subtle left-border) → Hover (4px left-border + primary color) → Actions reveal
+  - Copy Button: Default (copy icon) → Success (checkmark + spring animation) → Reset (2s)
+  - Agent Tasks: Pending (mono badge) → Running (magenta pulse) → Completed (checkmark)
+  - Prediction Badge: High (green glow) → Med (yellow) → Low (orange) with uppercase labels
   
 - **Icon Selection**:
-  - `Link` for the app logo and branding
-  - `Sparkle` for enhanced branding accent and AI features
-  - `Robot` for agent kernel and autonomous systems
-  - `Lightning` for the shorten action
-  - `Brain` for AI categorization and analysis features
+  - `LinkIcon` with terminal flicker for branding
+  - `Robot` with magenta pulse for AI agent kernel
+  - `Lightning` for compression action
+  - `Brain` for AI categorization
   - `Heart` for health monitoring
-  - `Tag` for category badges
-  - `Pulse` for checking/loading states and active agent tasks
-  - `TrendUp/TrendDown` for analytics and predictions
-  - `Lightbulb` for insights and recommendations
-  - `Fire` for top performing links
-  - `Clock` for temporal metrics
-  - `Copy` for copying short URLs
-  - `Trash` for deleting links
-  - `Check` for success confirmations
-  - `Warning` for error states
-  - `ChartLine` for analytics and click tracking
-  - `MagnifyingGlass` for search functionality
-  - `Download` for data export
-  - `QrCode` for QR code generation
+  - `Tag` for categories
+  - `Pulse` for active processing states
+  - `TrendUp/TrendDown` for predictions
+  - `Lightbulb` for insights
+  - `Fire` for high performance
+  - `Clock` for temporal data
+  - All icons at 12-16px for precision
   
 - **Spacing**:
-  - Page padding: `p-6` on mobile, `p-8` on desktop
-  - Card gaps: `gap-3` for tight grouping, `gap-4` for agent sections, `gap-6` for major sections
-  - Input/button height: `h-12` for comfortable touch targets
-  - Link list spacing: `space-y-3` for clear separation
-  - Agent insights spacing: `space-y-4` for breathing room
+  - Page padding: `px-6 py-8` mobile, `px-8 py-12` desktop
+  - Card gaps: `gap-3` for tight technical grouping
+  - Section margins: `mb-8` for clear separation
+  - Grid: 20px cyber grid background
+  - Analytics grid: 2 columns mobile, 4 columns desktop with `gap-3`
   
 - **Mobile**:
-  - Single column layout throughout
-  - Input and button stack vertically on very small screens (<400px)
-  - Analytics grid collapses to 2 columns on mobile
-  - Agent Station remains full-width with stacked buttons
-  - Link cards show all information but with tighter spacing
-  - Prediction badges remain visible with abbreviated text
-  - Bottom sheet for delete confirmation instead of dialog
-  - Sticky input section at top for easy access
-  - Reduced title size to 28px on mobile
+  - Single column layout
+  - Input/button stack on small screens
+  - 2-column analytics grid
+  - Reduced title to 48px
+  - Condensed badges with abbreviations
+  - Tabs full-width
+  - Touch targets minimum 44px
+  - Sticky input at top

@@ -169,47 +169,51 @@ export function AgentInsights({ links }: AgentInsightsProps) {
 
   return (
     <div className="space-y-4">
-      <Card className="p-6 glass-card border-primary/20">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Robot size={24} weight="duotone" className="text-primary" />
+      <Card className="p-6 glass-card border-2 border-accent/50 relative overflow-hidden agent-pulse">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 blur-3xl"></div>
+        <div className="relative">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-accent/20 border-2 border-accent relative">
+                <Robot size={24} weight="bold" className="text-accent terminal-flicker" />
+                <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-accent animate-pulse"></div>
+              </div>
+              <div>
+                <h3 className="font-black text-lg uppercase tracking-wide">AI_AGENT_STATION</h3>
+                <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">
+                  AUTONOMOUS_INTELLIGENCE_CORE
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold text-lg">AI Agent Station</h3>
-              <p className="text-xs text-muted-foreground">
-                Autonomous intelligence analyzing your links
-              </p>
-            </div>
+            {(agentStatus.pending > 0 || agentStatus.running > 0) && (
+              <Badge variant="outline" className="flex items-center gap-1.5 border-primary bg-primary/10 font-mono">
+                <Pulse size={12} className="animate-pulse text-primary" />
+                <span className="text-[10px] uppercase">
+                  {agentStatus.running}:RUN / {agentStatus.pending}:QUE
+                </span>
+              </Badge>
+            )}
           </div>
-          {(agentStatus.pending > 0 || agentStatus.running > 0) && (
-            <Badge variant="outline" className="flex items-center gap-1">
-              <Pulse size={12} className="animate-pulse text-primary" />
-              <span className="text-xs">
-                {agentStatus.running} running, {agentStatus.pending} queued
-              </span>
-            </Badge>
-          )}
-        </div>
 
-        <div className="flex gap-3">
-          <Button
-            onClick={handleAnalyze}
-            disabled={isAnalyzing}
-            variant="outline"
-            className="flex-1"
-          >
-            <TrendUp size={18} className="mr-2" />
-            {isAnalyzing ? 'Analyzing...' : 'Analyze Patterns'}
-          </Button>
-          <Button
-            onClick={handleOptimize}
-            disabled={isOptimizing}
-            className="flex-1 gradient-button"
-          >
-            <Sparkle size={18} weight="fill" className="mr-2" />
-            {isOptimizing ? 'Optimizing...' : 'Optimize Links'}
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              onClick={handleAnalyze}
+              disabled={isAnalyzing}
+              variant="outline"
+              className="flex-1 border-primary/50 hover:border-primary hover:bg-primary/10 font-mono uppercase text-xs tracking-wider"
+            >
+              <TrendUp size={18} className="mr-2" />
+              {isAnalyzing ? 'ANALYZING...' : 'ANALYZE_PATTERNS'}
+            </Button>
+            <Button
+              onClick={handleOptimize}
+              disabled={isOptimizing}
+              className="flex-1 gradient-button font-mono uppercase text-xs tracking-wider font-bold"
+            >
+              <Sparkle size={18} weight="fill" className="mr-2" />
+              {isOptimizing ? 'OPTIMIZING...' : 'OPTIMIZE_LINKS'}
+            </Button>
+          </div>
         </div>
       </Card>
 
@@ -220,10 +224,10 @@ export function AgentInsights({ links }: AgentInsightsProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
           >
-            <Card className="p-6 glass-card border-accent/30">
+            <Card className="p-6 glass-card border-l-4 border-l-accent">
               <div className="flex items-center gap-2 mb-4">
                 <Brain size={20} weight="fill" className="text-accent" />
-                <h4 className="font-semibold">Pattern Insights</h4>
+                <h4 className="font-black uppercase tracking-wide">PATTERN_INSIGHTS</h4>
               </div>
               <div className="space-y-3">
                 {insights.insights.map((insight, idx) => (
@@ -232,10 +236,10 @@ export function AgentInsights({ links }: AgentInsightsProps) {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="flex items-start gap-2"
+                    className="flex items-start gap-2 p-2 border-l border-accent/30 pl-3"
                   >
-                    <Lightbulb size={16} weight="fill" className="text-accent mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-foreground">{insight}</p>
+                    <Lightbulb size={14} weight="fill" className="text-accent mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-foreground font-mono leading-relaxed">{insight}</p>
                   </motion.div>
                 ))}
               </div>
@@ -243,12 +247,12 @@ export function AgentInsights({ links }: AgentInsightsProps) {
                 <div className="mt-4 pt-4 border-t border-border/50">
                   <div className="flex items-center gap-2 mb-2">
                     <TrendUp size={16} className="text-primary" />
-                    <span className="text-xs font-medium text-muted-foreground">TRENDS</span>
+                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">DETECTED_TRENDS</span>
                   </div>
                   <div className="space-y-2">
                     {insights.trends.map((trend, idx) => (
-                      <p key={idx} className="text-sm text-muted-foreground">
-                        • {trend}
+                      <p key={idx} className="text-sm text-muted-foreground font-mono">
+                        <span className="text-primary mr-2">{'>'}</span>{trend}
                       </p>
                     ))}
                   </div>
@@ -264,13 +268,13 @@ export function AgentInsights({ links }: AgentInsightsProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
           >
-            <Card className="p-6 glass-card border-primary/30">
+            <Card className="p-6 glass-card border-l-4 border-l-primary">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Sparkle size={20} weight="fill" className="text-primary" />
-                  <h4 className="font-semibold">Optimization Recommendations</h4>
+                  <h4 className="font-black uppercase tracking-wide">OPTIMIZATION_REC</h4>
                 </div>
-                <Badge variant="secondary" className="text-sm font-bold">
+                <Badge variant="secondary" className="text-sm font-black font-mono border-2 border-primary bg-primary/20">
                   {recommendations.optimizationScore}/100
                 </Badge>
               </div>
@@ -281,12 +285,12 @@ export function AgentInsights({ links }: AgentInsightsProps) {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="flex items-start gap-3 p-3 rounded-lg bg-primary/5 border border-primary/10"
+                    className="flex items-start gap-3 p-3 border border-primary/20 bg-primary/5"
                   >
-                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex-shrink-0">
+                    <div className="flex items-center justify-center w-6 h-6 bg-primary text-primary-foreground text-xs font-black flex-shrink-0 font-mono">
                       {idx + 1}
                     </div>
-                    <p className="text-sm text-foreground flex-1">{rec}</p>
+                    <p className="text-sm text-foreground flex-1 font-mono leading-relaxed">{rec}</p>
                   </motion.div>
                 ))}
               </div>

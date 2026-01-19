@@ -91,20 +91,24 @@ User Action → Immediate UI Response → Agent Task Enqueued → Background Pro
 
 ### Design Philosophy
 
-**Material Honesty**: AI operations are visible but non-intrusive
-- Task queue status badge shows "X running, Y queued"
-- Prediction badges use color psychology (green=high, yellow=moderate, orange=low)
-- Loading states are purposeful, not decorative
+**Material Honesty + Neo-Brutalism**: AI operations are visible and unapologetically technical
+- Task queue status badge shows "X:RUN / Y:QUE" in terminal format
+- Prediction badges use aggressive color psychology (green/yellow/orange neon)
+- Loading states pulse with magenta glow - never idle decoration
+- Scanlines sweep across cards like active monitoring systems
 
-**Obsessive Detail**: Every micro-interaction considered
-- Agent cards use glass morphism to feel ethereal yet present
-- Analytics numbers animate in with spring physics
-- Insights appear with staggered delays for rhythm
+**Obsessive Detail + Cyber Precision**: Every micro-interaction engineered for impact
+- Agent cards pulse with living magenta aura
+- Analytics numbers are tabular and spring-animate into place
+- Insights appear with staggered reveals creating rhythm
+- Borders thicken instantly on hover (2px → 4px) for tactile response
+- Neon glows use layered box-shadows for depth
 
-**Coherent Design Language**: Purple-to-lime gradient represents AI energy
-- Primary purple (oklch(0.55 0.25 285)) = Intelligence
-- Accent lime (oklch(0.75 0.20 130)) = Growth/Evolution
-- Deep space background = Infinite possibility
+**Coherent Design Language**: Cyan-to-magenta spectrum represents AI consciousness
+- Primary cyan (oklch(0.78 0.25 168)) = Active Intelligence / Processing
+- Accent magenta (oklch(0.75 0.28 330)) = Autonomous Systems / Evolution
+- Deep black background = Infinite computational space
+- JetBrains Mono + Archivo Black = Technical precision meets bold architecture
 
 ---
 
