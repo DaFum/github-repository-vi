@@ -1,6 +1,6 @@
 # Planning Guide
 
-HyperSmol is a sleek, ultra-minimalist URL shortener that transforms long URLs into tiny, shareable links with a focus on speed and simplicity.
+HyperSmol is a powerful yet elegant URL shortener that transforms long URLs into tiny, shareable links with advanced analytics, custom aliases, and smart filtering capabilities.
 
 **Experience Qualities**:
 1. **Lightning-fast** - Users should feel the instant gratification of creating short links with zero friction or waiting
@@ -8,7 +8,7 @@ HyperSmol is a sleek, ultra-minimalist URL shortener that transforms long URLs i
 3. **Playful** - Subtle animations and delightful micro-interactions make the mundane task of shortening URLs feel satisfying
 
 **Complexity Level**: Light Application (multiple features with basic state)
-This is a focused utility with URL shortening, link management, and copy functionality - perfect for a light application with persistent state but not requiring complex routing or advanced features.
+This is a feature-rich utility with URL shortening, analytics tracking, custom aliases, search/filtering, QR code generation, and data export - a sophisticated light application with persistent state and multiple interactive features.
 
 ## Essential Features
 
@@ -19,12 +19,54 @@ This is a focused utility with URL shortening, link management, and copy functio
 - Progression: Paste URL → Click "Shrink" button → Short URL generated → Auto-copied to clipboard → Success toast
 - Success criteria: Short URL is created, displayed, stored persistently, and ready to copy
 
+**Custom Aliases**
+- Functionality: Allows users to create memorable custom short codes instead of random ones
+- Purpose: Brand consistency and memorability for important links
+- Trigger: User clicks "Custom Alias" toggle before shortening
+- Progression: Toggle custom alias → Enter desired alias → Click shrink → Validates uniqueness → Creates custom short URL
+- Success criteria: Custom alias is validated, applied to link, and marked with badge
+
+**Analytics Dashboard**
+- Functionality: Displays key metrics including total links, clicks, weekly activity, and top link
+- Purpose: Provides insights into link performance at a glance
+- Trigger: Automatically displays when links exist
+- Progression: Links created → Stats cards appear → Updates in real-time as clicks tracked
+- Success criteria: Accurate metrics displayed in clean, scannable cards
+
+**Click Tracking**
+- Functionality: Simulates and tracks clicks on shortened links
+- Purpose: Measure engagement and link popularity
+- Trigger: User clicks chart icon on any link
+- Progression: Click track button → Click count increments → Badge updates → Toast confirms
+- Success criteria: Click count persists and displays accurately on each link
+
 **Link History**
 - Functionality: Displays all previously shortened URLs with original and shortened versions
 - Purpose: Allows users to retrieve past short links without re-creating them
 - Trigger: Automatically updates when new link is created
 - Progression: New link created → Link appears at top of history list → Hover shows actions → Click copy icon to copy
 - Success criteria: All links persist between sessions and can be copied or deleted
+
+**Search & Filter**
+- Functionality: Find links by URL or short code, filter by recency or popularity
+- Purpose: Quick access to specific links in large collections
+- Trigger: User types in search box or switches tabs
+- Progression: Enter search term → Results filter instantly → Switch tabs for different views
+- Success criteria: Search is instant, filters work correctly, empty states are helpful
+
+**QR Code Generation**
+- Functionality: Generates scannable QR codes for any shortened link
+- Purpose: Easy mobile sharing and offline distribution
+- Trigger: Click QR icon on any link
+- Progression: Click QR button → Modal opens → QR code displayed → User can scan/screenshot
+- Success criteria: QR code is accurate, scannable, and clearly displayed
+
+**Data Export**
+- Functionality: Downloads all links as JSON file
+- Purpose: Backup, portability, and data ownership
+- Trigger: Click export button in header
+- Progression: Click export → JSON file generates → Download triggers → Success toast
+- Success criteria: All link data exported in valid JSON format
 
 **Copy to Clipboard**
 - Functionality: One-click copying of shortened URLs
@@ -50,11 +92,16 @@ This is a focused utility with URL shortening, link management, and copy functio
 ## Edge Case Handling
 
 - **Duplicate URLs**: If the same URL is shortened twice, display the existing short link rather than creating a duplicate
+- **Duplicate Custom Alias**: Prevent users from creating custom aliases that already exist with clear error message
 - **Empty Input**: Disable the shorten button when input is empty to prevent accidental clicks
 - **Very Long URLs**: Handle URLs up to 2000 characters gracefully without breaking layout
 - **Invalid URLs**: Show helpful error messages for common mistakes (missing protocol, malformed URLs)
+- **Invalid Custom Alias**: Sanitize custom aliases to only allow alphanumeric characters, hyphens, and underscores
 - **Clipboard Permissions**: Handle browsers that block clipboard access with fallback manual selection
 - **Empty History**: Show an engaging empty state with helpful guidance when no links exist
+- **Empty Search Results**: Display clear "no matches" state when search/filter yields no results
+- **Data Migration**: Automatically migrate old link data structure to include new fields (clicks, custom alias)
+- **QR Code API Failure**: Handle gracefully if QR code service is unavailable
 
 ## Design Direction
 
@@ -121,11 +168,16 @@ Animations should enhance the feeling of instant response and provide satisfying
 
 - **Icon Selection**:
   - `Link` for the app logo and branding
-  - `ArrowDown` or `Lightning` for the shorten action
+  - `Sparkle` for enhanced branding accent
+  - `Lightning` for the shorten action
   - `Copy` for copying short URLs
   - `Trash` for deleting links
   - `Check` for success confirmations
   - `Warning` for error states
+  - `ChartLine` for analytics and click tracking
+  - `MagnifyingGlass` for search functionality
+  - `Download` for data export
+  - `QrCode` for QR code generation
 
 - **Spacing**:
   - Page padding: `p-6` on mobile, `p-8` on desktop
