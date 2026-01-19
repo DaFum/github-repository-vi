@@ -13,7 +13,7 @@ import { Lightning, Copy, Trash, Check, Link as LinkIcon, Warning, ChartLine, Ma
 import { AgentInsights } from '@/components/AgentInsights'
 import { PredictionBadge } from '@/components/PredictionBadge'
 import { AdvancedAnalytics } from '@/components/AdvancedAnalytics'
-import { agentKernel } from '@/lib/agent-kernel'
+import { hyperSmolAgents } from '@/lib/hypersmolagents'
 
 type ShortenedLink = {
   id: string
@@ -251,7 +251,7 @@ Return ONLY the category name, nothing else.`
     setCustomAlias('')
     setUseCustomAlias(false)
 
-    agentKernel.enqueueTask('categorize', newLink.originalUrl, 7).then(() => {
+    hyperSmolAgents.enqueueTask('categorize', newLink.originalUrl, 7).then(() => {
       setTimeout(() => {
         categorizeUrl(newLink.originalUrl).then(category => {
           setLinks((currentLinks) =>
@@ -263,7 +263,7 @@ Return ONLY the category name, nothing else.`
       }, 500)
     })
 
-    agentKernel.enqueueTask('predict', newLink.originalUrl, 6).then(() => {
+    hyperSmolAgents.enqueueTask('predict', newLink.originalUrl, 6).then(() => {
       setTimeout(() => {
         predictPopularity(newLink.originalUrl).then(prediction => {
           setLinks((currentLinks) =>

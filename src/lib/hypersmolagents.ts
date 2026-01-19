@@ -18,7 +18,19 @@ type AgentMetrics = {
   lastOptimization: number
 }
 
-class AgentKernel {
+/**
+ * HyperSmolAgents
+ *
+ * The biological heart of the HyperSmol ecosystem. This kernel orchestrates
+ * asynchronous micro-intelligences to perform tasks without blocking the
+ * main thread, mimicking a living organism's autonomic nervous system.
+ *
+ * Capabilities:
+ * - Swarm Logic: Manages concurrent specialized agents
+ * - Self-Healing: Automatically adjusts concurrency based on system load
+ * - Asynchronous Mastery: Prioritizes user-facing tasks over background analysis
+ */
+class HyperSmolAgents {
   private taskQueue: AgentTask[] = []
   private runningTasks: Map<string, AgentTask> = new Map()
   private metrics: AgentMetrics = {
@@ -99,6 +111,11 @@ class AgentKernel {
       task.result = result
       task.completedAt = Date.now()
       this.metrics.tasksCompleted++
+
+      // Self-optimize every 10 tasks to prevent oscillation
+      if (this.metrics.tasksCompleted % 10 === 0) {
+        await this.selfOptimize()
+      }
     } catch (error) {
       task.status = 'failed'
       task.error = error instanceof Error ? error.message : 'Unknown error'
@@ -110,6 +127,8 @@ class AgentKernel {
       this.runningTasks.delete(task.id)
     }
   }
+
+  // --- Specialized Agents ---
 
   private async categorizeUrl(url: string): Promise<string> {
     const promptText = `Analyze this URL and categorize it into ONE of these categories: Social Media, E-commerce, News, Documentation, Entertainment, Business, Education, Technology, Health, Finance, Travel, Food, Sports, Gaming, Government, or Other.
@@ -203,18 +222,26 @@ Score should be 0-100 (higher = more likely to be popular).`
     }
   }
 
+  /**
+   * Self-Healing Mechanism
+   * Adjusts the organism's metabolic rate (concurrency) based on
+   * environmental stress (task latency).
+   */
   async selfOptimize(): Promise<void> {
     const metrics = this.getMetrics()
     
-    if (metrics.averageTaskTime > 3000) {
+    // If tasks are slow (> 3s), reduce cognitive load (concurrency)
+    if (metrics.averageTaskTime > 3000 && this.maxConcurrent > 1) {
+      this.maxConcurrent = Math.max(1, this.maxConcurrent - 1)
+    }
+    // If tasks are fast (< 1s), expand cognitive bandwidth
+    else if (metrics.averageTaskTime < 1000 && this.maxConcurrent < 5) {
       this.maxConcurrent = Math.min(5, this.maxConcurrent + 1)
-    } else if (metrics.averageTaskTime < 1000 && this.maxConcurrent > 2) {
-      this.maxConcurrent = Math.max(2, this.maxConcurrent - 1)
     }
 
     this.metrics.lastOptimization = Date.now()
   }
 }
 
-export const agentKernel = new AgentKernel()
+export const hyperSmolAgents = new HyperSmolAgents()
 export type { AgentTask, AgentMetrics }

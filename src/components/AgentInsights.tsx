@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Brain, Sparkle, TrendUp, Lightbulb, Robot, Pulse } from '@phosphor-icons/react'
-import { agentKernel } from '@/lib/agent-kernel'
+import { hyperSmolAgents } from '@/lib/hypersmolagents'
 import { toast } from 'sonner'
 
 type ShortenedLink = {
@@ -29,7 +29,7 @@ export function AgentInsights({ links }: AgentInsightsProps) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setAgentStatus(agentKernel.getQueueStatus())
+      setAgentStatus(hyperSmolAgents.getQueueStatus())
     }, 1000)
 
     return () => clearInterval(interval)
@@ -49,10 +49,10 @@ export function AgentInsights({ links }: AgentInsightsProps) {
     })
 
     try {
-      const taskId = await agentKernel.enqueueTask('analyze', links, 8)
+      const taskId = await hyperSmolAgents.enqueueTask('analyze', links, 8)
       
       const checkResult = setInterval(async () => {
-        const metrics = agentKernel.getMetrics()
+        const metrics = hyperSmolAgents.getMetrics()
         if (metrics.tasksCompleted > 0) {
           clearInterval(checkResult)
         }
@@ -98,7 +98,7 @@ export function AgentInsights({ links }: AgentInsightsProps) {
     })
 
     try {
-      await agentKernel.enqueueTask('optimize', links, 9)
+      await hyperSmolAgents.enqueueTask('optimize', links, 9)
 
       setTimeout(() => {
         const mockResult = {
