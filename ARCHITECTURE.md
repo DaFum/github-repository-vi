@@ -36,11 +36,6 @@ We eliminate fragility through type-safe, self-correcting mechanisms.
     - **Provenance**: Every output carries a history chain (GeneratedBy -> Source).
     - **Snapshots**: Immutable state deltas recorded after every node completion.
 
-### Data Structures (The DNA)
-- **ExecutionContext**: The "God View" containing run status, global memory, and the state of every node.
-- **NodeExecutionState**: Tracks the input buffer, output, logs, and error state of a single node.
-- **EdgeSignals**: Data "on the wire" waiting to be consumed by downstream nodes.
-
 ---
 
 ## 2. 🧱 The Building Station (UX/UI & Logic)
@@ -67,11 +62,23 @@ The "Building Station" is the bridge between the carbon-based user and the silic
 **The Evolutionary Trajectory:**
 A static system is a dead system. HyperSmol includes feedback loops allowing agents to rewrite their own optimization paths.
 
-- **Self-Healing Mechanism**:
-  - *Symptom*: Execution failure in a node.
-  - *Response*: The GraphEngine checks `retryCount`. If < 3, it performs exponential backoff and retries.
-- **Recursive Refinement**:
-  - The graph supports cycles. A "Critic" node can reject an output, sending a token *back* to the "Generator" node for a v2 iteration.
+### 3a. The Neural Mesh (P2P Agent Swarm)
+- **Protocol**: Serverless Browser-to-Browser communication via WebRTC (`simple-peer`).
+- **Workflow**: Agents negotiate tasks directly without a central server.
+- **Privacy**: Zero-knowledge calendar/data access via direct peer sockets.
+
+### 3b. The Ocular Cortex (Screen-Aware Context)
+- **Vision**: Contextual awareness using `getDisplayMedia`.
+- **Analysis**: Frames are analyzed by local or cloud vision models (`pollinations.chat` with image input).
+- **Triggers**: Agents "watch" user workflows and trigger actions based on visual state changes.
+
+### 3c. The Genetic Optimizer (Evolutionary Prompting)
+- **Evolution**: Automated adversarial prompt generation.
+- **Selection**: "Survival of the fittest" algorithm runs prompt variations in parallel (Shadow Mode) and selects the best performers based on a Judge Agent's score.
+
+### 3d. The Infinity Store (Marketplace)
+- **Blueprint**: Agents saved as compressed JSON (`jszip`) containing graph structure, schemas, and prompts.
+- **Decentralized**: Sharing mechanism via portable files.
 
 ---
 
@@ -88,10 +95,16 @@ A static system is a dead system. HyperSmol includes feedback loops allowing age
 - [x] **Graph Engine**: Implement the Token-Passing Executor.
 - [x] **Node Registry**: Implement `AgentProcessor`, `LogicProcessor`.
 
-**Phase 3: Deep Integration (Current)**
-- [ ] **Universal Translator**: Implement `Interpolator` with Zod validation.
-- [ ] **Black Box Recorder**: Implement provenance tracking.
-- [ ] **Cognitive Routing**: Add barrier sync and dead-end pruning to Engine.
+**Phase 3: Deep Integration (Complete)**
+- [x] **Universal Translator**: Implement `Interpolator` with Zod validation.
+- [x] **Black Box Recorder**: Implement provenance tracking.
+- [x] **Cognitive Routing**: Add barrier sync and dead-end pruning to Engine.
+
+**Phase 4: Evolution & Vision (Current)**
+- [ ] **Neural Mesh**: Implement `P2PClient`.
+- [ ] **Ocular Cortex**: Implement `ScreenWatcher`.
+- [ ] **Genetic Optimizer**: Implement `GeneticPrompt` evolution loop.
+- [ ] **Infinity Store**: Implement Blueprint export/import.
 
 ---
 
