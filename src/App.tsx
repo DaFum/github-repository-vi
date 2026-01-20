@@ -17,7 +17,8 @@ import { hyperSmolAgents } from '@/lib/hypersmolagents'
 import { pollinations } from '@/lib/pollinations'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
-import { Gear } from '@phosphor-icons/react'
+import { Gear, Circuitry } from '@phosphor-icons/react'
+import { FlowEditor } from '@/components/flow/FlowEditor'
 
 type ShortenedLink = {
   id: string
@@ -49,6 +50,7 @@ function App() {
   const [isCheckingHealth, setIsCheckingHealth] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [apiKey, setApiKey] = useState(pollinations.getApiKey() || '')
+  const [showBuilder, setShowBuilder] = useState(false)
 
   const validateUrl = (url: string): boolean => {
     try {
@@ -441,7 +443,16 @@ function App() {
             <span className="animate-pulse text-accent">█</span>
           </motion.div>
 
-          <div className="absolute top-4 right-4 md:top-8 md:right-8">
+          <div className="absolute top-4 right-4 md:top-8 md:right-8 flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowBuilder(!showBuilder)}
+              className={`font-mono uppercase text-xs gap-2 ${showBuilder ? 'bg-primary/20 border-primary text-primary' : 'text-muted-foreground'}`}
+            >
+              <Circuitry size={18} />
+              {showBuilder ? 'AGENT_BUILDER_ACTIVE' : 'OPEN_BUILDER'}
+            </Button>
             <Button
               variant="ghost"
               size="icon"
@@ -453,93 +464,110 @@ function App() {
           </div>
         </motion.div>
 
-        {links && links.length > 0 && (
-          <AdvancedAnalytics links={links} />
-        )}
+        {showBuilder ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="h-[600px] border-2 border-primary/30 rounded-lg overflow-hidden glass-card shadow-2xl relative"
+          >
+             <FlowEditor />
+             <div className="absolute top-2 right-2 z-10">
+                <Badge variant="outline" className="bg-black/50 backdrop-blur font-mono text-xs border-primary/50 text-primary">
+                    BETA_BUILDER_v1
+                </Badge>
+             </div>
+          </motion.div>
+        ) : (
+          <>
+            {links && links.length > 0 && (
+              <AdvancedAnalytics links={links} />
+            )}
 
-        {links && links.length > 0 && (
-          <div className="mb-8">
-            <AgentInsights links={links} />
-          </div>
-        )}
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-        >
-          <Card className="p-6 mb-8 glass-card border-2 border-primary/30">
-            <div className="flex flex-col gap-3">
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex-1">
-                  <Input
-                    id="url-input"
-                    type="text"
-                    placeholder="PASTE_URL_HERE..."
-                    value={urlInput}
-                    onChange={(e) => {
-                      setUrlInput(e.target.value)
-                      setIsValidUrl(true)
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && urlInput.trim()) {
-                        handleShortenUrl()
-                      }
-                    }}
-                    className={`h-12 input-glow text-sm font-mono bg-input border-2 ${
-                      !isValidUrl ? 'border-destructive focus-visible:ring-destructive' : 'border-border'
-                    }`}
-                  />
-                </div>
-                <Button
-                  onClick={handleShortenUrl}
-                  disabled={!urlInput.trim()}
-                  className="gradient-button h-12 px-6 text-sm font-black uppercase tracking-wider"
-                >
-                  <Lightning size={20} weight="fill" className="mr-2" />
-                  SHRINK
-                </Button>
+            {links && links.length > 0 && (
+              <div className="mb-8">
+                <AgentInsights links={links} />
               </div>
-              
-              <div className="flex items-center gap-3">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setUseCustomAlias(!useCustomAlias)}
-                  className="text-[10px] font-mono uppercase tracking-wider hover:text-primary"
-                >
-                  {useCustomAlias ? '[AUTO_CODE]' : '[CUSTOM_ALIAS]'}
-                </Button>
-                {useCustomAlias && (
+            )}
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+            >
+              <Card className="p-6 mb-8 glass-card border-2 border-primary/30">
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex-1">
+                      <Input
+                        id="url-input"
+                        type="text"
+                        placeholder="PASTE_URL_HERE..."
+                        value={urlInput}
+                        onChange={(e) => {
+                          setUrlInput(e.target.value)
+                          setIsValidUrl(true)
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && urlInput.trim()) {
+                            handleShortenUrl()
+                          }
+                        }}
+                        className={`h-12 input-glow text-sm font-mono bg-input border-2 ${
+                          !isValidUrl ? 'border-destructive focus-visible:ring-destructive' : 'border-border'
+                        }`}
+                      />
+                    </div>
+                    <Button
+                      onClick={handleShortenUrl}
+                      disabled={!urlInput.trim()}
+                      className="gradient-button h-12 px-6 text-sm font-black uppercase tracking-wider"
+                    >
+                      <Lightning size={20} weight="fill" className="mr-2" />
+                      SHRINK
+                    </Button>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setUseCustomAlias(!useCustomAlias)}
+                      className="text-[10px] font-mono uppercase tracking-wider hover:text-primary"
+                    >
+                      {useCustomAlias ? '[AUTO_CODE]' : '[CUSTOM_ALIAS]'}
+                    </Button>
+                    {useCustomAlias && (
+                      <motion.div
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: 'auto' }}
+                        className="flex-1"
+                      >
+                        <Input
+                          id="custom-alias"
+                          type="text"
+                          placeholder="custom-link-name"
+                          value={customAlias}
+                          onChange={(e) => setCustomAlias(e.target.value)}
+                          className="h-9 text-sm font-mono bg-input border-2 border-border"
+                        />
+                      </motion.div>
+                    )}
+                  </div>
+                </div>
+                {!isValidUrl && (
                   <motion.div
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: 'auto' }}
-                    className="flex-1"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="flex items-center gap-2 mt-3 text-destructive text-xs font-mono"
                   >
-                    <Input
-                      id="custom-alias"
-                      type="text"
-                      placeholder="custom-link-name"
-                      value={customAlias}
-                      onChange={(e) => setCustomAlias(e.target.value)}
-                      className="h-9 text-sm font-mono bg-input border-2 border-border"
-                    />
+                    <Warning size={16} weight="fill" />
+                    <span className="uppercase">[ERROR] INVALID_URL_FORMAT (REQUIRES HTTP/HTTPS)</span>
                   </motion.div>
                 )}
-              </div>
-            </div>
-            {!isValidUrl && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                className="flex items-center gap-2 mt-3 text-destructive text-xs font-mono"
-              >
-                <Warning size={16} weight="fill" />
-                <span className="uppercase">[ERROR] INVALID_URL_FORMAT (REQUIRES HTTP/HTTPS)</span>
-              </motion.div>
-            )}
-          </Card>
-        </motion.div>
+              </Card>
+            </motion.div>
+          </>
+        )}
 
         <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
