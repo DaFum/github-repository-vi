@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
 // --- Data Structures ---
 
@@ -7,18 +7,18 @@ export const ProvenanceSchema = z.object({
   source: z.array(z.string()), // Source Node IDs
   timestamp: z.number(),
   meta: z.record(z.any()).optional(),
-});
+})
 
-export type Provenance = z.infer<typeof ProvenanceSchema>;
+export type Provenance = z.infer<typeof ProvenanceSchema>
 
 export const LogEntrySchema = z.object({
   timestamp: z.number(),
   level: z.enum(['info', 'warn', 'error']),
   message: z.string(),
   data: z.any().optional(),
-});
+})
 
-export type LogEntry = z.infer<typeof LogEntrySchema>;
+export type LogEntry = z.infer<typeof LogEntrySchema>
 
 export const NodeExecutionStateSchema = z.object({
   id: z.string(),
@@ -31,9 +31,9 @@ export const NodeExecutionStateSchema = z.object({
   endTime: z.number().optional(),
   logs: z.array(LogEntrySchema),
   retryCount: z.number().default(0),
-});
+})
 
-export type NodeExecutionState = z.infer<typeof NodeExecutionStateSchema>;
+export type NodeExecutionState = z.infer<typeof NodeExecutionStateSchema>
 
 export const ExecutionContextSchema = z.object({
   runId: z.string(),
@@ -42,28 +42,24 @@ export const ExecutionContextSchema = z.object({
   nodeStates: z.map(z.string(), NodeExecutionStateSchema), // State of every node
   edgeSignals: z.map(z.string(), z.any()), // Data on "wires" (EdgeId -> Data)
   history: z.array(z.any()), // Snapshots (simplified for now)
-});
+})
 
-export type ExecutionContext = z.infer<typeof ExecutionContextSchema>;
+export type ExecutionContext = z.infer<typeof ExecutionContextSchema>
 
 // --- Definitions ---
 
 export type NodeDefinition = {
-  type: string;
-  label: string;
-  description?: string;
-  inputs: z.ZodObject<any>; // Input Schema
-  outputs: z.ZodObject<any>; // Output Schema
-  defaultConfig?: Record<string, any>;
-};
+  type: string
+  label: string
+  description?: string
+  inputs: z.ZodObject<any> // Input Schema
+  outputs: z.ZodObject<any> // Output Schema
+  defaultConfig?: Record<string, any>
+}
 
 // --- Interfaces ---
 
 export interface NodeProcessor {
-  isReady(inputs: Record<string, any>, config: any): boolean;
-  execute(
-    inputs: Record<string, any>,
-    config: any,
-    context: ExecutionContext
-  ): Promise<any>;
+  isReady(inputs: Record<string, any>, config: any): boolean
+  execute(inputs: Record<string, any>, config: any, context: ExecutionContext): Promise<any>
 }

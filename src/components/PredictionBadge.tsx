@@ -38,7 +38,7 @@ export function PredictionBadge({ score, reasoning, showDetails = false }: Predi
     >
       <Badge
         variant="outline"
-        className={`text-[10px] flex items-center gap-1 cursor-help font-mono font-bold uppercase ${getScoreColor(score)}`}
+        className={`flex cursor-help items-center gap-1 font-mono text-[10px] font-bold uppercase ${getScoreColor(score)}`}
       >
         <Sparkle size={10} weight="fill" />
         <span>{getScoreLabel(score)}</span>
@@ -49,10 +49,12 @@ export function PredictionBadge({ score, reasoning, showDetails = false }: Predi
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="absolute z-50 top-full mt-2 left-0 w-64 p-3 bg-popover border-2 border-primary shadow-lg"
+          className="bg-popover border-primary absolute top-full left-0 z-50 mt-2 w-64 border-2 p-3 shadow-lg"
         >
-          <div className="text-xs font-black mb-1 uppercase tracking-wider">AI_PREDICTION [{score}/100]</div>
-          <div className="text-xs text-muted-foreground font-mono leading-relaxed">{reasoning}</div>
+          <div className="mb-1 text-xs font-black tracking-wider uppercase">
+            AI_PREDICTION [{score}/100]
+          </div>
+          <div className="text-muted-foreground font-mono text-xs leading-relaxed">{reasoning}</div>
         </motion.div>
       )}
     </div>

@@ -22,8 +22,15 @@ type AgentInsightsProps = {
 
 export function AgentInsights({ links }: AgentInsightsProps) {
   const [insights, setInsights] = useState<{ insights: string[]; trends: string[] } | null>(null)
-  const [recommendations, setRecommendations] = useState<{ recommendations: string[]; optimizationScore: number } | null>(null)
-  const [auditResult, setAuditResult] = useState<{ flaws: string[]; riskLevel: 'low' | 'medium' | 'high'; critique: string } | null>(null)
+  const [recommendations, setRecommendations] = useState<{
+    recommendations: string[]
+    optimizationScore: number
+  } | null>(null)
+  const [auditResult, setAuditResult] = useState<{
+    flaws: string[]
+    riskLevel: 'low' | 'medium' | 'high'
+    critique: string
+  } | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [isOptimizing, setIsOptimizing] = useState(false)
   const [isAuditing, setIsAuditing] = useState(false)
@@ -40,19 +47,19 @@ export function AgentInsights({ links }: AgentInsightsProps) {
   const handleAnalyze = async () => {
     if (links.length === 0) {
       toast.error('No links to analyze', {
-        description: 'Create some links first'
+        description: 'Create some links first',
       })
       return
     }
 
     setIsAnalyzing(true)
     toast.info('Agent analyzing...', {
-      description: 'Pattern recognition in progress'
+      description: 'Pattern recognition in progress',
     })
 
     try {
       const taskId = await hyperSmolAgents.enqueueTask('analyze', links, 8)
-      
+
       const checkResult = setInterval(async () => {
         const metrics = hyperSmolAgents.getMetrics()
         if (metrics.tasksCompleted > 0) {
@@ -65,23 +72,23 @@ export function AgentInsights({ links }: AgentInsightsProps) {
           insights: [
             `You've created ${links.length} links with an average of ${(links.reduce((sum, l) => sum + l.clicks, 0) / links.length).toFixed(1)} clicks per link`,
             `Most active category: ${getMostActiveCategory(links)}`,
-            `${links.filter(l => Date.now() - l.createdAt < 86400000).length} links created in the last 24 hours`
+            `${links.filter((l) => Date.now() - l.createdAt < 86400000).length} links created in the last 24 hours`,
           ],
           trends: [
             `Engagement trending ${getTrendDirection(links)}`,
-            `Link creation velocity: ${getCreationVelocity(links)}`
-          ]
+            `Link creation velocity: ${getCreationVelocity(links)}`,
+          ],
         }
         setInsights(mockResult)
         setIsAnalyzing(false)
         toast.success('Analysis complete!', {
-          description: 'New insights discovered'
+          description: 'New insights discovered',
         })
       }, 2000)
     } catch (error) {
       setIsAnalyzing(false)
       toast.error('Analysis failed', {
-        description: 'Please try again'
+        description: 'Please try again',
       })
     }
   }
@@ -90,8 +97,8 @@ export function AgentInsights({ links }: AgentInsightsProps) {
     if (links.length === 0) return
 
     setIsAuditing(true)
-    toast.info('Devil\'s Advocate analyzing...', {
-      description: 'Challenging assumptions and finding flaws'
+    toast.info("Devil's Advocate analyzing...", {
+      description: 'Challenging assumptions and finding flaws',
     })
 
     try {
@@ -110,15 +117,16 @@ export function AgentInsights({ links }: AgentInsightsProps) {
           flaws: [
             'Reliance on single-domain shortening creates a single point of failure.',
             'Lack of geographic distribution analysis in current metrics.',
-            'URL entropy is low, making sequential scanning possible.'
+            'URL entropy is low, making sequential scanning possible.',
           ],
           riskLevel: 'medium' as const,
-          critique: 'The current strategy prioritizes speed over resilience. While engagement is stable, the infrastructure lacks redundancy.'
+          critique:
+            'The current strategy prioritizes speed over resilience. While engagement is stable, the infrastructure lacks redundancy.',
         }
         setAuditResult(mockAudit)
         setIsAuditing(false)
         toast.warning('Audit Complete', {
-          description: `Risk Level: ${mockAudit.riskLevel.toUpperCase()}`
+          description: `Risk Level: ${mockAudit.riskLevel.toUpperCase()}`,
         })
       }, 3000)
     } catch (error) {
@@ -130,14 +138,14 @@ export function AgentInsights({ links }: AgentInsightsProps) {
   const handleOptimize = async () => {
     if (links.length === 0) {
       toast.error('No links to optimize', {
-        description: 'Create some links first'
+        description: 'Create some links first',
       })
       return
     }
 
     setIsOptimizing(true)
     toast.info('Agent optimizing...', {
-      description: 'Analyzing improvement opportunities'
+      description: 'Analyzing improvement opportunities',
     })
 
     try {
@@ -149,60 +157,65 @@ export function AgentInsights({ links }: AgentInsightsProps) {
             'Consider categorizing uncategorized links for better organization',
             'High-click links could benefit from custom aliases',
             'Run health checks periodically to maintain link quality',
-            `Focus on ${getMostActiveCategory(links)} category - it shows highest engagement`
+            `Focus on ${getMostActiveCategory(links)} category - it shows highest engagement`,
           ],
-          optimizationScore: calculateOptimizationScore(links)
+          optimizationScore: calculateOptimizationScore(links),
         }
         setRecommendations(mockResult)
         setIsOptimizing(false)
         toast.success('Optimization complete!', {
-          description: `Score: ${mockResult.optimizationScore}/100`
+          description: `Score: ${mockResult.optimizationScore}/100`,
         })
       }, 2500)
     } catch (error) {
       setIsOptimizing(false)
       toast.error('Optimization failed', {
-        description: 'Please try again'
+        description: 'Please try again',
       })
     }
   }
 
   const getMostActiveCategory = (links: ShortenedLink[]): string => {
-    const categoryCounts = links.reduce((acc, link) => {
-      const cat = link.category || 'Uncategorized'
-      acc[cat] = (acc[cat] || 0) + link.clicks
-      return acc
-    }, {} as Record<string, number>)
+    const categoryCounts = links.reduce(
+      (acc, link) => {
+        const cat = link.category || 'Uncategorized'
+        acc[cat] = (acc[cat] || 0) + link.clicks
+        return acc
+      },
+      {} as Record<string, number>
+    )
 
     return Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'None'
   }
 
   const getTrendDirection = (links: ShortenedLink[]): string => {
-    const recentClicks = links.filter(l => Date.now() - l.createdAt < 86400000)
+    const recentClicks = links
+      .filter((l) => Date.now() - l.createdAt < 86400000)
       .reduce((sum, l) => sum + l.clicks, 0)
-    const olderClicks = links.filter(l => Date.now() - l.createdAt >= 86400000)
+    const olderClicks = links
+      .filter((l) => Date.now() - l.createdAt >= 86400000)
       .reduce((sum, l) => sum + l.clicks, 0)
-    
+
     return recentClicks > olderClicks ? 'upward 📈' : 'stable 📊'
   }
 
   const getCreationVelocity = (links: ShortenedLink[]): string => {
-    const linksPerDay = links.filter(l => Date.now() - l.createdAt < 86400000).length
+    const linksPerDay = links.filter((l) => Date.now() - l.createdAt < 86400000).length
     return linksPerDay > 5 ? 'High' : linksPerDay > 2 ? 'Moderate' : 'Low'
   }
 
   const calculateOptimizationScore = (links: ShortenedLink[]): number => {
     let score = 50
-    
-    const categorizedPercent = (links.filter(l => l.category).length / links.length) * 100
+
+    const categorizedPercent = (links.filter((l) => l.category).length / links.length) * 100
     score += categorizedPercent * 0.3
-    
-    const customAliasCount = links.filter(l => l.shortCode.length > 6).length
+
+    const customAliasCount = links.filter((l) => l.shortCode.length > 6).length
     score += (customAliasCount / links.length) * 10
-    
+
     const avgClicks = links.reduce((sum, l) => sum + l.clicks, 0) / links.length
     score += Math.min(avgClicks * 2, 10)
-    
+
     return Math.min(Math.round(score), 100)
   }
 
@@ -212,25 +225,28 @@ export function AgentInsights({ links }: AgentInsightsProps) {
 
   return (
     <div className="space-y-4">
-      <Card className="p-6 glass-card border-2 border-accent/50 relative overflow-hidden agent-pulse">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 blur-3xl"></div>
+      <Card className="glass-card border-accent/50 agent-pulse relative overflow-hidden border-2 p-6">
+        <div className="bg-accent/5 absolute top-0 right-0 h-32 w-32 blur-3xl"></div>
         <div className="relative">
-          <div className="flex items-start justify-between mb-4">
+          <div className="mb-4 flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-accent/20 border-2 border-accent relative">
+              <div className="bg-accent/20 border-accent relative border-2 p-2">
                 <Robot size={24} weight="bold" className="text-accent terminal-flicker" />
-                <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-accent animate-pulse"></div>
+                <div className="bg-accent absolute -top-0.5 -right-0.5 h-2 w-2 animate-pulse"></div>
               </div>
               <div>
-                <h3 className="font-black text-lg uppercase tracking-wide">AI_AGENT_STATION</h3>
-                <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">
+                <h3 className="text-lg font-black tracking-wide uppercase">AI_AGENT_STATION</h3>
+                <p className="text-muted-foreground font-mono text-[10px] tracking-wider uppercase">
                   AUTONOMOUS_INTELLIGENCE_CORE
                 </p>
               </div>
             </div>
             {(agentStatus.pending > 0 || agentStatus.running > 0) && (
-              <Badge variant="outline" className="flex items-center gap-1.5 border-primary bg-primary/10 font-mono">
-                <Pulse size={12} className="animate-pulse text-primary" />
+              <Badge
+                variant="outline"
+                className="border-primary bg-primary/10 flex items-center gap-1.5 font-mono"
+              >
+                <Pulse size={12} className="text-primary animate-pulse" />
                 <span className="text-[10px] uppercase">
                   {agentStatus.running}:RUN / {agentStatus.pending}:QUE
                 </span>
@@ -243,7 +259,7 @@ export function AgentInsights({ links }: AgentInsightsProps) {
               onClick={handleAnalyze}
               disabled={isAnalyzing}
               variant="outline"
-              className="flex-1 border-primary/50 hover:border-primary hover:bg-primary/10 font-mono uppercase text-xs tracking-wider"
+              className="border-primary/50 hover:border-primary hover:bg-primary/10 flex-1 font-mono text-xs tracking-wider uppercase"
             >
               <TrendUp size={18} className="mr-2" />
               {isAnalyzing ? 'ANALYZING...' : 'ANALYZE_PATTERNS'}
@@ -251,7 +267,7 @@ export function AgentInsights({ links }: AgentInsightsProps) {
             <Button
               onClick={handleOptimize}
               disabled={isOptimizing}
-              className="flex-1 gradient-button font-mono uppercase text-xs tracking-wider font-bold"
+              className="gradient-button flex-1 font-mono text-xs font-bold tracking-wider uppercase"
             >
               <Sparkle size={18} weight="fill" className="mr-2" />
               {isOptimizing ? 'OPTIMIZING...' : 'OPTIMIZE_LINKS'}
@@ -260,10 +276,10 @@ export function AgentInsights({ links }: AgentInsightsProps) {
               onClick={handleAudit}
               disabled={isAuditing}
               variant="destructive"
-              className="flex-1 font-mono uppercase text-xs tracking-wider font-bold border border-destructive/50 bg-destructive/10 text-destructive hover:bg-destructive/20"
+              className="border-destructive/50 bg-destructive/10 text-destructive hover:bg-destructive/20 flex-1 border font-mono text-xs font-bold tracking-wider uppercase"
             >
               <Gavel size={18} weight="fill" className="mr-2" />
-              {isAuditing ? 'AUDITING...' : 'DEVIL\'S_ADVOCATE'}
+              {isAuditing ? 'AUDITING...' : "DEVIL'S_ADVOCATE"}
             </Button>
           </div>
         </div>
@@ -276,10 +292,10 @@ export function AgentInsights({ links }: AgentInsightsProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
           >
-            <Card className="p-6 glass-card border-l-4 border-l-accent">
-              <div className="flex items-center gap-2 mb-4">
+            <Card className="glass-card border-l-accent border-l-4 p-6">
+              <div className="mb-4 flex items-center gap-2">
                 <Brain size={20} weight="fill" className="text-accent" />
-                <h4 className="font-black uppercase tracking-wide">PATTERN_INSIGHTS</h4>
+                <h4 className="font-black tracking-wide uppercase">PATTERN_INSIGHTS</h4>
               </div>
               <div className="space-y-3">
                 {insights.insights.map((insight, idx) => (
@@ -288,23 +304,30 @@ export function AgentInsights({ links }: AgentInsightsProps) {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="flex items-start gap-2 p-2 border-l border-accent/30 pl-3"
+                    className="border-accent/30 flex items-start gap-2 border-l p-2 pl-3"
                   >
-                    <Lightbulb size={14} weight="fill" className="text-accent mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-foreground font-mono leading-relaxed">{insight}</p>
+                    <Lightbulb
+                      size={14}
+                      weight="fill"
+                      className="text-accent mt-0.5 flex-shrink-0"
+                    />
+                    <p className="text-foreground font-mono text-sm leading-relaxed">{insight}</p>
                   </motion.div>
                 ))}
               </div>
               {insights.trends.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-border/50">
-                  <div className="flex items-center gap-2 mb-2">
+                <div className="border-border/50 mt-4 border-t pt-4">
+                  <div className="mb-2 flex items-center gap-2">
                     <TrendUp size={16} className="text-primary" />
-                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">DETECTED_TRENDS</span>
+                    <span className="text-muted-foreground text-[10px] font-black tracking-wider uppercase">
+                      DETECTED_TRENDS
+                    </span>
                   </div>
                   <div className="space-y-2">
                     {insights.trends.map((trend, idx) => (
-                      <p key={idx} className="text-sm text-muted-foreground font-mono">
-                        <span className="text-primary mr-2">{'>'}</span>{trend}
+                      <p key={idx} className="text-muted-foreground font-mono text-sm">
+                        <span className="text-primary mr-2">{'>'}</span>
+                        {trend}
                       </p>
                     ))}
                   </div>
@@ -320,20 +343,27 @@ export function AgentInsights({ links }: AgentInsightsProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
           >
-            <Card className="p-6 glass-card border-l-4 border-l-destructive">
-              <div className="flex items-center justify-between mb-4">
+            <Card className="glass-card border-l-destructive border-l-4 p-6">
+              <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Gavel size={20} weight="fill" className="text-destructive" />
-                  <h4 className="font-black uppercase tracking-wide text-destructive">DEVIL'S_ADVOCATE_AUDIT</h4>
+                  <h4 className="text-destructive font-black tracking-wide uppercase">
+                    DEVIL'S_ADVOCATE_AUDIT
+                  </h4>
                 </div>
-                <Badge variant="outline" className="text-sm font-black font-mono border-2 border-destructive text-destructive bg-destructive/10 uppercase">
+                <Badge
+                  variant="outline"
+                  className="border-destructive text-destructive bg-destructive/10 border-2 font-mono text-sm font-black uppercase"
+                >
                   RISK: {auditResult.riskLevel}
                 </Badge>
               </div>
 
-              <div className="mb-4 p-3 bg-destructive/5 border border-destructive/20 rounded">
-                <p className="font-mono text-xs text-destructive font-bold uppercase mb-1">CRITIQUE_SUMMARY</p>
-                <p className="text-sm font-mono">{auditResult.critique}</p>
+              <div className="bg-destructive/5 border-destructive/20 mb-4 rounded border p-3">
+                <p className="text-destructive mb-1 font-mono text-xs font-bold uppercase">
+                  CRITIQUE_SUMMARY
+                </p>
+                <p className="font-mono text-sm">{auditResult.critique}</p>
               </div>
 
               <div className="space-y-2">
@@ -343,10 +373,12 @@ export function AgentInsights({ links }: AgentInsightsProps) {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="flex items-start gap-2 p-2 border-l border-destructive/30 pl-3"
+                    className="border-destructive/30 flex items-start gap-2 border-l p-2 pl-3"
                   >
-                    <span className="text-destructive text-xs mt-1">[!]</span>
-                    <p className="text-sm text-muted-foreground font-mono leading-relaxed">{flaw}</p>
+                    <span className="text-destructive mt-1 text-xs">[!]</span>
+                    <p className="text-muted-foreground font-mono text-sm leading-relaxed">
+                      {flaw}
+                    </p>
                   </motion.div>
                 ))}
               </div>
@@ -360,13 +392,16 @@ export function AgentInsights({ links }: AgentInsightsProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
           >
-            <Card className="p-6 glass-card border-l-4 border-l-primary">
-              <div className="flex items-center justify-between mb-4">
+            <Card className="glass-card border-l-primary border-l-4 p-6">
+              <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Sparkle size={20} weight="fill" className="text-primary" />
-                  <h4 className="font-black uppercase tracking-wide">OPTIMIZATION_REC</h4>
+                  <h4 className="font-black tracking-wide uppercase">OPTIMIZATION_REC</h4>
                 </div>
-                <Badge variant="secondary" className="text-sm font-black font-mono border-2 border-primary bg-primary/20">
+                <Badge
+                  variant="secondary"
+                  className="border-primary bg-primary/20 border-2 font-mono text-sm font-black"
+                >
                   {recommendations.optimizationScore}/100
                 </Badge>
               </div>
@@ -377,12 +412,14 @@ export function AgentInsights({ links }: AgentInsightsProps) {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="flex items-start gap-3 p-3 border border-primary/20 bg-primary/5"
+                    className="border-primary/20 bg-primary/5 flex items-start gap-3 border p-3"
                   >
-                    <div className="flex items-center justify-center w-6 h-6 bg-primary text-primary-foreground text-xs font-black flex-shrink-0 font-mono">
+                    <div className="bg-primary text-primary-foreground flex h-6 w-6 flex-shrink-0 items-center justify-center font-mono text-xs font-black">
                       {idx + 1}
                     </div>
-                    <p className="text-sm text-foreground flex-1 font-mono leading-relaxed">{rec}</p>
+                    <p className="text-foreground flex-1 font-mono text-sm leading-relaxed">
+                      {rec}
+                    </p>
                   </motion.div>
                 ))}
               </div>

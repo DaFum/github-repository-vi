@@ -1,20 +1,20 @@
 // Placeholder for simple-peer types as we are using it via npm
 // In a real env, we'd install @types/simple-peer
-import SimplePeer from 'simple-peer';
+import SimplePeer from 'simple-peer'
 
 export type PeerMessage = {
-  type: 'handshake' | 'task_request' | 'task_response' | 'error';
-  payload: any;
-};
+  type: 'handshake' | 'task_request' | 'task_response' | 'error'
+  payload: any
+}
 
 export class P2PClient {
-  private peer: SimplePeer.Instance | null = null;
-  private isInitiator: boolean;
-  private onConnectCallback?: () => void;
-  private onDataCallback?: (data: PeerMessage) => void;
+  private peer: SimplePeer.Instance | null = null
+  private isInitiator: boolean
+  private onConnectCallback?: () => void
+  private onDataCallback?: (data: PeerMessage) => void
 
   constructor(initiator: boolean = false) {
-    this.isInitiator = initiator;
+    this.isInitiator = initiator
   }
 
   initialize() {
@@ -25,64 +25,64 @@ export class P2PClient {
     this.peer = new SimplePeer({
       initiator: this.isInitiator,
       trickle: false,
-    });
+    })
 
     this.peer.on('signal', (data) => {
       // In a real app, this signal data is what you copy-paste via WhatsApp/Link
-      console.log('SIGNAL DATA (Share this):', JSON.stringify(data));
-    });
+      console.log('SIGNAL DATA (Share this):', JSON.stringify(data))
+    })
 
     this.peer.on('connect', () => {
-      console.log('P2P CONNECTION ESTABLISHED');
-      if (this.onConnectCallback) this.onConnectCallback();
-    });
+      console.log('P2P CONNECTION ESTABLISHED')
+      if (this.onConnectCallback) this.onConnectCallback()
+    })
 
     this.peer.on('data', (data) => {
       try {
-        const message = JSON.parse(data.toString());
-        if (this.onDataCallback) this.onDataCallback(message);
+        const message = JSON.parse(data.toString())
+        if (this.onDataCallback) this.onDataCallback(message)
       } catch (e) {
-        console.error('Failed to parse P2P message', e);
+        console.error('Failed to parse P2P message', e)
       }
-    });
+    })
   }
 
   // To complete the handshake, we need to pass the other peer's signal data here
   signal(data: string) {
     if (this.peer) {
-      this.peer.signal(JSON.parse(data));
+      this.peer.signal(JSON.parse(data))
     }
   }
 
   send(message: PeerMessage) {
     if (this.peer && this.peer.connected) {
-      this.peer.send(JSON.stringify(message));
+      this.peer.send(JSON.stringify(message))
     } else {
-      console.warn('P2P not connected');
+      console.warn('P2P not connected')
     }
   }
 
   onConnect(cb: () => void) {
-    this.onConnectCallback = cb;
+    this.onConnectCallback = cb
   }
 
   onData(cb: (data: PeerMessage) => void) {
-    this.onDataCallback = cb;
+    this.onDataCallback = cb
   }
 }
 
 export class AgentHandshakeProtocol {
-    static createRequest(taskDescription: string): PeerMessage {
-        return {
-            type: 'task_request',
-            payload: { task: taskDescription, timestamp: Date.now() }
-        };
+  static createRequest(taskDescription: string): PeerMessage {
+    return {
+      type: 'task_request',
+      payload: { task: taskDescription, timestamp: Date.now() },
     }
+  }
 
-    static createResponse(result: any): PeerMessage {
-        return {
-            type: 'task_response',
-            payload: { result, timestamp: Date.now() }
-        };
+  static createResponse(result: any): PeerMessage {
+    return {
+      type: 'task_response',
+      payload: { result, timestamp: Date.now() },
     }
+  }
 }

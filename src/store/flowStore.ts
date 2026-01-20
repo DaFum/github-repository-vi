@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from 'zustand'
 import {
   Connection,
   Edge,
@@ -11,34 +11,34 @@ import {
   OnConnect,
   applyNodeChanges,
   applyEdgeChanges,
-} from '@xyflow/react';
-import { ExecutionContext, NodeExecutionState } from '@/lib/graph/types';
+} from '@xyflow/react'
+import { ExecutionContext, NodeExecutionState } from '@/lib/graph/types'
 
 export type AgentNodeData = {
-  label: string;
-  type: 'agent' | 'tool' | 'trigger';
-  config?: Record<string, any>;
-};
+  label: string
+  type: 'agent' | 'tool' | 'trigger'
+  config?: Record<string, any>
+}
 
-export type AppNode = Node<AgentNodeData>;
+export type AppNode = Node<AgentNodeData>
 
 type FlowState = {
-  nodes: AppNode[];
-  edges: Edge[];
-  executionContext: ExecutionContext;
+  nodes: AppNode[]
+  edges: Edge[]
+  executionContext: ExecutionContext
 
-  onNodesChange: OnNodesChange;
-  onEdgesChange: OnEdgesChange;
-  onConnect: OnConnect;
-  addNode: (node: AppNode) => void;
+  onNodesChange: OnNodesChange
+  onEdgesChange: OnEdgesChange
+  onConnect: OnConnect
+  addNode: (node: AppNode) => void
 
   // Execution Actions
-  startExecution: () => void;
-  pauseExecution: () => void;
-  stopExecution: () => void;
-  updateNodeStatus: (nodeId: string, status: NodeExecutionState['status']) => void;
-  setEdgeSignal: (edgeId: string, data: any) => void;
-};
+  startExecution: () => void
+  pauseExecution: () => void
+  stopExecution: () => void
+  updateNodeStatus: (nodeId: string, status: NodeExecutionState['status']) => void
+  setEdgeSignal: (edgeId: string, data: any) => void
+}
 
 // Initial state for testing
 const initialNodes: AppNode[] = [
@@ -54,9 +54,9 @@ const initialNodes: AppNode[] = [
     position: { x: 400, y: 100 },
     data: { label: 'Summarizer Agent', type: 'agent' },
   },
-];
+]
 
-const initialEdges: Edge[] = [];
+const initialEdges: Edge[] = []
 
 const initialExecutionContext: ExecutionContext = {
   runId: 'init',
@@ -65,7 +65,7 @@ const initialExecutionContext: ExecutionContext = {
   nodeStates: new Map(),
   edgeSignals: new Map(),
   history: [],
-};
+}
 
 export const useFlowStore = create<FlowState>((set, get) => ({
   nodes: initialNodes,
@@ -75,22 +75,22 @@ export const useFlowStore = create<FlowState>((set, get) => ({
   onNodesChange: (changes: NodeChange[]) => {
     set({
       nodes: applyNodeChanges(changes, get().nodes) as AppNode[],
-    });
+    })
   },
   onEdgesChange: (changes: EdgeChange[]) => {
     set({
       edges: applyEdgeChanges(changes, get().edges),
-    });
+    })
   },
   onConnect: (connection: Connection) => {
     set({
       edges: addEdge(connection, get().edges),
-    });
+    })
   },
   addNode: (node: AppNode) => {
     set({
       nodes: [...get().nodes, node],
-    });
+    })
   },
 
   // --- Execution Actions ---
@@ -100,44 +100,44 @@ export const useFlowStore = create<FlowState>((set, get) => ({
         ...state.executionContext,
         status: 'running',
         runId: Date.now().toString(),
-      }
-    }));
+      },
+    }))
   },
   pauseExecution: () => {
     set((state) => ({
-      executionContext: { ...state.executionContext, status: 'paused' }
-    }));
+      executionContext: { ...state.executionContext, status: 'paused' },
+    }))
   },
   stopExecution: () => {
     set((state) => ({
-      executionContext: { ...state.executionContext, status: 'idle', edgeSignals: new Map() }
-    }));
+      executionContext: { ...state.executionContext, status: 'idle', edgeSignals: new Map() },
+    }))
   },
   updateNodeStatus: (nodeId, status) => {
     set((state) => {
-        const newStates = new Map(state.executionContext.nodeStates);
-        const currentState = newStates.get(nodeId) || {
-            id: nodeId,
-            status: 'pending',
-            inputBuffer: {},
-            output: null,
-            error: null,
-            logs: [],
-            retryCount: 0
-        };
-        newStates.set(nodeId, { ...currentState, status });
-        return {
-            executionContext: { ...state.executionContext, nodeStates: newStates }
-        };
-    });
+      const newStates = new Map(state.executionContext.nodeStates)
+      const currentState = newStates.get(nodeId) || {
+        id: nodeId,
+        status: 'pending',
+        inputBuffer: {},
+        output: null,
+        error: null,
+        logs: [],
+        retryCount: 0,
+      }
+      newStates.set(nodeId, { ...currentState, status })
+      return {
+        executionContext: { ...state.executionContext, nodeStates: newStates },
+      }
+    })
   },
   setEdgeSignal: (edgeId, data) => {
-      set((state) => {
-          const newSignals = new Map(state.executionContext.edgeSignals);
-          newSignals.set(edgeId, data);
-          return {
-              executionContext: { ...state.executionContext, edgeSignals: newSignals }
-          };
-      });
-  }
-}));
+    set((state) => {
+      const newSignals = new Map(state.executionContext.edgeSignals)
+      newSignals.set(edgeId, data)
+      return {
+        executionContext: { ...state.executionContext, edgeSignals: newSignals },
+      }
+    })
+  },
+}))

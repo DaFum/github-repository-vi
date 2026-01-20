@@ -7,40 +7,40 @@
 
 ## ⚡ Quick Start Commands
 
-| Action | Command | Context |
-| :--- | :--- | :--- |
-| **Install** | `npm install` | Restore dependencies (fix lockfile if needed) |
-| **Build** | `npm run build` | **CRITICAL**: Run to verify TypeSafety & catch build errors |
-| **Dev** | `npm run dev` | Start local server (rarely needed for logic tasks) |
+| Action      | Command         | Context                                                     |
+| :---------- | :-------------- | :---------------------------------------------------------- |
+| **Install** | `npm install`   | Restore dependencies (fix lockfile if needed)               |
+| **Build**   | `npm run build` | **CRITICAL**: Run to verify TypeSafety & catch build errors |
+| **Dev**     | `npm run dev`   | Start local server (rarely needed for logic tasks)          |
 
 ---
 
 ## 🧬 Architectural Directives
 
 1.  **The Kernel is Sacred**
-    *   **Core**: `src/lib/hypersmolagents.ts` is the biological heart.
-    *   **Singleton**: ALWAYS use the exported `hyperSmolAgents` instance. NEVER create new instances of `HyperSmolAgents` manually.
-    *   **Async First**: Heavy logic MUST be enqueued via `enqueueTask`. NEVER block the main thread.
+    - **Core**: `src/lib/hypersmolagents.ts` is the biological heart.
+    - **Singleton**: ALWAYS use the exported `hyperSmolAgents` instance. NEVER create new instances of `HyperSmolAgents` manually.
+    - **Async First**: Heavy logic MUST be enqueued via `enqueueTask`. NEVER block the main thread.
 
 2.  **State Management**
-    *   **Persistence**: Use the `useKV` hook from `@github/spark/hooks` for all user data (links, settings).
-    *   **Optimistic UI**: Update the UI immediately; let the agents work in the background.
+    - **Persistence**: Use the `useKV` hook from `@github/spark/hooks` for all user data (links, settings).
+    - **Optimistic UI**: Update the UI immediately; let the agents work in the background.
 
 3.  **Visual Language (Neo-Brutalism)**
-    *   **Aesthetics**: 2px borders, sharp corners (`rounded-sm`), uppercase labels, monospace fonts (`JetBrains Mono`).
-    *   **Motion**: Framer Motion for purposeful feedback (pulses, springs), not decoration.
-    *   **Color**:
-        *   Primary: Electric Cyan (`oklch(0.78 0.25 168)`)
-        *   Accent: Hot Magenta (`oklch(0.75 0.28 330)`)
+    - **Aesthetics**: 2px borders, sharp corners (`rounded-sm`), uppercase labels, monospace fonts (`JetBrains Mono`).
+    - **Motion**: Framer Motion for purposeful feedback (pulses, springs), not decoration.
+    - **Color**:
+      - Primary: Electric Cyan (`oklch(0.78 0.25 168)`)
+      - Accent: Hot Magenta (`oklch(0.75 0.28 330)`)
 
 ---
 
 ## 🚫 Boundaries & Anti-Patterns
 
-*   **NO** generic error messages. Errors must be specific (e.g., "API Rate Limit Exceeded" vs "Error").
-*   **NO** loose types. `any` is forbidden. Use specific interfaces (e.g., `ShortenedLink`, `AgentTask`).
-*   **NO** deleting `package-lock.json` unless absolutely necessary (and verify restoration).
-*   **NO** creating "utils" folders without checking `src/lib/hypersmolagents.ts` capabilities first.
+- **NO** generic error messages. Errors must be specific (e.g., "API Rate Limit Exceeded" vs "Error").
+- **NO** loose types. `any` is forbidden. Use specific interfaces (e.g., `ShortenedLink`, `AgentTask`).
+- **NO** deleting `package-lock.json` unless absolutely necessary (and verify restoration).
+- **NO** creating "utils" folders without checking `src/lib/hypersmolagents.ts` capabilities first.
 
 ---
 
@@ -54,4 +54,4 @@ Before marking a task as complete, you **MUST**:
 
 ---
 
-*“Complexity is not an excuse for friction.”*
+_“Complexity is not an excuse for friction.”_
