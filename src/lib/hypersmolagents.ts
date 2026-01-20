@@ -137,8 +137,20 @@ URL: ${url}
 
 Return ONLY the category name, nothing else.`
     
-    const category = await window.spark.llm(promptText, 'gpt-4o-mini')
-    return category.trim()
+    try {
+      // Use Pollinations API via our cortex client
+      // Dynamic import to avoid circular dependencies if any, though likely not needed here.
+      const { pollinations } = await import('./pollinations');
+      const category = await pollinations.chat([
+        { role: 'system', content: 'You are a precise URL categorization agent.' },
+        { role: 'user', content: promptText }
+      ], { model: 'openai', temperature: 0.1 });
+
+      return category.trim();
+    } catch (e) {
+      console.warn('Agent Cortex failed, falling back to heuristic', e);
+      return 'Uncategorized';
+    }
   }
 
   private async checkHealth(url: string): Promise<{ status: 'healthy' | 'unknown'; timestamp: number }> {
@@ -162,10 +174,15 @@ Provide 3-5 actionable recommendations to improve link management, categorizatio
   "optimizationScore": 85
 }
 
-The optimizationScore should be 0-100 based on current link organization quality.`
+The optimizationScore should be 0-100 based on current link organization quality.`;
 
-    const response = await window.spark.llm(promptText, 'gpt-4o-mini', true)
-    return JSON.parse(response)
+    const { pollinations } = await import('./pollinations');
+    const response = await pollinations.chat([
+      { role: 'system', content: 'You are a strategic optimization expert. Return strictly valid JSON.' },
+      { role: 'user', content: promptText }
+    ], { model: 'openai', jsonMode: true });
+
+    return JSON.parse(response);
   }
 
   private async analyzePattern(links: Array<{ originalUrl: string; category?: string; clicks: number }>): Promise<{ insights: string[]; trends: string[] }> {
@@ -180,10 +197,15 @@ Identify patterns, trends, and insights about the user's link usage. Return as J
   "trends": ["trend 1", "trend 2", ...]
 }
 
-Focus on actionable intelligence like most used categories, engagement patterns, or content preferences.`
+Focus on actionable intelligence like most used categories, engagement patterns, or content preferences.`;
 
-    const response = await window.spark.llm(promptText, 'gpt-4o-mini', true)
-    return JSON.parse(response)
+    const { pollinations } = await import('./pollinations');
+    const response = await pollinations.chat([
+      { role: 'system', content: 'You are a data analytics expert. Return strictly valid JSON.' },
+      { role: 'user', content: promptText }
+    ], { model: 'openai', jsonMode: true });
+
+    return JSON.parse(response);
   }
 
   private async predictPopularity(url: string): Promise<{ score: number; reasoning: string }> {
@@ -197,10 +219,15 @@ Consider factors like domain authority, content type, URL structure, and typical
   "reasoning": "Brief explanation of the prediction"
 }
 
-Score should be 0-100 (higher = more likely to be popular).`
+Score should be 0-100 (higher = more likely to be popular).`;
 
-    const response = await window.spark.llm(promptText, 'gpt-4o-mini', true)
-    return JSON.parse(response)
+    const { pollinations } = await import('./pollinations');
+    const response = await pollinations.chat([
+      { role: 'system', content: 'You are a viral trend prediction expert. Return strictly valid JSON.' },
+      { role: 'user', content: promptText }
+    ], { model: 'openai', jsonMode: true });
+
+    return JSON.parse(response);
   }
 
   private updateMetrics(taskDuration: number): void {
