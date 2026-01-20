@@ -1,6 +1,7 @@
-import { NodeProcessor, ExecutionContext } from './types';
+import { NodeProcessor, ExecutionContext, NodeDefinition } from './types';
 import { pollinations } from '@/lib/pollinations';
 // import { compileExpression } from 'filtrex'; // Uncomment when implemented
+import { z } from 'zod';
 
 export class AgentProcessor implements NodeProcessor {
   isReady(inputs: Record<string, any>, config: any): boolean {
@@ -10,7 +11,6 @@ export class AgentProcessor implements NodeProcessor {
 
   async execute(inputs: Record<string, any>, config: any, context: ExecutionContext): Promise<any> {
     const prompt = config.prompt || "Explain quantum computing";
-    // Interpolate inputs into prompt here (future step)
 
     // Call Pollinations
     const response = await pollinations.chat([
@@ -37,17 +37,47 @@ export class LogicProcessor implements NodeProcessor {
 
 export class NodeRegistry {
   private static processors: Map<string, NodeProcessor> = new Map();
+  private static definitions: Map<string, NodeDefinition> = new Map();
 
-  static register(type: string, processor: NodeProcessor) {
+  static register(type: string, processor: NodeProcessor, definition?: NodeDefinition) {
     this.processors.set(type, processor);
+    if (definition) {
+        this.definitions.set(type, definition);
+    }
   }
 
   static get(type: string): NodeProcessor {
     return this.processors.get(type) || new LogicProcessor(); // Default
   }
+
+  static getDefinition(type: string): NodeDefinition | undefined {
+      return this.definitions.get(type);
+  }
 }
 
+// --- Default Definitions ---
+
+const AgentDefinition: NodeDefinition = {
+    type: 'agent',
+    label: 'AI Agent',
+    inputs: z.object({
+        input: z.string().optional()
+    }),
+    outputs: z.object({
+        text: z.string()
+    })
+};
+
+const TriggerDefinition: NodeDefinition = {
+    type: 'trigger',
+    label: 'Trigger',
+    inputs: z.object({}),
+    outputs: z.object({
+        data: z.any()
+    })
+};
+
 // Register default processors
-NodeRegistry.register('agent', new AgentProcessor());
-NodeRegistry.register('trigger', new LogicProcessor()); // Triggers act as pass-throughs usually
+NodeRegistry.register('agent', new AgentProcessor(), AgentDefinition);
+NodeRegistry.register('trigger', new LogicProcessor(), TriggerDefinition);
 NodeRegistry.register('tool', new LogicProcessor()); // Mock for now

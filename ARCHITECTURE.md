@@ -16,6 +16,26 @@ The core is no longer just a set of scripts; it is a **Reactive DAG Executor** w
 - **Tick Cycle**: The engine runs in a 50ms heartbeat loop, ensuring the UI remains responsive while processing complex cognitive graphs in parallel.
 - **Resilience**: The engine supports "Time Travel" debugging, cycle detection, and automatic retries for self-healing.
 
+### The Nervous System: Synaptic Binding
+We eliminate fragility through type-safe, self-correcting mechanisms.
+
+1.  **Universal Translator (Interpolator)**:
+    - **Hydration**: Recursively replaces `{{placeholders}}` with live data.
+    - **Type-Aware Injection**: Automatically converts formats (e.g., CSV string -> Array) to match the target schema.
+    - **JIT Validation**: Halts execution at the edge level if data fails the destination `zod` schema.
+
+2.  **Behavioral Genome (Node Registry)**:
+    - **Contracts**: Nodes are defined by strict Input/Output schemas (Behavioral Contracts).
+    - **Dynamic Registration**: New capabilities (e.g., from MCP) generate Node Definitions on the fly.
+
+3.  **Cognitive Routing**:
+    - **Barrier Synchronization**: Join nodes wait for ALL inputs before firing.
+    - **Dead-End Pruning**: Skipped branches emit "Null Tokens," allowing the graph to resolve gracefully without errors.
+
+4.  **Black Box Recorder**:
+    - **Provenance**: Every output carries a history chain (GeneratedBy -> Source).
+    - **Snapshots**: Immutable state deltas recorded after every node completion.
+
 ### Data Structures (The DNA)
 - **ExecutionContext**: The "God View" containing run status, global memory, and the state of every node.
 - **NodeExecutionState**: Tracks the input buffer, output, logs, and error state of a single node.
@@ -62,16 +82,16 @@ A static system is a dead system. HyperSmol includes feedback loops allowing age
 - [x] **Devil's Advocate**: Implement `auditContent` in `hypersmolagents.ts`.
 - [x] **Refinement Loop**: Implement `refineContent` recursive logic.
 
-**Phase 2: The Building Station (In Progress)**
+**Phase 2: The Building Station (Complete)**
 - [x] **Scaffold Flow Editor**: Implement `WorkflowCanvas` with `@xyflow/react`.
 - [x] **State Management**: Create `flowStore` with `zustand`.
-- [x] **Custom Nodes**: Implement "Agent", "Tool", and "Trigger" nodes.
-- [ ] **Graph Engine**: Implement the Token-Passing Executor.
-- [ ] **Node Registry**: Implement `AgentProcessor`, `LogicProcessor`.
+- [x] **Graph Engine**: Implement the Token-Passing Executor.
+- [x] **Node Registry**: Implement `AgentProcessor`, `LogicProcessor`.
 
-**Phase 3: Deep Integration (Future)**
-- [ ] **MCP Integration**: Connect `@modelcontextprotocol/sdk` for local tool access.
-- [ ] **Hono Edge Router**: Compile flows into micro-apps.
+**Phase 3: Deep Integration (Current)**
+- [ ] **Universal Translator**: Implement `Interpolator` with Zod validation.
+- [ ] **Black Box Recorder**: Implement provenance tracking.
+- [ ] **Cognitive Routing**: Add barrier sync and dead-end pruning to Engine.
 
 ---
 
