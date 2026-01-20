@@ -8,30 +8,18 @@
 
 ---
 
-## 1. 🧬 The Kernel (Smolagents & Pollinations Integration)
+## 1. 🧬 The Kernel (GraphExecutionEngine)
 
-**Foundational Logic:**
-The `hypersmolagents` kernel (`src/lib/hypersmolagents.ts`) is the autonomic nervous system.
-- **Brain**: The `pollinations.ts` client serves as the cortex, interfacing with the Pollinations.ai API for text and image generation.
-- **Nervous System**: `@modelcontextprotocol/sdk` allows the frontend to plug into local files, databases, or remote APIs without custom backend glue code.
-- **Swarm Logic**: Specialized agents (Categorizer, Predictor, Healer, Analyst) operate in parallel.
+**The "Heartbeat" of the Organism:**
+The core is no longer just a set of scripts; it is a **Reactive DAG Executor** with Token-Passing Architecture.
+- **Token Model**: Nodes do not just "run"; they consume and emit Tokens containing data and provenance.
+- **Tick Cycle**: The engine runs in a 50ms heartbeat loop, ensuring the UI remains responsive while processing complex cognitive graphs in parallel.
+- **Resilience**: The engine supports "Time Travel" debugging, cycle detection, and automatic retries for self-healing.
 
-### Phase 1: Cognitive Mesh Implementation
-We have moved beyond linear chains to recursive, self-correcting meshes.
-
-1.  **The "Cost-Arbitrage" Broker**:
-    - **Logic**: Real-time analysis of prompt complexity.
-    - **Routing**: Simple tasks -> `openai`. Complex reasoning -> `gemini-large`. Code -> `qwen-coder`.
-    - **Implementation**: `PollinationsClient.smartSelectModel`.
-
-2.  **The "Devil's Advocate" (Logic Auditor)**:
-    - **Role**: A persistent entity that challenges assumptions and finds logical fallacies.
-    - **Trigger**: "AUDIT" action in Agent Station.
-    - **Output**: Risk assessment (Low/Med/High) and critical flaws list.
-
-3.  **Recursive Refinement Loop**:
-    - **Flow**: Generator -> Critic (Confidence Score) -> Refiner -> Loop.
-    - **Goal**: Zero-compromise quality before user presentation.
+### Data Structures (The DNA)
+- **ExecutionContext**: The "God View" containing run status, global memory, and the state of every node.
+- **NodeExecutionState**: Tracks the input buffer, output, logs, and error state of a single node.
+- **EdgeSignals**: Data "on the wire" waiting to be consumed by downstream nodes.
 
 ---
 
@@ -43,14 +31,14 @@ The "Building Station" is the bridge between the carbon-based user and the silic
 
 ### Tech Stack
 - **Canvas**: `@xyflow/react` (v12) for the infinite logic grid.
-- **Drag & Drop**: `@dnd-kit` for intuitive node construction.
-- **Validation**: `zod` schemas to validate "Snap-to-Logic" connections instantly.
-- **Motion**: `framer-motion` for buttery smooth feedback.
+- **Engine**: Client-side `GraphExecutionEngine` running in the main thread (or worker).
+- **Validation**: `zod` for strict runtime type checking of edge connections.
+- **Logic**: `filtrex` for safe, sandboxed expression evaluation in Logic Nodes.
 
 ### Components
 1.  **The Infinite Logic Grid**: A ReactFlow canvas where users connect Triggers, Agents, and Tools.
-2.  **The Agent Cortex (HUD)**: A `zustand`-managed side panel to configure agent personas (temperature, role, prompts).
-3.  **The Tool Socket**: A universal dock for MCP tools, allowing local filesystem access or dynamic tool generation via `react-hook-form`.
+2.  **The Agent Cortex (HUD)**: A `zustand`-managed side panel to configure agent personas.
+3.  **The Tool Socket**: A universal dock for MCP tools.
 
 ---
 
@@ -60,12 +48,10 @@ The "Building Station" is the bridge between the carbon-based user and the silic
 A static system is a dead system. HyperSmol includes feedback loops allowing agents to rewrite their own optimization paths.
 
 - **Self-Healing Mechanism**:
-  - *Symptom*: Agent task latency increases > 2000ms.
-  - *Response*: The Kernel automatically throttles concurrency.
-- **Context Refinement**:
-  - The `CategorizationAgent` learns from user corrections.
-- **Optimization Feedback Loop**:
-  - The `OptimizationAgent` monitors the click-through rates of its own recommendations.
+  - *Symptom*: Execution failure in a node.
+  - *Response*: The GraphEngine checks `retryCount`. If < 3, it performs exponential backoff and retries.
+- **Recursive Refinement**:
+  - The graph supports cycles. A "Critic" node can reject an output, sending a token *back* to the "Generator" node for a v2 iteration.
 
 ---
 
@@ -75,18 +61,17 @@ A static system is a dead system. HyperSmol includes feedback loops allowing age
 - [x] **Cost-Arbitrage**: Implement `smartSelectModel` in `pollinations.ts`.
 - [x] **Devil's Advocate**: Implement `auditContent` in `hypersmolagents.ts`.
 - [x] **Refinement Loop**: Implement `refineContent` recursive logic.
-- [x] **UI Exposure**: Add Audit/Risk visualization to `AgentInsights`.
 
 **Phase 2: The Building Station (In Progress)**
 - [x] **Scaffold Flow Editor**: Implement `WorkflowCanvas` with `@xyflow/react`.
 - [x] **State Management**: Create `flowStore` with `zustand`.
 - [x] **Custom Nodes**: Implement "Agent", "Tool", and "Trigger" nodes.
-- [x] **App Integration**: Add a "Builder" view to the main application.
+- [ ] **Graph Engine**: Implement the Token-Passing Executor.
+- [ ] **Node Registry**: Implement `AgentProcessor`, `LogicProcessor`.
 
 **Phase 3: Deep Integration (Future)**
 - [ ] **MCP Integration**: Connect `@modelcontextprotocol/sdk` for local tool access.
 - [ ] **Hono Edge Router**: Compile flows into micro-apps.
-- [ ] **Visual Debugging**: "Holographic" simulation of agent thought processes.
 
 ---
 
