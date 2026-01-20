@@ -1,23 +1,37 @@
-# 🏗️ ARCHITECTURAL BLUEPRINT [v2026.1]
+# 🏗️ ARCHITECTURAL BLUEPRINT [v2026.2]
 
 > *Executive Summary of the Vision*
 >
-> HyperSmol is not merely a URL shortener; it is a **digital organism**. We are architecting a self-sustaining ecosystem where code and cognition merge. At its core lies `hypersmolagents`—a biological heart that pumps intelligence through the veins of the application. We are moving beyond static logic into the era of **Hyper-Dynamic Systems**, where the software observes, predicts, and evolves its own pathways to optimize for human intent. This is the manifestation of the equation: `✨(Code ⊃ Art)⟩ ⨹ ⟨(Complexity ⊃ Simplicity)⟩ ⨹ ⟨(Agent ⊃ Organism)⟩`.
+> HyperSmol has evolved from a simple URL shortener into a **digital organism**. We are architecting a self-sustaining ecosystem where code and cognition merge. At its core lies `hypersmolagents`—a biological heart that pumps intelligence through the veins of the application. We are moving beyond static logic into the era of **Hyper-Dynamic Systems**, where the software observes, predicts, and evolves its own pathways to optimize for human intent. This is the manifestation of the equation: `✨(Code ⊃ Art)⟩ ⨹ ⟨(Complexity ⊃ Simplicity)⟩ ⨹ ⟨(Agent ⊃ Organism)⟩`.
+>
+> **Core Philosophy:** The Browser is the Operating System. Instead of sending data to a Python server to "think," the React application manages the cognitive load directly.
 
 ---
 
-## 1. 🧬 The Kernel (Smolagents Integration)
+## 1. 🧬 The Kernel (Smolagents & Pollinations Integration)
 
 **Foundational Logic:**
-The `hypersmolagents` kernel (`src/lib/hypersmolagents.ts`) is the autonomic nervous system of HyperSmol. It does not simply execute tasks; it orchestrates a symphony of asynchronous micro-intelligences.
+The `hypersmolagents` kernel (`src/lib/hypersmolagents.ts`) is the autonomic nervous system.
+- **Brain**: The `pollinations.ts` client serves as the cortex, interfacing with the Pollinations.ai API for text and image generation.
+- **Nervous System**: `@modelcontextprotocol/sdk` allows the frontend to plug into local files, databases, or remote APIs without custom backend glue code.
+- **Swarm Logic**: Specialized agents (Categorizer, Predictor, Healer, Analyst) operate in parallel.
 
-- **Biological Heart**: The kernel manages the lifecycle of every agentic thought process—birth (instantiation), life (execution), and evolution (optimization).
-- **Swarm Logic**: Multiple specialized agents (Categorizer, Predictor, Healer, Analyst) operate in parallel, coordinated by a master node that respects rate limits and system load (2026_STD: AsyncMastery).
-- **Zero-Trust Security**: Every external interaction is treated as untrusted until validated. The kernel enforces strict boundaries between user inputs and agent execution contexts.
+### Phase 1: Cognitive Mesh Implementation
+We have moved beyond linear chains to recursive, self-correcting meshes.
 
-**Technical Architecture:**
-- **Atomic Modularity**: Each agent function is isolated. An error in the `PredictionAgent` must never arrest the `HealthAgent`.
-- **Loose Coupling**: The UI communicates with the Kernel via a unidirectional intent stream. The Kernel responds via reactive state updates, ensuring the "Building Station" remains responsive regardless of cognitive load.
+1.  **The "Cost-Arbitrage" Broker**:
+    - **Logic**: Real-time analysis of prompt complexity.
+    - **Routing**: Simple tasks -> `openai`. Complex reasoning -> `gemini-large`. Code -> `qwen-coder`.
+    - **Implementation**: `PollinationsClient.smartSelectModel`.
+
+2.  **The "Devil's Advocate" (Logic Auditor)**:
+    - **Role**: A persistent entity that challenges assumptions and finds logical fallacies.
+    - **Trigger**: "AUDIT" action in Agent Station.
+    - **Output**: Risk assessment (Low/Med/High) and critical flaws list.
+
+3.  **Recursive Refinement Loop**:
+    - **Flow**: Generator -> Critic (Confidence Score) -> Refiner -> Loop.
+    - **Goal**: Zero-compromise quality before user presentation.
 
 ---
 
@@ -27,48 +41,54 @@ The `hypersmolagents` kernel (`src/lib/hypersmolagents.ts`) is the autonomic ner
 
 The "Building Station" is the bridge between the carbon-based user and the silicon-based kernel. It merges the tactile immediacy of a visual builder with the infinite depth of high-level scripting.
 
-- **Neo-Brutalist Cyber Interface**: The aesthetic is not decoration; it is information density. Every glow, pulse, and border shift communicates system state.
-- **UX Intuition**:
-  - *Tier 1 (Surface)*: Immediate gratification. URL in -> Shortlink out. < 100ms latency.
-  - *Tier 2 (Cognition)*: Asynchronous enhancement. Categorization tags appear, prediction badges glow, health status verifies—all without blocking the user flow.
-  - *Tier 3 (Deep Dive)*: The "Agent Station" allows power users to inspect the mind of the machine—viewing task queues, success rates, and raw optimization metrics.
-- **Democratization**: Complex AI operations are wrapped in "NoCode" interactions. A user clicks "Optimize," and the system performs a multi-dimensional analysis that would previously require a data science team.
+### Tech Stack
+- **Canvas**: `@xyflow/react` (v12) for the infinite logic grid.
+- **Drag & Drop**: `@dnd-kit` for intuitive node construction.
+- **Validation**: `zod` schemas to validate "Snap-to-Logic" connections instantly.
+- **Motion**: `framer-motion` for buttery smooth feedback.
+
+### Components
+1.  **The Infinite Logic Grid**: A ReactFlow canvas where users connect Triggers, Agents, and Tools.
+2.  **The Agent Cortex (HUD)**: A `zustand`-managed side panel to configure agent personas (temperature, role, prompts).
+3.  **The Tool Socket**: A universal dock for MCP tools, allowing local filesystem access or dynamic tool generation via `react-hook-form`.
 
 ---
 
 ## 3. 🔄 Self-Evolution Mechanisms
 
 **The Evolutionary Trajectory:**
-A static system is a dead system. HyperSmol must include feedback loops allowing agents to rewrite their own optimization paths.
+A static system is a dead system. HyperSmol includes feedback loops allowing agents to rewrite their own optimization paths.
 
 - **Self-Healing Mechanism**:
   - *Symptom*: Agent task latency increases > 2000ms.
-  - *Response*: The Kernel automatically throttles concurrency, sheds non-critical load (like deep pattern analysis), and prioritizes user-facing tasks.
-  - *Recovery*: As latency stabilizes, the Kernel re-expands its cognitive bandwidth.
+  - *Response*: The Kernel automatically throttles concurrency.
 - **Context Refinement**:
-  - The `CategorizationAgent` learns from user corrections. If a user manually retags a link, the agent ingests this delta to refine its future classification vectors.
+  - The `CategorizationAgent` learns from user corrections.
 - **Optimization Feedback Loop**:
-  - The `OptimizationAgent` monitors the click-through rates of its own recommendations. If "Strategy A" yields low engagement, it deprecates that pathway in favor of "Strategy B."
+  - The `OptimizationAgent` monitors the click-through rates of its own recommendations.
 
 ---
 
 ## 4. 🚀 Immediate Implementation Steps
 
-**Phase 1: Kernel Genesis (Current State)**
-- [x] **Activate `hypersmolagents`**: Rename and refactor `agent-kernel` to fully embody the `HyperSmolAgents` architecture.
-- [x] **Establish Async Channels**: Ensure the React frontend subscribes to Kernel states without blocking the main thread.
-- [x] **Deploy Core Agents**: Categorizer, Health Check, Predictor.
+**Phase 1: Cognitive Mesh (Complete)**
+- [x] **Cost-Arbitrage**: Implement `smartSelectModel` in `pollinations.ts`.
+- [x] **Devil's Advocate**: Implement `auditContent` in `hypersmolagents.ts`.
+- [x] **Refinement Loop**: Implement `refineContent` recursive logic.
+- [x] **UI Exposure**: Add Audit/Risk visualization to `AgentInsights`.
 
-**Phase 2: The Cognitive Awakening (Next Steps)**
-- [ ] **Enhance Self-Healing**: Implement dynamic concurrency adjustment based on real-time execution metrics.
-- [ ] **Deep Integration**: Connect `hypersmolagents` directly to the `useKV` storage to allow agents to persist long-term memories across sessions.
-- [ ] **Visualizing the Brain**: Upgrade the "Agent Station" UI to visualize the `TaskQueue` processing in real-time (The "Pulse" of the organism).
+**Phase 2: The Building Station (In Progress)**
+- [x] **Scaffold Flow Editor**: Implement `WorkflowCanvas` with `@xyflow/react`.
+- [x] **State Management**: Create `flowStore` with `zustand`.
+- [x] **Custom Nodes**: Implement "Agent", "Tool", and "Trigger" nodes.
+- [x] **App Integration**: Add a "Builder" view to the main application.
 
-**Phase 3: Autonomy (Future Horizon)**
-- [ ] **Agent-to-Agent Dialogue**: Allow the `PredictionAgent` to ask the `AnalystAgent` for historical data before making a forecast.
-- [ ] **Code Self-Refinement**: (Moonshot) Allow the system to suggest code optimizations for its own agent prompts based on LLM feedback.
+**Phase 3: Deep Integration (Future)**
+- [ ] **MCP Integration**: Connect `@modelcontextprotocol/sdk` for local tool access.
+- [ ] **Hono Edge Router**: Compile flows into micro-apps.
+- [ ] **Visual Debugging**: "Holographic" simulation of agent thought processes.
 
 ---
 
-**[v2026.1] SIGNED: ARCHITECT_ZERO**
+**[v2026.2] SIGNED: ARCHITECT_ZERO**
 *COMPLEXITY IS NOT AN EXCUSE FOR FRICTION.*

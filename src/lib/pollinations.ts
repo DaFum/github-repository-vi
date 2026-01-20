@@ -32,8 +32,61 @@ class PollinationsClient {
     return this.apiKey;
   }
 
+  /**
+   * The "Cost-Arbitrage" Broker
+   * Automatically selects the best model based on prompt complexity.
+   *
+   * Low Complexity -> openai (Fast/Cheap)
+   * High Complexity -> claude-large / gemini-search (Reasoning/Search)
+   * Code Generation -> qwen-coder (Specialized)
+   */
+  smartSelectModel(prompt: string, intent?: 'code' | 'reasoning' | 'creative'): string {
+    const complexityScore = this.calculateComplexity(prompt);
+
+    if (intent === 'code' || prompt.includes('function') || prompt.includes('class') || prompt.includes('const ')) {
+      return 'qwen-coder';
+    }
+
+    if (intent === 'reasoning' || complexityScore > 80) {
+      return 'gemini-large'; // Fallback to a reasoning-capable model
+    }
+
+    if (complexityScore > 50) {
+      return 'claude'; // Mid-tier reasoning
+    }
+
+    return 'openai'; // Default, fast
+  }
+
+  private calculateComplexity(prompt: string): number {
+    let score = 0;
+    // Length factor
+    score += Math.min(prompt.length / 50, 40);
+
+    // Keyword factor
+    const complexKeywords = ['analyze', 'audit', 'critique', 'strategy', 'architecture', 'recursive', 'optimize'];
+    complexKeywords.forEach(word => {
+      if (prompt.toLowerCase().includes(word)) score += 10;
+    });
+
+    // Formatting factor
+    if (prompt.includes('```') || prompt.includes('{')) score += 15;
+
+    return Math.min(score, 100);
+  }
+
   async chat(messages: PollinationsMessage[], options: PollinationsOptions = {}): Promise<string> {
-    const { model = 'openai', temperature = 0.7, jsonMode = false, seed } = options;
+    let { model, temperature = 0.7, jsonMode = false, seed } = options;
+
+    // Auto-select model if not specified, based on the last user message
+    if (!model) {
+      const lastUserMsg = messages.slice().reverse().find(m => m.role === 'user');
+      if (lastUserMsg) {
+        model = this.smartSelectModel(lastUserMsg.content);
+      } else {
+        model = 'openai';
+      }
+    }
 
     // Construct headers
     const headers: Record<string, string> = {
@@ -93,11 +146,6 @@ class PollinationsClient {
     let url = `${this.baseUrl}/image/${encodedPrompt}?model=${model}&width=${width}&height=${height}&nologo=true`;
 
     if (this.apiKey) {
-      // The docs mention using Authorization header for image generation too
-      // But for simple GET requests, usually query param is easier if we want to use it in an <img> tag
-      // However, for fetching the image blob or URL, we can use fetch.
-      // If we just want the URL string, we can append the key if permitted.
-      // Docs say: "Auth methods: 2. Query param: ?key=YOUR_API_KEY"
       url += `&key=${this.apiKey}`;
     }
 

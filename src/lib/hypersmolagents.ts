@@ -1,6 +1,6 @@
 type AgentTask = {
   id: string
-  type: 'categorize' | 'health-check' | 'optimize' | 'analyze' | 'predict'
+  type: 'categorize' | 'health-check' | 'optimize' | 'analyze' | 'predict' | 'audit' | 'refine'
   payload: unknown
   priority: number
   status: 'pending' | 'running' | 'completed' | 'failed'
@@ -29,6 +29,7 @@ type AgentMetrics = {
  * - Swarm Logic: Manages concurrent specialized agents
  * - Self-Healing: Automatically adjusts concurrency based on system load
  * - Asynchronous Mastery: Prioritizes user-facing tasks over background analysis
+ * - Cognitive Mesh: Implements recursive refinement and audit loops
  */
 class HyperSmolAgents {
   private taskQueue: AgentTask[] = []
@@ -103,6 +104,12 @@ class HyperSmolAgents {
         case 'predict':
           result = await this.predictPopularity(task.payload as string)
           break
+        case 'audit':
+          result = await this.auditContent(task.payload as string)
+          break
+        case 'refine':
+          result = await this.refineContent(task.payload as { content: string; context: string })
+          break
         default:
           throw new Error(`Unknown task type: ${task.type}`)
       }
@@ -138,8 +145,6 @@ URL: ${url}
 Return ONLY the category name, nothing else.`
     
     try {
-      // Use Pollinations API via our cortex client
-      // Dynamic import to avoid circular dependencies if any, though likely not needed here.
       const { pollinations } = await import('./pollinations');
       const category = await pollinations.chat([
         { role: 'system', content: 'You are a precise URL categorization agent.' },
@@ -230,6 +235,68 @@ Score should be 0-100 (higher = more likely to be popular).`;
     return JSON.parse(response);
   }
 
+  /**
+   * The "Devil's Advocate" (Logic Auditor)
+   * Challenges assumptions and finds flaws.
+   */
+  private async auditContent(content: string): Promise<{ flaws: string[]; riskLevel: 'low' | 'medium' | 'high'; critique: string }> {
+    const { pollinations } = await import('./pollinations');
+    const prompt = `Audit the following content/plan for logical fallacies, safety risks, and hidden assumptions. Be ruthless.
+
+Content: "${content}"
+
+Return JSON:
+{
+  "flaws": ["flaw 1", "flaw 2"],
+  "riskLevel": "low" | "medium" | "high",
+  "critique": "Overall assessment..."
+}`;
+
+    const response = await pollinations.chat([
+      { role: 'system', content: 'You are the Devil\'s Advocate. You challenge assumptions and find critical flaws. You are not polite; you are accurate.' },
+      { role: 'user', content: prompt }
+    ], { model: 'claude', jsonMode: true }); // Prefer reasoning model
+
+    return JSON.parse(response);
+  }
+
+  /**
+   * The "Recursive Refinement" Loop
+   * Generates, Criticizes, and Refines content in a loop.
+   */
+  private async refineContent({ content, context }: { content: string; context: string }): Promise<{ finalContent: string; iterations: number; confidence: number }> {
+    const { pollinations } = await import('./pollinations');
+    let currentDraft = content;
+    let confidence = 0;
+    let iterations = 0;
+    const MAX_ITERATIONS = 3;
+
+    while (iterations < MAX_ITERATIONS && confidence < 90) {
+        iterations++;
+
+        // 1. Criticize
+        const critiqueResponse = await pollinations.chat([
+            { role: 'system', content: 'You are a strict critic. Rate confidence (0-100) and provide specific feedback.' },
+            { role: 'user', content: `Context: ${context}\n\nDraft: ${currentDraft}\n\nProvide JSON: { "confidence": number, "feedback": "string" }` }
+        ], { model: 'openai', jsonMode: true });
+
+        const critique = JSON.parse(critiqueResponse);
+        confidence = critique.confidence;
+
+        if (confidence >= 90) break;
+
+        // 2. Refine
+        const refineResponse = await pollinations.chat([
+            { role: 'system', content: 'You are an expert editor. Improve the draft based on feedback.' },
+            { role: 'user', content: `Original: ${currentDraft}\nFeedback: ${critique.feedback}\n\nRewrite the draft.` }
+        ], { model: 'openai' }); // Fast model for rewrite
+
+        currentDraft = refineResponse;
+    }
+
+    return { finalContent: currentDraft, iterations, confidence };
+  }
+
   private updateMetrics(taskDuration: number): void {
     const totalTasks = this.metrics.tasksCompleted + this.metrics.tasksFaileds
     this.metrics.averageTaskTime = 
@@ -249,19 +316,12 @@ Score should be 0-100 (higher = more likely to be popular).`;
     }
   }
 
-  /**
-   * Self-Healing Mechanism
-   * Adjusts the organism's metabolic rate (concurrency) based on
-   * environmental stress (task latency).
-   */
   async selfOptimize(): Promise<void> {
     const metrics = this.getMetrics()
     
-    // If tasks are slow (> 3s), reduce cognitive load (concurrency)
     if (metrics.averageTaskTime > 3000 && this.maxConcurrent > 1) {
       this.maxConcurrent = Math.max(1, this.maxConcurrent - 1)
     }
-    // If tasks are fast (< 1s), expand cognitive bandwidth
     else if (metrics.averageTaskTime < 1000 && this.maxConcurrent < 5) {
       this.maxConcurrent = Math.min(5, this.maxConcurrent + 1)
     }
