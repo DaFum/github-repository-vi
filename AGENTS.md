@@ -54,4 +54,12 @@ Before marking a task as complete, you **MUST**:
 
 ---
 
+
+## 🧪 Documentation 
+
+How you will handle the documentation files:
+
+1.  **AGENTS.md files**: Update when they are outdated and add new AGENTS.md files for folders getting harder to understand.
+2.  **memory.md file**: Collecting of memorys about things worthy of mention when work on the code.
+
 _“Complexity is not an excuse for friction.”_
