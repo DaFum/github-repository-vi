@@ -4,12 +4,17 @@ import { pollinations } from '@/lib/pollinations'
 import { z } from 'zod'
 
 export class AgentProcessor implements NodeProcessor {
-  isReady(inputs: Record<string, any>, config: any): boolean {
+  isReady(_inputs: Record<string, unknown>, _config: unknown): boolean {
     // Agents generally need a prompt or user input
     return true
   }
 
-  async execute(inputs: Record<string, any>, config: any, context: ExecutionContext): Promise<any> {
+  async execute(
+    _inputs: Record<string, unknown>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    config: any,
+    _context: ExecutionContext
+  ): Promise<unknown> {
     const prompt = config.prompt || 'Explain quantum computing'
 
     // Call Pollinations
@@ -26,11 +31,15 @@ export class AgentProcessor implements NodeProcessor {
 }
 
 export class LogicProcessor implements NodeProcessor {
-  isReady(inputs: Record<string, any>, config: any): boolean {
+  isReady(_inputs: Record<string, unknown>, _config: unknown): boolean {
     return true
   }
 
-  async execute(inputs: Record<string, any>, config: any, context: ExecutionContext): Promise<any> {
+  async execute(
+    inputs: Record<string, unknown>,
+    _config: unknown,
+    _context: ExecutionContext
+  ): Promise<unknown> {
     // Placeholder for Filtrex logic
     // const myFilter = compileExpression(config.expression);
     // return myFilter(inputs);

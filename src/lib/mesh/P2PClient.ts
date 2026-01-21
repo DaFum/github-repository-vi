@@ -4,6 +4,7 @@ import SimplePeer from 'simple-peer'
 
 export type PeerMessage = {
   type: 'handshake' | 'task_request' | 'task_response' | 'error'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any
 }
 
@@ -79,6 +80,7 @@ export class AgentHandshakeProtocol {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static createResponse(result: any): PeerMessage {
     return {
       type: 'task_response',

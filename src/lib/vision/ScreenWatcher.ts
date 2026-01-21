@@ -68,7 +68,7 @@ export class ScreenWatcher {
               },
               { type: 'image_url', image_url: { url: base64Image } },
             ],
-          } as any,
+          } as any, // eslint-disable-line @typescript-eslint/no-explicit-any
         ],
         { model: 'openai' }
       ) // Vision capable model

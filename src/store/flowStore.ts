@@ -17,7 +17,7 @@ import { ExecutionContext, NodeExecutionState } from '@/lib/graph/types'
 export type AgentNodeData = {
   label: string
   type: 'agent' | 'tool' | 'trigger'
-  config?: Record<string, any>
+  config?: Record<string, unknown>
 }
 
 export type AppNode = Node<AgentNodeData>
@@ -37,6 +37,7 @@ type FlowState = {
   pauseExecution: () => void
   stopExecution: () => void
   updateNodeStatus: (nodeId: string, status: NodeExecutionState['status']) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setEdgeSignal: (edgeId: string, data: any) => void
 }
 

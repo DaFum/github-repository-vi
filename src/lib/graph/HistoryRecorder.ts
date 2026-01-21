@@ -1,7 +1,7 @@
-import { ExecutionContext, NodeExecutionState } from './types'
+import { ExecutionContext } from './types'
 
 export class HistoryRecorder {
-  static createSnapshot(context: ExecutionContext): any {
+  static createSnapshot(context: ExecutionContext): unknown {
     // Simplified snapshot: clone status and node states
     // In a real system, use structural sharing (immer) for efficiency
     return {
@@ -22,13 +22,15 @@ export class HistoryRecorder {
     }
   }
 
-  static generateProvenance(nodeId: string, inputs: Record<string, any>): any {
+  static generateProvenance(nodeId: string, inputs: Record<string, unknown>): unknown {
     // Trace source nodes from inputs if they contain provenance
     const sources: string[] = []
 
     Object.values(inputs).forEach((val) => {
-      if (val && typeof val === 'object' && val.provenance) {
-        sources.push(val.provenance.generatedBy)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (val && typeof val === 'object' && (val as any).provenance) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        sources.push((val as any).provenance.generatedBy)
       }
     })
 

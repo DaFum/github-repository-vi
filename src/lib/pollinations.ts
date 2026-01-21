@@ -115,6 +115,7 @@ class PollinationsClient {
     }
 
     // Construct body
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const body: any = {
       model,
       messages,
