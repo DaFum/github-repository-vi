@@ -18,10 +18,11 @@ type AdvancedAnalyticsProps = {
 export function AdvancedAnalytics({ links }: AdvancedAnalyticsProps) {
   if (links.length === 0) return null
 
+  const now = Date.now()
   const totalClicks = links.reduce((sum, link) => sum + link.clicks, 0)
   const avgClicks = totalClicks / links.length
   const topLink = links.reduce((max, link) => (link.clicks > max.clicks ? link : max), links[0])
-  const recentLinks = links.filter((l) => Date.now() - l.createdAt < 604800000).length
+  const recentLinks = links.filter((l) => now - l.createdAt < 604800000).length
   const categoryStats = links.reduce(
     (acc, link) => {
       const cat = link.category || 'Uncategorized'

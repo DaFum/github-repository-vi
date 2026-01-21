@@ -102,7 +102,10 @@ function Carousel({
 
   useEffect(() => {
     if (!api) return
-    onSelect(api)
+
+    // Defer initial state update to next tick to avoid synchronous setState warning
+    setTimeout(() => onSelect(api), 0)
+
     api.on('reInit', onSelect)
     api.on('select', onSelect)
 

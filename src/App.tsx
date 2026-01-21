@@ -68,6 +68,7 @@ type ShortenedLink = {
 }
 
 function App() {
+  const [now] = useState(() => Date.now())
   const [links, setLinks] = useKV<ShortenedLink[]>('shortened-links', [])
   const [urlInput, setUrlInput] = useState('')
   const [customAlias, setCustomAlias] = useState('')
@@ -333,7 +334,7 @@ function App() {
 
     const matchesTab =
       activeTab === 'all' ||
-      (activeTab === 'recent' && Date.now() - link.createdAt < 86400000) ||
+      (activeTab === 'recent' && now - link.createdAt < 86400000) ||
       (activeTab === 'popular' && link.clicks > 0)
 
     return matchesSearch && matchesTab
@@ -677,7 +678,7 @@ function App() {
                     value="recent"
                     className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex-1 text-[10px] tracking-wider uppercase sm:flex-none"
                   >
-                    RECENT [{links.filter((l) => Date.now() - l.createdAt < 86400000).length}]
+                    RECENT [{links.filter((l) => now - l.createdAt < 86400000).length}]
                   </TabsTrigger>
                   <TabsTrigger
                     value="popular"

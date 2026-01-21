@@ -49,29 +49,32 @@ export class GraphEngine {
     }
   }
 
-  private findReadyNodes(store: any) {
+  private findReadyNodes(store: ReturnType<typeof useFlowStore.getState>) {
     const { nodes, edges, executionContext } = store
     const { edgeSignals, nodeStates } = executionContext
 
-    return nodes.filter((node: any) => {
+    return nodes.filter((node) => {
       const state = nodeStates.get(node.id)
       if (state && state.status !== 'pending') return false
 
       // Barrier Synchronization: Check if ALL incoming edges have signals
-      const incomingEdges = edges.filter((edge: any) => edge.target === node.id)
-      const allInputsReady = incomingEdges.every((edge: any) => edgeSignals.has(edge.id))
+      const incomingEdges = edges.filter((edge) => edge.target === node.id)
+      const allInputsReady = incomingEdges.every((edge) => edgeSignals.has(edge.id))
 
       return allInputsReady
     })
   }
 
-  private resolveInputs(node: any, store: any): Record<string, any> {
+  private resolveInputs(
+    node: { id: string },
+    store: ReturnType<typeof useFlowStore.getState>
+  ): Record<string, unknown> {
     const { edges, executionContext } = store
-    const inputs: Record<string, any> = {}
+    const inputs: Record<string, unknown> = {}
 
-    const incomingEdges = edges.filter((edge: any) => edge.target === node.id)
+    const incomingEdges = edges.filter((edge) => edge.target === node.id)
 
-    incomingEdges.forEach((edge: any) => {
+    incomingEdges.forEach((edge) => {
       const signal = executionContext.edgeSignals.get(edge.id)
       // Simplified: use source handle as key or just 'input'
       inputs[edge.sourceHandle || 'input'] = signal
@@ -80,7 +83,10 @@ export class GraphEngine {
     return inputs
   }
 
-  private async executeNode(node: any, store: any) {
+  private async executeNode(
+    node: { id: string; data: { type: string; config?: Record<string, unknown> } },
+    store: ReturnType<typeof useFlowStore.getState>
+  ) {
     const nodeId = node.id
     store.updateNodeStatus(nodeId, 'working')
 
@@ -117,8 +123,8 @@ export class GraphEngine {
       // Dead-End Pruning: If result is null/undefined, do not emit signal?
       // Or emit explicit "Null Token".
       if (result !== null && result !== undefined) {
-        const outgoingEdges = store.edges.filter((edge: any) => edge.source === node.id)
-        outgoingEdges.forEach((edge: any) => {
+        const outgoingEdges = store.edges.filter((edge) => edge.source === node.id)
+        outgoingEdges.forEach((edge) => {
           store.setEdgeSignal(edge.id, result)
         })
       }

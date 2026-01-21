@@ -5,22 +5,23 @@ export class Interpolator {
    * Recursively scans the input object for string placeholders like `{{some.variable}}`
    * and replaces them with data from the source.
    */
-  static hydrate(template: any, source: Record<string, any>): any {
+  static hydrate(template: unknown, source: Record<string, unknown>): unknown {
     if (typeof template === 'string') {
       return this.interpolateString(template, source)
     } else if (Array.isArray(template)) {
       return template.map((item) => this.hydrate(item, source))
     } else if (typeof template === 'object' && template !== null) {
-      const result: Record<string, any> = {}
+      const result: Record<string, unknown> = {}
       for (const key in template) {
-        result[key] = this.hydrate(template[key], source)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        result[key] = this.hydrate((template as any)[key], source)
       }
       return result
     }
     return template
   }
 
-  private static interpolateString(str: string, source: Record<string, any>): any {
+  private static interpolateString(str: string, source: Record<string, unknown>): unknown {
     // Regex to match {{variable}}
     const match = str.match(/^{{([^}]+)}}$/)
     if (match) {
@@ -36,17 +37,18 @@ export class Interpolator {
     })
   }
 
-  private static getValueByPath(obj: any, path: string): any {
-    return path.split('.').reduce((acc, part) => acc && acc[part], obj)
+  private static getValueByPath(obj: unknown, path: string): unknown {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return path.split('.').reduce((acc, part) => acc && (acc as any)[part], obj)
   }
 
   /**
    * Validates data against a Zod schema and attempts safe coercion.
    */
   static validateAndCoerce(
-    data: any,
-    schema: z.ZodType<any>
-  ): { success: boolean; data?: any; error?: string } {
+    data: unknown,
+    schema: z.ZodType<unknown>
+  ): { success: boolean; data?: unknown; error?: string } {
     const result = schema.safeParse(data)
     if (result.success) {
       return { success: true, data: result.data }
@@ -66,7 +68,7 @@ export class Interpolator {
         const parts = data.split(',').map((s) => s.trim())
         const retry = schema.safeParse(parts)
         if (retry.success) return { success: true, data: retry.data }
-      } catch (e) {
+      } catch {
         // Ignore parse errors, proceed to failure
       }
     }
