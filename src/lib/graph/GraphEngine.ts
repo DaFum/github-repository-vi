@@ -1,12 +1,20 @@
 import { useFlowStore } from '@/store/flowStore'
+import { Lifecycle } from '../interfaces'
 import { NodeRegistry } from './NodeRegistry'
-import { ExecutionContext } from './types'
 import { Interpolator } from './Interpolator'
 import { HistoryRecorder } from './HistoryRecorder'
 
-export class GraphEngine {
+export class GraphEngine implements Lifecycle {
   private intervalId: NodeJS.Timeout | null = null
   private isTicking = false
+
+  initialize() {
+    this.start()
+  }
+
+  dispose() {
+    this.stop()
+  }
 
   start() {
     if (this.intervalId) return
@@ -113,6 +121,7 @@ export class GraphEngine {
       const result = await processor.execute(inputs, node.data.config || {}, store.executionContext)
 
       // 5. Output Provenance
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const provenance = HistoryRecorder.generateProvenance(nodeId, inputs)
 
       console.log(`Node ${nodeId} Completed:`, result)
@@ -139,3 +148,5 @@ export class GraphEngine {
 }
 
 export const graphEngine = new GraphEngine()
+
+export const createGraphEngine = () => new GraphEngine()

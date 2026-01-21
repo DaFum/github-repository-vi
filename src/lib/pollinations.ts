@@ -3,6 +3,8 @@ export type PollinationsMessage = {
   content: string
 }
 
+import { Lifecycle } from './interfaces'
+
 export type PollinationsOptions = {
   model?: string
   temperature?: number
@@ -10,15 +12,23 @@ export type PollinationsOptions = {
   seed?: number
 }
 
-class PollinationsClient {
+class PollinationsClient implements Lifecycle {
   private apiKey: string | null = null
   private baseUrl = 'https://gen.pollinations.ai'
 
   constructor() {
+    this.initialize()
+  }
+
+  initialize() {
     // Try to load API key from local storage on initialization
     if (typeof window !== 'undefined') {
       this.apiKey = localStorage.getItem('pollinations_api_key')
     }
+  }
+
+  dispose() {
+    // No-op for stateless client
   }
 
   setApiKey(key: string) {
@@ -175,3 +185,5 @@ class PollinationsClient {
 }
 
 export const pollinations = new PollinationsClient()
+
+export const createPollinationsClient = () => new PollinationsClient()

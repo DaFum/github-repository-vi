@@ -54,15 +54,14 @@ Before marking a task as complete, you **MUST**:
 
 ---
 
-
-## 🗂️ Documentation 
+## 🗂️ Documentation
 
 How you will handle the documentation files:
 
 1.  **`AGENTS.md` files**: Update when they are outdated and add new `AGENTS.md` files for folders getting harder to understand.
 2.  **`memory.md` file**: Collecting of memorys about things worthy of mention when work on the code.
 3.  **`ARCHITECTURE.md` file**: Executive Summary of the Vision
-4.  **`PRD.md` file**: deprecated file, initial plan of the project 
+4.  **`PRD.md` file**: deprecated file, initial plan of the project
 
 ---
 

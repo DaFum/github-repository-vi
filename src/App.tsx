@@ -192,6 +192,17 @@ function App() {
     })
   }
 
+  useEffect(() => {
+    hyperSmolAgents.initialize()
+    pollinations.initialize()
+
+    return () => {
+      // We don't want to dispose global singletons on unmount as they persist across re-renders
+      // and we don't have a root provider. But to be safe if the app is truly destroyed:
+      // hyperSmolAgents.dispose()
+    }
+  }, [])
+
   const checkAllLinksHealth = async (): Promise<void> => {
     if (!links || links.length === 0) return
 

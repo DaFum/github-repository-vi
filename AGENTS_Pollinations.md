@@ -544,12 +544,12 @@ https://enter.pollinations.ai/authorize?redirect_url=YOUR_APP_URL
 
 ### Optional Preselection Parameters
 
-| Param | Description | Example |
-|-------|-------------|---------|
-| `models` | Comma-separated allowed models | `flux,openai,gptimage` |
-| `budget` | Pollen budget limit | `10` |
-| `expiry` | Expiry in days (default: 30) | `7` |
-| `permissions` | Account permissions | `profile,balance,usage` |
+| Param         | Description                    | Example                 |
+| ------------- | ------------------------------ | ----------------------- |
+| `models`      | Comma-separated allowed models | `flux,openai,gptimage`  |
+| `budget`      | Pollen budget limit            | `10`                    |
+| `expiry`      | Expiry in days (default: 30)   | `7`                     |
+| `permissions` | Account permissions            | `profile,balance,usage` |
 
 ### Account Permissions
 
@@ -564,6 +564,7 @@ https://enter.pollinations.ai/authorize?redirect_url=https://myapp.com/callback&
 ```
 
 After authorization, the user is redirected back with the API key in the URL fragment:
+
 ```
 https://myapp.com/callback#api_key=pk_xxxxx
 ```

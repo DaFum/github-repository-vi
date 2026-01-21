@@ -1,3 +1,4 @@
+import { Lifecycle } from './interfaces'
 import { pollinations } from './pollinations'
 
 type AgentTask = {
@@ -33,7 +34,7 @@ type AgentMetrics = {
  * - Asynchronous Mastery: Prioritizes user-facing tasks over background analysis
  * - Cognitive Mesh: Implements recursive refinement and audit loops
  */
-class HyperSmolAgents {
+class HyperSmolAgents implements Lifecycle {
   private taskQueue: AgentTask[] = []
   private runningTasks: Map<string, AgentTask> = new Map()
   private metrics: AgentMetrics = {
@@ -45,8 +46,26 @@ class HyperSmolAgents {
   }
   private maxConcurrent = 3
   private isProcessing = false
+  private isDisposed = false
+
+  async initialize(): Promise<void> {
+    this.isDisposed = false
+    console.log('HyperSmolAgents initialized')
+  }
+
+  async dispose(): Promise<void> {
+    this.isDisposed = true
+    this.taskQueue = []
+    this.runningTasks.clear()
+    this.isProcessing = false
+    console.log('HyperSmolAgents disposed')
+  }
 
   async enqueueTask(type: AgentTask['type'], payload: unknown, priority = 5): Promise<string> {
+    if (this.isDisposed) {
+      throw new Error('Agent system is disposed')
+    }
+
     const task: AgentTask = {
       id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       type,
@@ -67,11 +86,12 @@ class HyperSmolAgents {
   }
 
   private async processQueue(): Promise<void> {
-    if (this.isProcessing) return
+    if (this.isProcessing || this.isDisposed) return
     this.isProcessing = true
 
-    while (this.taskQueue.length > 0 || this.runningTasks.size > 0) {
+    while ((this.taskQueue.length > 0 || this.runningTasks.size > 0) && !this.isDisposed) {
       while (this.runningTasks.size < this.maxConcurrent && this.taskQueue.length > 0) {
+        if (this.isDisposed) break
         const task = this.taskQueue.shift()!
         task.status = 'running'
         this.runningTasks.set(task.id, task)
@@ -395,4 +415,8 @@ Return JSON:
 }
 
 export const hyperSmolAgents = new HyperSmolAgents()
+
+// Factory function pattern
+export const createHyperSmolAgents = () => new HyperSmolAgents()
+
 export type { AgentTask, AgentMetrics }
