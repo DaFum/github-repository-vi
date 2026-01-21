@@ -26,6 +26,10 @@ export default defineConfig({
   },
   optimizeDeps: {
     timeout: 60000,
-    include: ['@dnd-kit/core'],
+    include: ['@dnd-kit/core', '@dnd-kit/utilities'],
+  },
+  server: {
+    port: 5000,
+    strictPort: true,
   },
 })
