@@ -3,6 +3,7 @@
 HyperSmol is a powerful AI-driven URL shortener that combines elegant simplicity with sophisticated agent-based intelligence. It transforms long URLs into tiny, shareable links while providing autonomous AI agents that analyze patterns, optimize link management, predict popularity, monitor health, and deliver actionable insights - creating a self-evolving ecosystem that learns and improves over time.
 
 **Experience Qualities**:
+
 1. **Lightning-fast** - Users should feel the instant gratification of creating short links with zero friction or waiting
 2. **Crystalline** - The interface should be clean and transparent, removing all unnecessary elements to focus purely on the task
 3. **Intelligent** - AI-powered agents work autonomously in the background, analyzing patterns, predicting trends, and optimizing link management without manual intervention
@@ -14,6 +15,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 ## Essential Features
 
 **Autonomous Agent Kernel**
+
 - Functionality: Central AI orchestration system that manages task queues, executes AI operations, and self-optimizes performance
 - Purpose: Create a living system that autonomously handles complex tasks without blocking the UI
 - Trigger: Automatically processes tasks as they're enqueued from various operations
@@ -21,6 +23,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 - Success criteria: Tasks complete asynchronously, metrics track performance, system adjusts concurrency based on load
 
 **AI Pattern Analysis**
+
 - Functionality: Deep learning agent analyzes link collections to identify usage patterns, engagement trends, and content preferences
 - Purpose: Provide actionable intelligence about link behavior without manual analysis
 - Trigger: User clicks "Analyze Patterns" in Agent Station
@@ -28,6 +31,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 - Success criteria: Meaningful insights about click patterns, category engagement, and temporal trends are discovered and presented
 
 **AI Optimization Engine**
+
 - Functionality: Strategic optimization agent evaluates link collection and generates improvement recommendations
 - Purpose: Guide users toward better link organization and management practices
 - Trigger: User clicks "Optimize Links" in Agent Station
@@ -35,6 +39,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 - Success criteria: 3-5 actionable recommendations provided with overall quality score
 
 **Predictive Popularity Analysis**
+
 - Functionality: Predictive AI analyzes each new URL and forecasts its potential engagement level
 - Purpose: Help users understand which links are likely to perform well
 - Trigger: Automatically on link creation
@@ -42,6 +47,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 - Success criteria: Prediction badge shows "High/Moderate/Low Potential" with hover tooltip explaining reasoning
 
 **Advanced Analytics Dashboard**
+
 - Functionality: Real-time metrics display with engagement rates, categorization stats, and trend visualizations
 - Purpose: Provide comprehensive overview of link performance at a glance
 - Trigger: Automatically displays when links exist
@@ -49,6 +55,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 - Success criteria: Shows total links, clicks with average, top link performance, weekly activity, and category distribution
 
 **URL Shortening**
+
 - Functionality: Accepts a long URL and generates a short, unique identifier
 - Purpose: Core value proposition - making URLs manageable and shareable
 - Trigger: User pastes URL into input field and clicks shorten button
@@ -56,6 +63,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 - Success criteria: Short URL is created, displayed, stored persistently, and ready to copy
 
 **AI-Powered Categorization**
+
 - Functionality: Uses GPT-4o-mini to automatically categorize links into semantic categories
 - Purpose: Organize and understand link collections without manual effort
 - Trigger: Automatically on link creation, or manually via "Auto-Tag" button or individual link categorize icon
@@ -63,6 +71,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 - Success criteria: Links are accurately categorized into relevant categories (Social Media, E-commerce, News, Documentation, etc.)
 
 **Link Health Monitoring**
+
 - Functionality: Checks if shortened URLs are still accessible and valid
 - Purpose: Maintain link quality and identify broken links proactively
 - Trigger: Click heart icon on individual link or "Health Check" batch button
@@ -70,6 +79,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 - Success criteria: Health status is accurately detected and displayed with visual indicators
 
 **Custom Aliases**
+
 - Functionality: Allows users to create memorable custom short codes instead of random ones
 - Purpose: Brand consistency and memorability for important links
 - Trigger: User clicks "Custom Alias" toggle before shortening
@@ -77,6 +87,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 - Success criteria: Custom alias is validated, applied to link, and marked with badge
 
 **Analytics Dashboard**
+
 - Functionality: Displays key metrics including total links, clicks, weekly activity, and top link
 - Purpose: Provides insights into link performance at a glance
 - Trigger: Automatically displays when links exist
@@ -84,6 +95,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 - Success criteria: Accurate metrics displayed in clean, scannable cards
 
 **Click Tracking**
+
 - Functionality: Simulates and tracks clicks on shortened links
 - Purpose: Measure engagement and link popularity
 - Trigger: User clicks chart icon on any link
@@ -91,6 +103,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 - Success criteria: Click count persists and displays accurately on each link
 
 **Link History**
+
 - Functionality: Displays all previously shortened URLs with original and shortened versions
 - Purpose: Allows users to retrieve past short links without re-creating them
 - Trigger: Automatically updates when new link is created
@@ -98,6 +111,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 - Success criteria: All links persist between sessions and can be copied or deleted
 
 **Search & Filter**
+
 - Functionality: Find links by URL or short code, filter by recency or popularity
 - Purpose: Quick access to specific links in large collections
 - Trigger: User types in search box or switches tabs
@@ -105,6 +119,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 - Success criteria: Search is instant, filters work correctly, empty states are helpful
 
 **QR Code Generation**
+
 - Functionality: Generates scannable QR codes for any shortened link
 - Purpose: Easy mobile sharing and offline distribution
 - Trigger: Click QR icon on any link
@@ -112,6 +127,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 - Success criteria: QR code is accurate, scannable, and clearly displayed
 
 **Data Export**
+
 - Functionality: Downloads all links as JSON file
 - Purpose: Backup, portability, and data ownership
 - Trigger: Click export button in header
@@ -119,6 +135,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 - Success criteria: All link data exported in valid JSON format
 
 **Copy to Clipboard**
+
 - Functionality: One-click copying of shortened URLs
 - Purpose: Streamlines the workflow of using shortened links
 - Trigger: Click copy icon on any shortened URL
@@ -126,6 +143,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 - Success criteria: URL is in clipboard, visual feedback is clear and immediate
 
 **Delete Links**
+
 - Functionality: Remove unwanted links from history
 - Purpose: Keep the interface clean and manage privacy
 - Trigger: Click delete icon on any link
@@ -133,6 +151,7 @@ This is a sophisticated agentic system with autonomous AI agents, task queue man
 - Success criteria: Link is permanently removed from storage
 
 **URL Validation**
+
 - Functionality: Validates that input is a proper URL before shortening
 - Purpose: Prevents errors and guides users to correct input
 - Trigger: User attempts to shorten invalid input
@@ -171,7 +190,7 @@ The design evokes a living, breathing AI system - **Neo-Brutalist Cyber** aesthe
 An unapologetically bold, high-contrast scheme that embodies cybernetic intelligence.
 
 - **Primary Color**: Electric Cyan `oklch(0.78 0.25 168)` - A vivid cyan that glows like active circuitry, representing AI processing and digital energy. Used for primary actions, agent status, and living systems.
-- **Secondary Colors**: 
+- **Secondary Colors**:
   - Deep Black `oklch(0.08 0 0)` - Pure darkness for backgrounds, creating infinite depth and focus
   - Carbon Gray `oklch(0.12 0 0)` - Slightly elevated surfaces for cards and modals
   - Steel Gray `oklch(0.22 0 0)` - Borders and subtle dividers
@@ -220,7 +239,6 @@ Animations communicate system responsiveness and AI processing - snappy, purpose
   - Custom `AgentInsights` with pulsing magenta border showing living AI system
   - Custom `PredictionBadge` with color-coded intensity (green/yellow/orange)
   - Custom `AdvancedAnalytics` with left-border color coding and tabular numbers
-  
 - **Customizations**:
   - Cyber grid background (repeating-linear-gradient) at 20px intervals
   - Scanline overlay on cards (repeating gradient at 3px)
@@ -230,7 +248,6 @@ Animations communicate system responsiveness and AI processing - snappy, purpose
   - Minimal border-radius (0.125rem) for brutalist sharpness
   - Uppercase tracking-wide labels throughout
   - Tabular numbers for metrics
-  
 - **States**:
   - Input: Default (2px steel border) → Focus (cyan glow + scanline) → Error (red border pulse) → Success (brief green)
   - Button: Default (cyan glow) → Hover (light sweep + elevation) → Active (no translate) → Loading (pulse)
@@ -238,7 +255,6 @@ Animations communicate system responsiveness and AI processing - snappy, purpose
   - Copy Button: Default (copy icon) → Success (checkmark + spring animation) → Reset (2s)
   - Agent Tasks: Pending (mono badge) → Running (magenta pulse) → Completed (checkmark)
   - Prediction Badge: High (green glow) → Med (yellow) → Low (orange) with uppercase labels
-  
 - **Icon Selection**:
   - `LinkIcon` with terminal flicker for branding
   - `Robot` with magenta pulse for AI agent kernel
@@ -252,14 +268,12 @@ Animations communicate system responsiveness and AI processing - snappy, purpose
   - `Fire` for high performance
   - `Clock` for temporal data
   - All icons at 12-16px for precision
-  
 - **Spacing**:
   - Page padding: `px-6 py-8` mobile, `px-8 py-12` desktop
   - Card gaps: `gap-3` for tight technical grouping
   - Section margins: `mb-8` for clear separation
   - Grid: 20px cyber grid background
   - Analytics grid: 2 columns mobile, 4 columns desktop with `gap-3`
-  
 - **Mobile**:
   - Single column layout
   - Input/button stack on small screens
