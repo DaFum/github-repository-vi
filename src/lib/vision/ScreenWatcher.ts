@@ -1,9 +1,18 @@
+import { Lifecycle } from '../interfaces'
 import { pollinations } from '@/lib/pollinations'
 
-export class ScreenWatcher {
+export class ScreenWatcher implements Lifecycle {
   private stream: MediaStream | null = null
   private intervalId: NodeJS.Timeout | null = null
   private onAnalysisCallback?: (analysis: string) => void
+
+  async initialize() {
+    await this.startCapture()
+  }
+
+  dispose() {
+    this.stopCapture()
+  }
 
   async startCapture() {
     try {
@@ -81,3 +90,5 @@ export class ScreenWatcher {
     }
   }
 }
+
+export const createScreenWatcher = () => new ScreenWatcher()

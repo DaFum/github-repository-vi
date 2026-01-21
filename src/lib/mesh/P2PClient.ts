@@ -1,6 +1,7 @@
 // Placeholder for simple-peer types as we are using it via npm
 // In a real env, we'd install @types/simple-peer
 import SimplePeer from 'simple-peer'
+import { Lifecycle } from '../interfaces'
 
 export type PeerMessage = {
   type: 'handshake' | 'task_request' | 'task_response' | 'error'
@@ -8,7 +9,7 @@ export type PeerMessage = {
   payload: any
 }
 
-export class P2PClient {
+export class P2PClient implements Lifecycle {
   private peer: SimplePeer.Instance | null = null
   private isInitiator: boolean
   private onConnectCallback?: () => void
@@ -46,6 +47,13 @@ export class P2PClient {
         console.error('Failed to parse P2P message', e)
       }
     })
+  }
+
+  dispose() {
+    if (this.peer) {
+      this.peer.destroy()
+      this.peer = null
+    }
   }
 
   // To complete the handshake, we need to pass the other peer's signal data here
@@ -88,3 +96,5 @@ export class AgentHandshakeProtocol {
     }
   }
 }
+
+export const createP2PClient = (initiator: boolean) => new P2PClient(initiator)

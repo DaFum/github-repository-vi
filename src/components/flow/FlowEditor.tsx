@@ -17,8 +17,8 @@ import {
 } from '@phosphor-icons/react'
 import { graphEngine } from '@/lib/graph/GraphEngine'
 import { BlueprintRegistry } from '@/lib/store/BlueprintRegistry'
-import { P2PClient } from '@/lib/mesh/P2PClient'
-import { ScreenWatcher } from '@/lib/vision/ScreenWatcher'
+import { createP2PClient } from '@/lib/mesh/P2PClient'
+import { createScreenWatcher } from '@/lib/vision/ScreenWatcher'
 import { GeneticPrompt } from '@/lib/optimizer/GeneticPrompt'
 import { toast } from 'sonner'
 
@@ -54,12 +54,12 @@ const FlowCanvas = () => {
 
   const handleRun = () => {
     startExecution()
-    graphEngine.start()
+    graphEngine.initialize()
   }
 
   const handleStop = () => {
     stopExecution()
-    graphEngine.stop()
+    graphEngine.dispose()
   }
 
   const handleExport = () => BlueprintRegistry.exportBlueprint()
@@ -76,14 +76,14 @@ const FlowCanvas = () => {
   }
 
   const handleP2P = () => {
-    const p2p = new P2PClient(true)
+    const p2p = createP2PClient(true)
     p2p.initialize()
     toast.info('P2P Mesh Initialized (Console for Signal)')
   }
 
   const handleVision = () => {
-    const watcher = new ScreenWatcher()
-    watcher.startCapture()
+    const watcher = createScreenWatcher()
+    watcher.initialize()
     toast.info('Ocular Cortex Active')
   }
 
