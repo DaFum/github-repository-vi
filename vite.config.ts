@@ -24,4 +24,8 @@ export default defineConfig({
       '@': resolve(projectRoot, 'src'),
     },
   },
+  optimizeDeps: {
+    timeout: 60000,
+    include: ['@dnd-kit/core'],
+  },
 })
