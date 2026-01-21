@@ -28,6 +28,10 @@ export default defineConfig({
     timeout: 60000,
     include: ['@dnd-kit/core', '@dnd-kit/utilities'],
   },
+  define: {
+    // This shims the 'global' variable to 'globalThis' (supported by all modern browsers)
+    global: 'globalThis',
+  },
   server: {
     port: 5000,
     strictPort: true,
