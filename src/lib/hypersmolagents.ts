@@ -1,3 +1,5 @@
+import { pollinations } from './pollinations'
+
 type AgentTask = {
   id: string
   type: 'categorize' | 'health-check' | 'optimize' | 'analyze' | 'predict' | 'audit' | 'refine'
@@ -149,7 +151,6 @@ URL: ${url}
 Return ONLY the category name, nothing else.`
 
     try {
-      const { pollinations } = await import('./pollinations')
       const category = await pollinations.chat(
         [
           { role: 'system', content: 'You are a precise URL categorization agent.' },
@@ -196,7 +197,6 @@ Provide 3-5 actionable recommendations to improve link management, categorizatio
 
 The optimizationScore should be 0-100 based on current link organization quality.`
 
-    const { pollinations } = await import('./pollinations')
     const response = await pollinations.chat(
       [
         {
@@ -231,7 +231,6 @@ Identify patterns, trends, and insights about the user's link usage. Return as J
 
 Focus on actionable intelligence like most used categories, engagement patterns, or content preferences.`
 
-    const { pollinations } = await import('./pollinations')
     const response = await pollinations.chat(
       [
         { role: 'system', content: 'You are a data analytics expert. Return strictly valid JSON.' },
@@ -256,7 +255,6 @@ Consider factors like domain authority, content type, URL structure, and typical
 
 Score should be 0-100 (higher = more likely to be popular).`
 
-    const { pollinations } = await import('./pollinations')
     const response = await pollinations.chat(
       [
         {
@@ -278,7 +276,6 @@ Score should be 0-100 (higher = more likely to be popular).`
   private async auditContent(
     content: string
   ): Promise<{ flaws: string[]; riskLevel: 'low' | 'medium' | 'high'; critique: string }> {
-    const { pollinations } = await import('./pollinations')
     const prompt = `Audit the following content/plan for logical fallacies, safety risks, and hidden assumptions. Be ruthless.
 
 Content: "${content}"
@@ -316,11 +313,10 @@ Return JSON:
     content: string
     context: string
   }): Promise<{ finalContent: string; iterations: number; confidence: number }> {
-    const { pollinations } = await import('./pollinations')
+    const MAX_ITERATIONS = 3
     let currentDraft = content
     let confidence = 0
     let iterations = 0
-    const MAX_ITERATIONS = 3
 
     while (iterations < MAX_ITERATIONS && confidence < 90) {
       iterations++
