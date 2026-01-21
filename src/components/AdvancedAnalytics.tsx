@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { ChartLine, Link as LinkIcon, Fire, Clock } from '@phosphor-icons/react'
+import { useState } from 'react'
 
 type ShortenedLink = {
   id: string
@@ -16,9 +17,9 @@ type AdvancedAnalyticsProps = {
 }
 
 export function AdvancedAnalytics({ links }: AdvancedAnalyticsProps) {
-  if (links.length === 0) return null
+  const [now] = useState(() => Date.now())
 
-  const now = Date.now()
+  if (links.length === 0) return null
   const totalClicks = links.reduce((sum, link) => sum + link.clicks, 0)
   const avgClicks = totalClicks / links.length
   const topLink = links.reduce((max, link) => (link.clicks > max.clicks ? link : max), links[0])
