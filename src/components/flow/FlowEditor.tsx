@@ -1,15 +1,8 @@
-import { useCallback, useRef } from 'react'
-import {
-  ReactFlow,
-  Background,
-  Controls,
-  MiniMap,
-  ReactFlowProvider,
-  useReactFlow,
-} from '@xyflow/react'
+import { useRef } from 'react'
+import { ReactFlow, Background, Controls, MiniMap, ReactFlowProvider } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { useFlowStore } from '@/store/flowStore'
-import { nodeTypes, TriggerNode, AgentNode, ToolNode } from './CustomNodes'
+import { nodeTypes } from './CustomNodes'
 import { Sidebar } from './Sidebar'
 import { DndContext, DragEndEvent } from '@dnd-kit/core'
 import { Button } from '@/components/ui/button'
