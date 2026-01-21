@@ -24,7 +24,4 @@ export default defineConfig({
       '@': resolve(projectRoot, 'src'),
     },
   },
-  define: {
-    global: 'window',
-  },
 })
