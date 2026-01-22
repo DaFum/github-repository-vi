@@ -18,6 +18,8 @@ Initial environment setup requires running npm install to ensure all dependencie
 
 The project uses Vite as the build tool and development server.
 
+Vite dependency resolution errors (e.g., "Failed to resolve import") can occur even when dependencies are installed due to stale cache. Run npm run optimize or rm -rf node_modules/.vite to clear Vite's dependency optimization cache and resolve these issues.
+
 The project uses Prettier (.prettierrc) for code formatting with singleQuote: true, semi: false, and prettier-plugin-tailwindcss enabled.
 
 The 'Black Box Recorder' (src/lib/graph/HistoryRecorder.ts) tracks provenance and immutable state snapshots for debugging.
