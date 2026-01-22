@@ -3,6 +3,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import type { Artifact } from '@/lib/store/useVaultStore'
+import { useNavigationStore } from '@/lib/store/useNavigationStore'
+import { toast } from 'sonner'
 import {
   Trash,
   ArrowSquareOut,
@@ -26,20 +28,20 @@ type ArtifactCardProps = {
  * - Actions (remix, copy, delete, open)
  */
 export function ArtifactCard({ artifact, onRemove }: ArtifactCardProps) {
+  const { navigateToArtifact } = useNavigationStore()
+
   const handleRemix = () => {
-    // TODO: Implement remix functionality
-    // This should restore the artifact's settings to the respective module
-    console.log('Remix artifact:', artifact)
+    navigateToArtifact(artifact)
+    toast.success('Opening in editor...')
   }
 
   const handleCopy = () => {
-    // Copy artifact data to clipboard
     navigator.clipboard.writeText(JSON.stringify(artifact, null, 2))
+    toast.success('Copied to clipboard')
   }
 
   const handleOpen = () => {
-    // TODO: Navigate to respective module with artifact loaded
-    console.log('Open artifact:', artifact)
+    navigateToArtifact(artifact)
   }
 
   const getTypeIcon = () => {

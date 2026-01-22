@@ -23,14 +23,15 @@ import { ArtifactVault } from '@/features/vault/ArtifactVault'
 import { PollenStatus } from '@/components/PollenStatus'
 import { hyperSmolAgents } from '@/lib/hypersmolagents'
 import { useAetherStore } from '@/lib/store/useAetherStore'
+import { useNavigationStore } from '@/lib/store/useNavigationStore'
 
 type ActiveModule = 'synapse' | 'canvas' | 'chat' | 'vault'
 
 function App() {
-  const [activeModule, setActiveModule] = useState<ActiveModule>('synapse')
   const [showSettings, setShowSettings] = useState(false)
   const [apiKey, setApiKey] = useState('')
   const { initialize, setApiKey: setStoreApiKey } = useAetherStore()
+  const { activeModule, setActiveModule } = useNavigationStore()
 
   useEffect(() => {
     // Initialize systems

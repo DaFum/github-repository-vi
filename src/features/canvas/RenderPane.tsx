@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button'
 import { ModelSelector } from '@/components/ModelSelector'
 import { Label } from '@/components/ui/label'
 import { pollinations } from '@/lib/pollinations'
-import { CircleNotch, Sparkle, Download, Warning } from '@phosphor-icons/react'
+import { useVaultStore } from '@/lib/store/useVaultStore'
+import { CircleNotch, Sparkle, Download, Warning, Archive } from '@phosphor-icons/react'
+import { toast } from 'sonner'
 
 type RenderPaneProps = {
   prompt: string
@@ -24,6 +26,7 @@ export function RenderPane({ prompt, model, onModelChange, seed }: RenderPanePro
   const [renderUrl, setRenderUrl] = useState<string | null>(null)
   const [isRendering, setIsRendering] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { addArtifact } = useVaultStore()
 
   const generateRender = async () => {
     if (!prompt.trim()) {
@@ -48,6 +51,22 @@ export function RenderPane({ prompt, model, onModelChange, seed }: RenderPanePro
       img.onload = () => {
         setRenderUrl(url)
         setIsRendering(false)
+
+        // Auto-save to vault
+        addArtifact({
+          type: 'image',
+          title: prompt.slice(0, 50),
+          description: `Generated with ${model}`,
+          model,
+          tags: ['canvas', 'hq-render'],
+          data: {
+            imageUrl: url,
+            prompt,
+            seed,
+            resolution: '1024x1024',
+          },
+        })
+        toast.success('Saved to Vault!', { icon: <Archive size={16} /> })
       }
       img.onerror = () => {
         setError('Failed to generate render')

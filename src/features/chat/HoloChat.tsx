@@ -9,7 +9,9 @@ import { BackgroundCanvas } from './BackgroundCanvas'
 import { ModelSelector } from '@/components/ModelSelector'
 import { pollinations } from '@/lib/pollinations'
 import { parseVisualizationCommands } from './VisualizationEngine'
-import { PaperPlaneRight, Sparkle, CircleNotch } from '@phosphor-icons/react'
+import { useVaultStore } from '@/lib/store/useVaultStore'
+import { PaperPlaneRight, Sparkle, CircleNotch, FloppyDisk } from '@phosphor-icons/react'
+import { toast } from 'sonner'
 
 export type Message = {
   id: string
@@ -44,6 +46,7 @@ export function HoloChat() {
   )
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const { addArtifact } = useVaultStore()
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -135,6 +138,31 @@ Be conversational and helpful. Use markdown for formatting.`
     }
   }
 
+  const saveConversation = () => {
+    if (messages.length === 0) {
+      toast.error('No conversation to save')
+      return
+    }
+
+    const firstUserMessage = messages.find((m) => m.role === 'user')
+    const title = firstUserMessage ? firstUserMessage.content.slice(0, 50) : 'Chat Conversation'
+
+    addArtifact({
+      type: 'chat',
+      title,
+      description: `${messages.length} messages with ${model}`,
+      model,
+      tags: ['holo-chat', 'conversation'],
+      data: {
+        messages,
+        messageCount: messages.length,
+        lastMessage: messages[messages.length - 1]?.timestamp,
+      },
+    })
+
+    toast.success('Conversation saved to Vault!')
+  }
+
   return (
     <div className="border-primary/30 glass-card relative h-[calc(100vh-280px)] min-h-[600px] overflow-hidden rounded-lg border-2">
       {/* Background Visualization */}
@@ -154,8 +182,20 @@ Be conversational and helpful. Use markdown for formatting.`
             </span>
           </div>
 
-          <div className="w-48">
-            <ModelSelector type="text" value={model} onChange={setModel} />
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={saveConversation}
+              disabled={messages.length === 0}
+              size="sm"
+              variant="ghost"
+              className="font-mono text-xs uppercase"
+            >
+              <FloppyDisk size={16} className="mr-1" />
+              SAVE
+            </Button>
+            <div className="w-48">
+              <ModelSelector type="text" value={model} onChange={setModel} />
+            </div>
           </div>
         </div>
 
