@@ -5,7 +5,7 @@ This project is configured for automatic deployment to GitHub Pages via GitHub A
 ## 📍 Live URL
 
 Once deployed, your application will be available at:
-**https://dafum.github.io/github-repository-vi/**
+**<https://dafum.github.io/github-repository-vi/>**
 
 ## ⚙️ Configuration
 
@@ -38,7 +38,7 @@ The following changes have been made to enable GitHub Pages deployment:
 
 Before the first deployment, you need to enable GitHub Pages in your repository settings:
 
-1. Go to your repository: https://github.com/DaFum/github-repository-vi
+1. Go to your repository: <https://github.com/DaFum/github-repository-vi>
 2. Navigate to **Settings** → **Pages**
 3. Under **Source**, select:
    - Source: **GitHub Actions**
@@ -58,7 +58,7 @@ git push origin main
 The GitHub Actions workflow will:
 1. Build the application
 2. Upload the `dist` folder to GitHub Pages
-3. Deploy to https://dafum.github.io/github-repository-vi/
+3. Deploy to <https://dafum.github.io/github-repository-vi/>
 
 ### Manual Deployment
 You can also trigger a deployment manually:
