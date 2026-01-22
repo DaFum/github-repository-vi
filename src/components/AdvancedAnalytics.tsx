@@ -20,26 +20,37 @@ type AdvancedAnalyticsProps = {
 export function AdvancedAnalytics({ links, totalClicks }: AdvancedAnalyticsProps) {
   const [now] = useState(() => Date.now())
 
+  const { avgClicks, topLink, recentLinks, topCategory, clickRate, categorizedRate } =
+    useMemo(() => {
+      if (links.length === 0) {
+        return {
+          avgClicks: 0,
+          topLink: null,
+          recentLinks: 0,
+          topCategory: null,
+          clickRate: 0,
+          categorizedRate: 0,
+        }
+      }
+      const avgClicks = totalClicks / links.length
+      const topLink = links.reduce((max, link) => (link.clicks > max.clicks ? link : max), links[0])
+      const recentLinks = links.filter((l) => now - l.createdAt < 604800000).length
+      const categoryStats = links.reduce(
+        (acc, link) => {
+          const cat = link.category || 'Uncategorized'
+          acc[cat] = (acc[cat] || 0) + 1
+          return acc
+        },
+        {} as Record<string, number>
+      )
+      const topCategory = Object.entries(categoryStats).sort((a, b) => b[1] - a[1])[0]
+
+      const clickRate = (links.filter((l) => l.clicks > 0).length / links.length) * 100
+      const categorizedRate = (links.filter((l) => l.category).length / links.length) * 100
+      return { avgClicks, topLink, recentLinks, topCategory, clickRate, categorizedRate }
+    }, [links, totalClicks, now])
+
   if (links.length === 0) return null
-
-  const { avgClicks, topLink, recentLinks, topCategory, clickRate, categorizedRate } = useMemo(() => {
-    const avgClicks = totalClicks / links.length
-    const topLink = links.reduce((max, link) => (link.clicks > max.clicks ? link : max), links[0])
-    const recentLinks = links.filter((l) => now - l.createdAt < 604800000).length
-    const categoryStats = links.reduce(
-      (acc, link) => {
-        const cat = link.category || 'Uncategorized'
-        acc[cat] = (acc[cat] || 0) + 1
-        return acc
-      },
-      {} as Record<string, number>
-    )
-    const topCategory = Object.entries(categoryStats).sort((a, b) => b[1] - a[1])[0]
-
-    const clickRate = (links.filter((l) => l.clicks > 0).length / links.length) * 100
-    const categorizedRate = (links.filter((l) => l.category).length / links.length) * 100
-    return { avgClicks, topLink, recentLinks, topCategory, clickRate, categorizedRate }
-  }, [links, totalClicks, now])
 
   return (
     <motion.div
@@ -97,7 +108,9 @@ export function AdvancedAnalytics({ links, totalClicks }: AdvancedAnalyticsProps
             animate={{ scale: 1 }}
             transition={{ type: 'spring', delay: 0.3 }}
           >
-            <div className="text-foreground text-3xl font-black tabular-nums">{topLink.clicks}</div>
+            <div className="text-foreground text-3xl font-black tabular-nums">
+              {topLink?.clicks || 0}
+            </div>
           </motion.div>
         </div>
         <div className="text-muted-foreground text-[10px] font-bold tracking-wider uppercase">

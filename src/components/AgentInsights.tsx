@@ -38,7 +38,13 @@ export function AgentInsights({ links }: AgentInsightsProps) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setAgentStatus(hyperSmolAgents.getQueueStatus())
+      setAgentStatus((prev) => {
+        const next = hyperSmolAgents.getQueueStatus()
+        if (prev.pending === next.pending && prev.running === next.running) {
+          return prev
+        }
+        return next
+      })
     }, 1000)
 
     return () => clearInterval(interval)

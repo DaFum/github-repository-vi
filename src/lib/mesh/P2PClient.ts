@@ -31,7 +31,9 @@ export class P2PClient implements Lifecycle {
 
     this.peer.on('signal', (data) => {
       // In a real app, this signal data is what you copy-paste via WhatsApp/Link
-      console.log('SIGNAL DATA (Share this):', JSON.stringify(data))
+      if (process.env.NODE_ENV === 'development') {
+        console.log('SIGNAL DATA (Share this):', JSON.stringify(data))
+      }
     })
 
     this.peer.on('connect', () => {
