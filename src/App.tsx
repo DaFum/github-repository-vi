@@ -33,6 +33,7 @@ import {
   Heart,
   Tag,
   Pulse,
+  Robot,
 } from '@phosphor-icons/react'
 import { AgentInsights } from '@/components/AgentInsights'
 import { PredictionBadge } from '@/components/PredictionBadge'
@@ -473,7 +474,7 @@ function App() {
                   className={`gap-2 font-mono text-xs uppercase ${showBuilder ? 'bg-primary/20 border-primary text-primary' : 'text-muted-foreground'}`}
                 >
                   <Circuitry size={18} />
-                  {showBuilder ? 'BUILDER' : 'BUILDER'}
+                  {showBuilder ? 'CLOSE_BUILDER' : 'OPEN_BUILDER'}
                 </Button>
                 <Button
                   variant="outline"
@@ -531,15 +532,17 @@ function App() {
                           CREATE_LINKS_TO_UNLOCK_AI_ANALYSIS
                         </p>
                         <div className="mt-4 flex flex-wrap justify-center gap-2">
-                          <Badge variant="outline" className="font-mono text-[10px] uppercase">
-                            PATTERN_ANALYSIS
-                          </Badge>
-                          <Badge variant="outline" className="font-mono text-[10px] uppercase">
-                            OPTIMIZATION
-                          </Badge>
-                          <Badge variant="outline" className="font-mono text-[10px] uppercase">
-                            DEVIL'S_ADVOCATE
-                          </Badge>
+                          {['PATTERN_ANALYSIS', 'OPTIMIZATION', "DEVIL'S_ADVOCATE"].map(
+                            (feature) => (
+                              <Badge
+                                key={feature}
+                                variant="outline"
+                                className="font-mono text-[10px] uppercase"
+                              >
+                                {feature}
+                              </Badge>
+                            )
+                          )}
                         </div>
                       </div>
                     </Card>
