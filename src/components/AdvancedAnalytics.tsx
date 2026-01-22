@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { ChartLine, Link as LinkIcon, Fire, Clock } from '@phosphor-icons/react'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 
 type ShortenedLink = {
   id: string
@@ -14,28 +14,32 @@ type ShortenedLink = {
 
 type AdvancedAnalyticsProps = {
   links: ShortenedLink[]
+  totalClicks: number
 }
 
-export function AdvancedAnalytics({ links }: AdvancedAnalyticsProps) {
+export function AdvancedAnalytics({ links, totalClicks }: AdvancedAnalyticsProps) {
   const [now] = useState(() => Date.now())
 
   if (links.length === 0) return null
-  const totalClicks = links.reduce((sum, link) => sum + link.clicks, 0)
-  const avgClicks = totalClicks / links.length
-  const topLink = links.reduce((max, link) => (link.clicks > max.clicks ? link : max), links[0])
-  const recentLinks = links.filter((l) => now - l.createdAt < 604800000).length
-  const categoryStats = links.reduce(
-    (acc, link) => {
-      const cat = link.category || 'Uncategorized'
-      acc[cat] = (acc[cat] || 0) + 1
-      return acc
-    },
-    {} as Record<string, number>
-  )
-  const topCategory = Object.entries(categoryStats).sort((a, b) => b[1] - a[1])[0]
 
-  const clickRate = (links.filter((l) => l.clicks > 0).length / links.length) * 100
-  const categorizedRate = (links.filter((l) => l.category).length / links.length) * 100
+  const { avgClicks, topLink, recentLinks, topCategory, clickRate, categorizedRate } = useMemo(() => {
+    const avgClicks = totalClicks / links.length
+    const topLink = links.reduce((max, link) => (link.clicks > max.clicks ? link : max), links[0])
+    const recentLinks = links.filter((l) => now - l.createdAt < 604800000).length
+    const categoryStats = links.reduce(
+      (acc, link) => {
+        const cat = link.category || 'Uncategorized'
+        acc[cat] = (acc[cat] || 0) + 1
+        return acc
+      },
+      {} as Record<string, number>
+    )
+    const topCategory = Object.entries(categoryStats).sort((a, b) => b[1] - a[1])[0]
+
+    const clickRate = (links.filter((l) => l.clicks > 0).length / links.length) * 100
+    const categorizedRate = (links.filter((l) => l.category).length / links.length) * 100
+    return { avgClicks, topLink, recentLinks, topCategory, clickRate, categorizedRate }
+  }, [links, totalClicks, now])
 
   return (
     <motion.div

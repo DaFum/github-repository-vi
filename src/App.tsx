@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
@@ -351,7 +351,9 @@ function App() {
     return matchesSearch && matchesTab
   })
 
-  const totalClicks = (links || []).reduce((sum, link) => sum + link.clicks, 0)
+  const totalClicks = useMemo(() => {
+    return (links || []).reduce((sum, link) => sum + link.clicks, 0)
+  }, [links])
 
   // Listener for agent task completions
   useEffect(() => {
@@ -526,7 +528,9 @@ function App() {
               </motion.div>
             ) : (
               <>
-                {links && links.length > 0 && <AdvancedAnalytics links={links} />}
+                {links && links.length > 0 && (
+                  <AdvancedAnalytics links={links} totalClicks={totalClicks} />
+                )}
 
                 {links && links.length > 0 && (
                   <div className="mb-8">
