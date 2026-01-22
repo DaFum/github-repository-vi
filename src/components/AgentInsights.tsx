@@ -64,7 +64,7 @@ export function AgentInsights({ links }: AgentInsightsProps) {
     })
 
     try {
-      const taskId = await hyperSmolAgents.enqueueTask('analyze', links, 8)
+      await hyperSmolAgents.enqueueTask('analyze', links, 8)
 
       const checkResult = setInterval(async () => {
         const metrics = hyperSmolAgents.getMetrics()
@@ -91,7 +91,7 @@ export function AgentInsights({ links }: AgentInsightsProps) {
           description: 'New insights discovered',
         })
       }, 2000)
-    } catch (error) {
+    } catch {
       setIsAnalyzing(false)
       toast.error('Analysis failed', {
         description: 'Please try again',
@@ -135,7 +135,7 @@ export function AgentInsights({ links }: AgentInsightsProps) {
           description: `Risk Level: ${mockAudit.riskLevel.toUpperCase()}`,
         })
       }, 3000)
-    } catch (error) {
+    } catch {
       setIsAuditing(false)
       toast.error('Audit failed')
     }
@@ -173,7 +173,7 @@ export function AgentInsights({ links }: AgentInsightsProps) {
           description: `Score: ${mockResult.optimizationScore}/100`,
         })
       }, 2500)
-    } catch (error) {
+    } catch {
       setIsOptimizing(false)
       toast.error('Optimization failed', {
         description: 'Please try again',

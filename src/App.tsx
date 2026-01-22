@@ -16,7 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import {
   Lightning,
@@ -29,7 +29,6 @@ import {
   MagnifyingGlass,
   Download,
   QrCode,
-  Sparkle,
   Brain,
   Heart,
   Tag,
@@ -114,7 +113,7 @@ function App() {
     )
 
     try {
-      const response = await fetch(link.originalUrl, {
+      await fetch(link.originalUrl, {
         method: 'HEAD',
         mode: 'no-cors',
       })
@@ -134,7 +133,7 @@ function App() {
       toast.success('Link is healthy!', {
         description: 'URL is accessible',
       })
-    } catch (error) {
+    } catch {
       setLinks((currentLinks) =>
         (currentLinks || []).map((l) =>
           l.id === linkId
@@ -382,7 +381,7 @@ function App() {
     })
 
     return () => unsubscribe()
-  }, [])
+  }, [setLinks])
 
   // To truly fix the "Split Brain", we need the Agent to be able to update the data.
   // But the Agent is in a plain class file.
@@ -402,7 +401,7 @@ function App() {
       }
     }
     migrateOldLinks()
-  }, [])
+  }, [links, setLinks])
 
   const formatDate = (timestamp: number): string => {
     const date = new Date(timestamp)

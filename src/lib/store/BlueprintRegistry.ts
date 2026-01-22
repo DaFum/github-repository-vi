@@ -1,8 +1,7 @@
 import JSZip from 'jszip'
-import { saveAs } from 'file-saver' // We need file-saver, let's assume it's available or use primitive DOM
 import { useFlowStore } from '@/store/flowStore'
 
-// Polyfill saveAs if not available
+// Helper function to download blobs
 const downloadBlob = (blob: Blob, filename: string) => {
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
