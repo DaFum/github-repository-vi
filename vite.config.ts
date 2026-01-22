@@ -25,8 +25,16 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    timeout: 60000,
-    include: ['@dnd-kit/core', '@dnd-kit/utilities'],
+    timeout: 120000,
+    include: [
+      '@dnd-kit/core',
+      '@dnd-kit/utilities',
+      '@xyflow/react',
+      'zustand',
+      'jszip',
+      'simple-peer',
+    ],
+    force: false,
   },
   define: {
     // This shims the 'global' variable to 'globalThis' (supported by all modern browsers)
