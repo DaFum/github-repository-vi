@@ -24,7 +24,7 @@ type AgentTask = {
 
 type AgentMetrics = {
   tasksCompleted: number
-  tasksFaileds: number
+  tasksFailed: number
   averageTaskTime: number
   successRate: number
   lastOptimization: number
@@ -45,7 +45,7 @@ class HyperSmolAgents implements Lifecycle {
   private listeners: AgentEventListener[] = []
   private metrics: AgentMetrics = {
     tasksCompleted: 0,
-    tasksFaileds: 0,
+    tasksFailed: 0,
     averageTaskTime: 0,
     successRate: 100,
     lastOptimization: Date.now(),
@@ -156,7 +156,7 @@ class HyperSmolAgents implements Lifecycle {
       task.status = 'failed'
       task.error = error instanceof Error ? error.message : 'Unknown error'
       task.completedAt = Date.now()
-      this.metrics.tasksFaileds++
+      this.metrics.tasksFailed++
       console.error(`Task ${task.id} failed:`, error)
 
       this.notifyListeners(task)
@@ -171,7 +171,7 @@ class HyperSmolAgents implements Lifecycle {
   }
 
   private updateMetrics(taskDuration: number): void {
-    const totalTasks = this.metrics.tasksCompleted + this.metrics.tasksFaileds
+    const totalTasks = this.metrics.tasksCompleted + this.metrics.tasksFailed
     this.metrics.averageTaskTime =
       (this.metrics.averageTaskTime * (totalTasks - 1) + taskDuration) / totalTasks
     this.metrics.successRate = (this.metrics.tasksCompleted / totalTasks) * 100

@@ -52,8 +52,8 @@ export type NodeDefinition = {
   type: string
   label: string
   description?: string
-  inputs: z.ZodObject<any> // Input Schema - keep any for ZodObject generic
-  outputs: z.ZodObject<any> // Output Schema - keep any for ZodObject generic
+  inputs: z.ZodObject<z.ZodRawShape> // Input Schema
+  outputs: z.ZodObject<z.ZodRawShape> // Output Schema
   defaultConfig?: Record<string, unknown>
 }
 

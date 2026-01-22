@@ -1,5 +1,5 @@
 import { Handle, Position, NodeProps } from '@xyflow/react'
-import { AgentNodeData, useFlowStore } from '@/store/flowStore'
+import { useFlowStore } from '@/store/flowStore'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Lightning, Robot, Wrench, Warning } from '@phosphor-icons/react'
