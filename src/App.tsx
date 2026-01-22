@@ -211,9 +211,10 @@ function App() {
       description: `Checking ${links.length} links`,
     })
 
-    for (const link of links) {
-      await checkLinkHealth(link.id)
-      await new Promise((resolve) => setTimeout(resolve, 300))
+    const BATCH_SIZE = 5
+    for (let i = 0; i < links.length; i += BATCH_SIZE) {
+      const batch = links.slice(i, i + BATCH_SIZE)
+      await Promise.all(batch.map((link) => checkLinkHealth(link.id)))
     }
 
     setIsCheckingHealth(false)
@@ -337,19 +338,23 @@ function App() {
     })
   }
 
-  const filteredLinks = (links || []).filter((link) => {
-    const matchesSearch =
-      searchQuery.trim() === '' ||
-      link.originalUrl.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      link.shortCode.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredLinks = useMemo(
+    () =>
+      (links || []).filter((link) => {
+        const matchesSearch =
+          searchQuery.trim() === '' ||
+          link.originalUrl.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          link.shortCode.toLowerCase().includes(searchQuery.toLowerCase())
 
-    const matchesTab =
-      activeTab === 'all' ||
-      (activeTab === 'recent' && now - link.createdAt < 86400000) ||
-      (activeTab === 'popular' && link.clicks > 0)
+        const matchesTab =
+          activeTab === 'all' ||
+          (activeTab === 'recent' && now - link.createdAt < 86400000) ||
+          (activeTab === 'popular' && link.clicks > 0)
 
-    return matchesSearch && matchesTab
-  })
+        return matchesSearch && matchesTab
+      }),
+    [links, searchQuery, activeTab, now]
+  )
 
   const totalClicks = useMemo(() => {
     return (links || []).reduce((sum, link) => sum + link.clicks, 0)
@@ -357,61 +362,33 @@ function App() {
 
   // Listener for agent task completions
   useEffect(() => {
-    const interval = setInterval(() => {
-      const metrics = hyperSmolAgents.getMetrics()
-      if (metrics.tasksCompleted > 0) {
-        // This is a naive polling mechanism. In a real event-driven architecture,
-        // we would subscribe to the agent kernel events.
-        // For now, since HyperSmolAgents doesn't emit events, we rely on the
-        // fact that React re-renders might catch updates or we need a way to
-        // pull results back.
-        // However, HyperSmolAgents currently stores results in memory but doesn't
-        // write back to the KV store. To make this truly work "Async First",
-        // we need to bridge the gap.
-        // Since the requirement is to use the Agent Kernel, we should ideally
-        // have the Agent Kernel update the state directly or expose a way to
-        // get results.
-        // Given constraints, I will add a simple poll to check if results are ready
-        // and update the local state. But HyperSmolAgents doesn't expose a way
-        // to retrieve specific task results by ID easily after completion without
-        // keeping track of task IDs.
-        // Optimization: The Agent Kernel should arguably take a callback or
-        // we pass the setLinks setter to it? No, that violates separation.
-        // Workaround: We will let the "Optimistic UI" be the driver.
-        // The user sees the task is queued.
-        // We will add a small modification to HyperSmolAgents or a helper here
-        // to handle the result.
-        // For this refactor step, I will simplify:
-        // The App will just fire and forget.
-        // *Self-Correction*: If I fire and forget, the UI never updates with categories.
-        // I need to fetch the results.
-      }
-    }, 1000)
+    const unsubscribe = hyperSmolAgents.subscribe((task) => {
+      if (task.status === 'completed' && task.type === 'categorize') {
+        const url = task.payload as string
+        const category = task.result as string
 
-    return () => clearInterval(interval)
+        setLinks((currentLinks) => {
+          if (!currentLinks) return currentLinks
+          return currentLinks.map((l) => {
+            if (l.originalUrl === url) {
+              return { ...l, category }
+            }
+            return l
+          })
+        })
+
+        toast.success('Categorized', { description: `${url} -> ${category}` })
+      }
+    })
+
+    return () => unsubscribe()
   }, [])
 
   // To truly fix the "Split Brain", we need the Agent to be able to update the data.
   // But the Agent is in a plain class file.
   // I will inject a "result handler" pattern here locally.
-
-  useEffect(() => {
-    // Override the executeTask method or hook into it? No, too hacky.
-    // I will modify `enqueueTask` to accept a callback in the future?
-    // For now, I will add a polling loop that effectively checks for updates
-    // if I had a way to know.
-    // Actually, the previous implementation was doing `then(...)`.
-    // I should restore that pattern but WITHOUT the duplicate logic.
-    // The `enqueueTask` returns a Promise<string> (id).
-    // The `executeTask` is void.
-    // I will wrap the enqueue with a poller for that specific task ID in a separate helper function?
-    // Or I can make `enqueueTask` return the result promise?
-    // The `AgentKernel` structure is "fire and forget" processing queue.
-    // Let's modify `handleShortenUrl` to wait for the result in a non-blocking way
-    // or just rely on the user manual refresh? No, that's bad UX.
-    // I will patch the `enqueueTask` usage to poll for the result of THAT task.
-    // But `HyperSmolAgents` doesn't expose `getTaskResult`.
-  }, [])
+  // SOLUTION: We implemented an event subscription model above (useEffect with subscribe).
+  // This allows the Agent Kernel to notify the UI when tasks complete, eliminating the split brain.
 
   useEffect(() => {
     const migrateOldLinks = () => {

@@ -37,9 +37,12 @@ type AgentMetrics = {
  * asynchronous micro-intelligences to perform tasks without blocking the
  * main thread, mimicking a living organism's autonomic nervous system.
  */
+type AgentEventListener = (task: AgentTask) => void
+
 class HyperSmolAgents implements Lifecycle {
   private taskQueue: AgentTask[] = []
   private runningTasks: Map<string, AgentTask> = new Map()
+  private listeners: AgentEventListener[] = []
   private metrics: AgentMetrics = {
     tasksCompleted: 0,
     tasksFaileds: 0,
@@ -48,7 +51,6 @@ class HyperSmolAgents implements Lifecycle {
     lastOptimization: Date.now(),
   }
   private maxConcurrent = 3
-  private isProcessing = false
   private isDisposed = false
 
   // Agent instances
@@ -71,8 +73,25 @@ class HyperSmolAgents implements Lifecycle {
     this.isDisposed = true
     this.taskQueue = []
     this.runningTasks.clear()
-    this.isProcessing = false
+    this.listeners = []
     console.log('HyperSmolAgents disposed')
+  }
+
+  subscribe(listener: AgentEventListener): () => void {
+    this.listeners.push(listener)
+    return () => {
+      this.listeners = this.listeners.filter((l) => l !== listener)
+    }
+  }
+
+  private notifyListeners(task: AgentTask) {
+    this.listeners.forEach((listener) => {
+      try {
+        listener(task)
+      } catch (e) {
+        console.error('Error in agent listener:', e)
+      }
+    })
   }
 
   async enqueueTask(type: AgentTask['type'], payload: unknown, priority = 5): Promise<string> {
@@ -92,30 +111,21 @@ class HyperSmolAgents implements Lifecycle {
     this.taskQueue.push(task)
     this.taskQueue.sort((a, b) => b.priority - a.priority)
 
-    if (!this.isProcessing) {
-      this.processQueue()
-    }
+    this.processQueue()
 
     return task.id
   }
 
-  private async processQueue(): Promise<void> {
-    if (this.isProcessing || this.isDisposed) return
-    this.isProcessing = true
+  private processQueue(): void {
+    if (this.isDisposed) return
 
-    while ((this.taskQueue.length > 0 || this.runningTasks.size > 0) && !this.isDisposed) {
-      while (this.runningTasks.size < this.maxConcurrent && this.taskQueue.length > 0) {
-        if (this.isDisposed) break
-        const task = this.taskQueue.shift()!
-        task.status = 'running'
-        this.runningTasks.set(task.id, task)
-        this.executeTask(task)
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 100))
+    while (this.runningTasks.size < this.maxConcurrent && this.taskQueue.length > 0) {
+      if (this.isDisposed) break
+      const task = this.taskQueue.shift()!
+      task.status = 'running'
+      this.runningTasks.set(task.id, task)
+      this.executeTask(task)
     }
-
-    this.isProcessing = false
   }
 
   private async executeTask(task: AgentTask): Promise<void> {
@@ -140,16 +150,23 @@ class HyperSmolAgents implements Lifecycle {
       if (this.metrics.tasksCompleted % 10 === 0) {
         await this.selfOptimize()
       }
+
+      this.notifyListeners(task)
     } catch (error) {
       task.status = 'failed'
       task.error = error instanceof Error ? error.message : 'Unknown error'
       task.completedAt = Date.now()
       this.metrics.tasksFaileds++
       console.error(`Task ${task.id} failed:`, error)
+
+      this.notifyListeners(task)
     } finally {
       const duration = Date.now() - startTime
       this.updateMetrics(duration)
       this.runningTasks.delete(task.id)
+
+      // Trigger next task processing
+      this.processQueue()
     }
   }
 
@@ -173,14 +190,21 @@ class HyperSmolAgents implements Lifecycle {
 
   async selfOptimize(): Promise<void> {
     const metrics = this.getMetrics()
+    let changed = false
 
     if (metrics.averageTaskTime > 3000 && this.maxConcurrent > 1) {
       this.maxConcurrent = Math.max(1, this.maxConcurrent - 1)
+      changed = true
     } else if (metrics.averageTaskTime < 1000 && this.maxConcurrent < 5) {
       this.maxConcurrent = Math.min(5, this.maxConcurrent + 1)
+      changed = true
     }
 
     this.metrics.lastOptimization = Date.now()
+
+    if (changed) {
+      this.processQueue()
+    }
   }
 }
 
