@@ -6,6 +6,9 @@ import { nodeTypes } from './CustomNodes'
 import { Sidebar } from './Sidebar'
 import { ArchitectPanel } from './ArchitectPanel'
 import { ExecutionTracker } from './ExecutionTracker'
+import { P2PMeshPanel } from '@/components/advanced/P2PMeshPanel'
+import { VisionPanel } from '@/components/advanced/VisionPanel'
+import { GeneticPanel } from '@/components/advanced/GeneticPanel'
 import { DndContext } from '@dnd-kit/core'
 import { Button } from '@/components/ui/button'
 import {
@@ -22,7 +25,6 @@ import {
 import { graphEngine } from '@/lib/graph/GraphEngine'
 import { useFlowDragDrop } from '@/hooks/useFlowDragDrop'
 import { useFlowFileOperations } from '@/hooks/useFlowFileOperations'
-import { useFlowTools } from '@/hooks/useFlowTools'
 
 const FlowCanvas = () => {
   const {
@@ -38,11 +40,13 @@ const FlowCanvas = () => {
 
   const [showTracker, setShowTracker] = useState(false)
   const [showArchitect, setShowArchitect] = useState(false)
+  const [showP2P, setShowP2P] = useState(false)
+  const [showVision, setShowVision] = useState(false)
+  const [showGenetic, setShowGenetic] = useState(false)
 
   const { handleDragEnd } = useFlowDragDrop()
   const { fileInputRef, handleExport, handleImportClick, handleFileChange } =
     useFlowFileOperations()
-  const { handleP2P, handleVision, handleEvolve } = useFlowTools()
 
   const handleRun = () => {
     startExecution()
@@ -70,7 +74,7 @@ const FlowCanvas = () => {
             <div className="relative flex-1">
               <div className="absolute top-4 right-4 z-20 flex gap-2">
                 <Button
-                  onClick={handleP2P}
+                  onClick={() => setShowP2P(true)}
                   variant="outline"
                   size="icon"
                   title="Neural Mesh (P2P)"
@@ -79,7 +83,7 @@ const FlowCanvas = () => {
                   <ShareNetwork weight="bold" />
                 </Button>
                 <Button
-                  onClick={handleVision}
+                  onClick={() => setShowVision(true)}
                   variant="outline"
                   size="icon"
                   title="Ocular Cortex (Vision)"
@@ -88,7 +92,7 @@ const FlowCanvas = () => {
                   <Eye weight="bold" />
                 </Button>
                 <Button
-                  onClick={handleEvolve}
+                  onClick={() => setShowGenetic(true)}
                   variant="outline"
                   size="icon"
                   title="Genetic Optimizer"
@@ -177,6 +181,11 @@ const FlowCanvas = () => {
           </div>
         </div>
       </div>
+
+      {/* Advanced Feature Panels */}
+      <P2PMeshPanel isOpen={showP2P} onClose={() => setShowP2P(false)} />
+      <VisionPanel isOpen={showVision} onClose={() => setShowVision(false)} />
+      <GeneticPanel isOpen={showGenetic} onClose={() => setShowGenetic(false)} />
     </DndContext>
   )
 }
