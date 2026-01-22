@@ -21,10 +21,7 @@ class PollinationsClient implements Lifecycle {
   }
 
   initialize() {
-    // Try to load API key from local storage on initialization
-    if (typeof window !== 'undefined') {
-      this.apiKey = localStorage.getItem('pollinations_api_key')
-    }
+    // No-op: API key is kept only in memory and not persisted to localStorage
   }
 
   dispose() {
@@ -32,10 +29,8 @@ class PollinationsClient implements Lifecycle {
   }
 
   setApiKey(key: string) {
+    // Store API key only in memory; do not persist to localStorage to avoid clear-text storage
     this.apiKey = key
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('pollinations_api_key', key)
-    }
   }
 
   getApiKey(): string | null {
