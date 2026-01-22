@@ -19,6 +19,7 @@ import { Gear, Circuitry, Palette, ChatCircle, Archive } from '@phosphor-icons/r
 import { FlowEditor } from '@/components/flow/FlowEditor'
 import { LiveCanvas } from '@/features/canvas/LiveCanvas'
 import { HoloChat } from '@/features/chat/HoloChat'
+import { ArtifactVault } from '@/features/vault/ArtifactVault'
 import { PollenStatus } from '@/components/PollenStatus'
 import { hyperSmolAgents } from '@/lib/hypersmolagents'
 import { useAetherStore } from '@/lib/store/useAetherStore'
@@ -146,8 +147,7 @@ function App() {
                   </TabsTrigger>
                   <TabsTrigger
                     value="vault"
-                    disabled
-                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-2 text-[10px] tracking-wider uppercase opacity-50"
+                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-2 text-[10px] tracking-wider uppercase"
                   >
                     <Archive size={16} />
                     <span className="hidden sm:inline">VAULT</span>
@@ -180,17 +180,7 @@ function App() {
 
               {activeModule === 'chat' && <HoloChat />}
 
-              {activeModule === 'vault' && (
-                <div className="border-accent/30 glass-card flex h-[600px] items-center justify-center rounded-lg border-2 p-12">
-                  <div className="text-center">
-                    <Archive size={64} className="text-accent mx-auto mb-4 opacity-50" />
-                    <h3 className="mb-2 text-xl font-black uppercase">ARTIFACT_VAULT</h3>
-                    <p className="text-muted-foreground font-mono text-sm">
-                      <span className="text-primary">{'>'}</span> MODULE_IN_DEVELOPMENT
-                    </p>
-                  </div>
-                </div>
-              )}
+              {activeModule === 'vault' && <ArtifactVault />}
             </motion.div>
           </div>
         </div>
