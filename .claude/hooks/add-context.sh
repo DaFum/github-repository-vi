@@ -28,8 +28,22 @@ if [ -z "$SESSION_ID" ]; then
   exit 0
 fi
 
+# Use a per-user, restricted directory for marker files to avoid leaking session info
+BASE_TMP="${TMPDIR:-/tmp}"
+USER_NAME="${USER:-$(id -u)}"
+CONTEXT_DIR="${BASE_TMP}/claude_${USER_NAME}"
+
+# Ensure the context directory exists with secure permissions
+mkdir -p "$CONTEXT_DIR"
+chmod 700 "$CONTEXT_DIR" 2>/dev/null || true
+
+# Best-effort cleanup of stale marker files (older than 7 days)
+if command -v find >/dev/null 2>&1; then
+  find "$CONTEXT_DIR" -type f -name 'context_*' -mtime +7 -delete 2>/dev/null || true
+fi
+
 # Only add context once per session by checking for a marker file
-CONTEXT_MARKER="/tmp/claude_context_${SESSION_ID}"
+CONTEXT_MARKER="${CONTEXT_DIR}/context_${SESSION_ID}"
 
 if [ -f "$CONTEXT_MARKER" ]; then
   # Context already added for this session

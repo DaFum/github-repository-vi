@@ -36,11 +36,12 @@ This hook ensures that all npm dependencies are installed when you start working
 Adds relevant information about the project structure, tech stack, and development guidelines to help Claude better understand the project context.
 
 **Features**:
-- Runs once per session (uses session marker)
+- Runs once per session (uses secure per-user session marker)
 - Provides project overview (React, TypeScript, Vite)
 - Lists available npm scripts
 - Outlines coding standards and best practices
 - Minimal performance impact (exits quickly for subsequent prompts)
+- Automatically cleans up marker files older than 7 days
 
 **To Enable**: Copy the `UserPromptSubmit` section from `.claude/settings.example.json` to `.claude/settings.json`
 
@@ -236,6 +237,8 @@ claude --debug
 - Be careful with hooks that modify files or run commands
 - Don't commit sensitive information in hook scripts
 - Use `.claude/settings.local.json` for local-only hooks with secrets
+- Session marker files are stored in per-user directories with restricted permissions (700)
+- Old marker files are automatically cleaned up after 7 days
 
 ## Further Reading
 
