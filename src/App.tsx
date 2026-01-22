@@ -17,27 +17,30 @@ import { Input } from '@/components/ui/input'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Gear, Circuitry, Palette, ChatCircle, Archive } from '@phosphor-icons/react'
 import { FlowEditor } from '@/components/flow/FlowEditor'
+import { PollenStatus } from '@/components/PollenStatus'
 import { hyperSmolAgents } from '@/lib/hypersmolagents'
-import { pollinations } from '@/lib/pollinations'
+import { useAetherStore } from '@/lib/store/useAetherStore'
 
 type ActiveModule = 'synapse' | 'canvas' | 'chat' | 'vault'
 
 function App() {
   const [activeModule, setActiveModule] = useState<ActiveModule>('synapse')
   const [showSettings, setShowSettings] = useState(false)
-  const [apiKey, setApiKey] = useState(pollinations.getApiKey() || '')
+  const [apiKey, setApiKey] = useState('')
+  const { initialize, setApiKey: setStoreApiKey } = useAetherStore()
 
   useEffect(() => {
+    // Initialize systems
     hyperSmolAgents.initialize()
-    pollinations.initialize()
+    initialize()
 
     return () => {
       // Global singletons persist across re-renders
     }
-  }, [])
+  }, [initialize])
 
   const handleSaveSettings = () => {
-    pollinations.setApiKey(apiKey)
+    setStoreApiKey(apiKey)
     setShowSettings(false)
     toast.success('Settings Saved', {
       description: 'Pollinations API Key updated',
@@ -265,6 +268,9 @@ function App() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Pollen Balance Status */}
+        <PollenStatus />
       </div>
     </>
   )
