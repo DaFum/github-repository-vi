@@ -1,9 +1,9 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @layer base {
   * {
-    @apply border-border
+    @apply border-border;
   }
 }
 
@@ -13,7 +13,7 @@
 
   --card: oklch(0.12 0 0);
   --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.10 0 0);
+  --popover: oklch(0.1 0 0);
   --popover-foreground: oklch(0.98 0 0);
 
   --primary: oklch(0.78 0.25 168);
@@ -25,17 +25,17 @@
   --destructive: oklch(0.65 0.26 25);
   --destructive-foreground: oklch(0.98 0 0);
 
-  --muted: oklch(0.20 0 0);
-  --muted-foreground: oklch(0.50 0 0);
+  --muted: oklch(0.2 0 0);
+  --muted-foreground: oklch(0.5 0 0);
   --border: oklch(0.22 0 0);
   --input: oklch(0.18 0 0);
   --ring: oklch(0.78 0.25 168);
 
   --radius: 0.125rem;
-  
+
   --glow-cyan: oklch(0.78 0.25 168);
   --glow-magenta: oklch(0.75 0.28 330);
-  --glow-yellow: oklch(0.85 0.20 95);
+  --glow-yellow: oklch(0.85 0.2 95);
 }
 
 @theme {
@@ -72,7 +72,9 @@
   position: relative;
   overflow: hidden;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 20px var(--glow-cyan), 0 0 40px oklch(0.78 0.25 168 / 0.3);
+  box-shadow:
+    0 0 20px var(--glow-cyan),
+    0 0 40px oklch(0.78 0.25 168 / 0.3);
 }
 
 .gradient-button::before {
@@ -90,7 +92,10 @@
 
 .gradient-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 30px var(--glow-cyan), 0 0 60px oklch(0.78 0.25 168 / 0.4), 0 10px 30px oklch(0 0 0 / 0.5);
+  box-shadow:
+    0 0 30px var(--glow-cyan),
+    0 0 60px oklch(0.78 0.25 168 / 0.4),
+    0 10px 30px oklch(0 0 0 / 0.5);
 }
 
 .gradient-button:active {
@@ -98,7 +103,9 @@
 }
 
 .input-glow:focus-visible {
-  box-shadow: 0 0 0 2px var(--glow-cyan), 0 0 30px oklch(0.78 0.25 168 / 0.2);
+  box-shadow:
+    0 0 0 2px var(--glow-cyan),
+    0 0 30px oklch(0.78 0.25 168 / 0.2);
   border-color: var(--primary);
 }
 
@@ -112,27 +119,26 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: 
-    repeating-linear-gradient(
-      0deg,
-      oklch(0.78 0.25 168 / 0.03) 0px,
-      transparent 1px,
-      transparent 2px,
-      oklch(0.78 0.25 168 / 0.03) 3px
-    );
+  background: repeating-linear-gradient(
+    0deg,
+    oklch(0.78 0.25 168 / 0.03) 0px,
+    transparent 1px,
+    transparent 2px,
+    oklch(0.78 0.25 168 / 0.03) 3px
+  );
   pointer-events: none;
   opacity: 0.5;
 }
 
 .cyber-grid {
-  background-image: 
+  background-image:
     linear-gradient(oklch(0.78 0.25 168 / 0.1) 1px, transparent 1px),
     linear-gradient(90deg, oklch(0.78 0.25 168 / 0.1) 1px, transparent 1px);
   background-size: 20px 20px;
 }
 
 .neon-text {
-  text-shadow: 
+  text-shadow:
     0 0 10px var(--glow-cyan),
     0 0 20px var(--glow-cyan),
     0 0 30px oklch(0.78 0.25 168 / 0.5);
@@ -143,18 +149,24 @@
 }
 
 @keyframes agent-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
-    box-shadow: 0 0 10px var(--glow-magenta), 0 0 20px oklch(0.75 0.28 330 / 0.3);
+    box-shadow:
+      0 0 10px var(--glow-magenta),
+      0 0 20px oklch(0.75 0.28 330 / 0.3);
   }
   50% {
     opacity: 0.7;
-    box-shadow: 0 0 20px var(--glow-magenta), 0 0 40px oklch(0.75 0.28 330 / 0.5);
+    box-shadow:
+      0 0 20px var(--glow-magenta),
+      0 0 40px oklch(0.75 0.28 330 / 0.5);
   }
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px);
   }
   50% {
@@ -171,8 +183,12 @@
 }
 
 @keyframes terminal-flicker {
-  0% { opacity: 0.95; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 body {
@@ -180,7 +196,12 @@ body {
   letter-spacing: -0.01em;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Archivo Black', sans-serif;
   text-transform: uppercase;
   letter-spacing: 0.02em;

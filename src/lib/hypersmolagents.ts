@@ -1,6 +1,18 @@
+import { Lifecycle } from './interfaces'
+import {
+  CategorizationAgent,
+  HealthCheckAgent,
+  OptimizationAgent,
+  AnalyticsAgent,
+  PredictionAgent,
+  AuditAgent,
+  RefinementAgent,
+  SpecializedAgent,
+} from './agents'
+
 type AgentTask = {
   id: string
-  type: 'categorize' | 'health-check' | 'optimize' | 'analyze' | 'predict'
+  type: 'categorize' | 'health-check' | 'optimize' | 'analyze' | 'predict' | 'audit' | 'refine'
   payload: unknown
   priority: number
   status: 'pending' | 'running' | 'completed' | 'failed'
@@ -12,7 +24,7 @@ type AgentTask = {
 
 type AgentMetrics = {
   tasksCompleted: number
-  tasksFaileds: number
+  tasksFailed: number
   averageTaskTime: number
   successRate: number
   lastOptimization: number
@@ -24,88 +36,110 @@ type AgentMetrics = {
  * The biological heart of the HyperSmol ecosystem. This kernel orchestrates
  * asynchronous micro-intelligences to perform tasks without blocking the
  * main thread, mimicking a living organism's autonomic nervous system.
- *
- * Capabilities:
- * - Swarm Logic: Manages concurrent specialized agents
- * - Self-Healing: Automatically adjusts concurrency based on system load
- * - Asynchronous Mastery: Prioritizes user-facing tasks over background analysis
  */
-class HyperSmolAgents {
+type AgentEventListener = (task: AgentTask) => void
+
+class HyperSmolAgents implements Lifecycle {
   private taskQueue: AgentTask[] = []
   private runningTasks: Map<string, AgentTask> = new Map()
+  private listeners: AgentEventListener[] = []
   private metrics: AgentMetrics = {
     tasksCompleted: 0,
-    tasksFaileds: 0,
+    tasksFailed: 0,
     averageTaskTime: 0,
     successRate: 100,
-    lastOptimization: Date.now()
+    lastOptimization: Date.now(),
   }
   private maxConcurrent = 3
-  private isProcessing = false
+  private isDisposed = false
+
+  // Agent instances
+  private agents = {
+    categorize: new CategorizationAgent(),
+    'health-check': new HealthCheckAgent(),
+    optimize: new OptimizationAgent(),
+    analyze: new AnalyticsAgent(),
+    predict: new PredictionAgent(),
+    audit: new AuditAgent(),
+    refine: new RefinementAgent(),
+  }
+
+  async initialize(): Promise<void> {
+    this.isDisposed = false
+    console.log('HyperSmolAgents initialized')
+  }
+
+  async dispose(): Promise<void> {
+    this.isDisposed = true
+    this.taskQueue = []
+    this.runningTasks.clear()
+    this.listeners = []
+    console.log('HyperSmolAgents disposed')
+  }
+
+  subscribe(listener: AgentEventListener): () => void {
+    this.listeners.push(listener)
+    return () => {
+      this.listeners = this.listeners.filter((l) => l !== listener)
+    }
+  }
+
+  private notifyListeners(task: AgentTask) {
+    this.listeners.forEach((listener) => {
+      try {
+        listener(task)
+      } catch (e) {
+        console.error('Error in agent listener:', e)
+      }
+    })
+  }
 
   async enqueueTask(type: AgentTask['type'], payload: unknown, priority = 5): Promise<string> {
+    if (this.isDisposed) {
+      throw new Error('Agent system is disposed')
+    }
+
     const task: AgentTask = {
       id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       type,
       payload,
       priority,
       status: 'pending',
-      createdAt: Date.now()
+      createdAt: Date.now(),
     }
 
     this.taskQueue.push(task)
     this.taskQueue.sort((a, b) => b.priority - a.priority)
 
-    if (!this.isProcessing) {
-      this.processQueue()
-    }
+    this.processQueue()
 
     return task.id
   }
 
-  private async processQueue(): Promise<void> {
-    if (this.isProcessing) return
-    this.isProcessing = true
+  private processQueue(): void {
+    if (this.isDisposed) return
 
-    while (this.taskQueue.length > 0 || this.runningTasks.size > 0) {
-      while (this.runningTasks.size < this.maxConcurrent && this.taskQueue.length > 0) {
-        const task = this.taskQueue.shift()!
-        task.status = 'running'
-        this.runningTasks.set(task.id, task)
-        this.executeTask(task)
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 100))
+    while (this.runningTasks.size < this.maxConcurrent && this.taskQueue.length > 0) {
+      if (this.isDisposed) break
+      const task = this.taskQueue.shift()!
+      task.status = 'running'
+      this.runningTasks.set(task.id, task)
+      this.executeTask(task)
     }
-
-    this.isProcessing = false
   }
 
   private async executeTask(task: AgentTask): Promise<void> {
     const startTime = Date.now()
 
     try {
-      let result: unknown
-
-      switch (task.type) {
-        case 'categorize':
-          result = await this.categorizeUrl(task.payload as string)
-          break
-        case 'health-check':
-          result = await this.checkHealth(task.payload as string)
-          break
-        case 'optimize':
-          result = await this.optimizeLinks(task.payload as Array<{ id: string; originalUrl: string; clicks: number }>)
-          break
-        case 'analyze':
-          result = await this.analyzePattern(task.payload as Array<{ originalUrl: string; category?: string; clicks: number }>)
-          break
-        case 'predict':
-          result = await this.predictPopularity(task.payload as string)
-          break
-        default:
-          throw new Error(`Unknown task type: ${task.type}`)
+      // Explicitly typecast to allow dynamic access while maintaining type safety
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const agent = this.agents[task.type] as SpecializedAgent<any, any>
+      if (!agent) {
+        throw new Error(`Unknown task type: ${task.type}`)
       }
+
+      const result = await agent.execute(task.payload)
 
       task.status = 'completed'
       task.result = result
@@ -116,99 +150,31 @@ class HyperSmolAgents {
       if (this.metrics.tasksCompleted % 10 === 0) {
         await this.selfOptimize()
       }
+
+      this.notifyListeners(task)
     } catch (error) {
       task.status = 'failed'
       task.error = error instanceof Error ? error.message : 'Unknown error'
       task.completedAt = Date.now()
-      this.metrics.tasksFaileds++
+      this.metrics.tasksFailed++
+      console.error(`Task ${task.id} failed:`, error)
+
+      this.notifyListeners(task)
     } finally {
       const duration = Date.now() - startTime
       this.updateMetrics(duration)
       this.runningTasks.delete(task.id)
+
+      // Trigger next task processing
+      this.processQueue()
     }
-  }
-
-  // --- Specialized Agents ---
-
-  private async categorizeUrl(url: string): Promise<string> {
-    const promptText = `Analyze this URL and categorize it into ONE of these categories: Social Media, E-commerce, News, Documentation, Entertainment, Business, Education, Technology, Health, Finance, Travel, Food, Sports, Gaming, Government, or Other.
-
-URL: ${url}
-
-Return ONLY the category name, nothing else.`
-    
-    const category = await window.spark.llm(promptText, 'gpt-4o-mini')
-    return category.trim()
-  }
-
-  private async checkHealth(url: string): Promise<{ status: 'healthy' | 'unknown'; timestamp: number }> {
-    try {
-      await fetch(url, { method: 'HEAD', mode: 'no-cors' })
-      return { status: 'healthy', timestamp: Date.now() }
-    } catch {
-      return { status: 'unknown', timestamp: Date.now() }
-    }
-  }
-
-  private async optimizeLinks(links: Array<{ id: string; originalUrl: string; clicks: number }>): Promise<{ recommendations: string[]; optimizationScore: number }> {
-    const promptText = `You are an AI optimization agent. Analyze these shortened links and provide strategic recommendations.
-
-Links data:
-${JSON.stringify(links.map(l => ({ url: l.originalUrl, clicks: l.clicks })), null, 2)}
-
-Provide 3-5 actionable recommendations to improve link management, categorization, or usage patterns. Return as a JSON object with this structure:
-{
-  "recommendations": ["recommendation 1", "recommendation 2", ...],
-  "optimizationScore": 85
-}
-
-The optimizationScore should be 0-100 based on current link organization quality.`
-
-    const response = await window.spark.llm(promptText, 'gpt-4o-mini', true)
-    return JSON.parse(response)
-  }
-
-  private async analyzePattern(links: Array<{ originalUrl: string; category?: string; clicks: number }>): Promise<{ insights: string[]; trends: string[] }> {
-    const promptText = `You are an AI analytics agent. Analyze these link usage patterns and extract insights.
-
-Links data:
-${JSON.stringify(links.map(l => ({ url: l.originalUrl, category: l.category, clicks: l.clicks })), null, 2)}
-
-Identify patterns, trends, and insights about the user's link usage. Return as JSON:
-{
-  "insights": ["insight 1", "insight 2", ...],
-  "trends": ["trend 1", "trend 2", ...]
-}
-
-Focus on actionable intelligence like most used categories, engagement patterns, or content preferences.`
-
-    const response = await window.spark.llm(promptText, 'gpt-4o-mini', true)
-    return JSON.parse(response)
-  }
-
-  private async predictPopularity(url: string): Promise<{ score: number; reasoning: string }> {
-    const promptText = `You are a predictive AI agent. Analyze this URL and predict its potential popularity/click-through rate.
-
-URL: ${url}
-
-Consider factors like domain authority, content type, URL structure, and typical engagement patterns. Return as JSON:
-{
-  "score": 75,
-  "reasoning": "Brief explanation of the prediction"
-}
-
-Score should be 0-100 (higher = more likely to be popular).`
-
-    const response = await window.spark.llm(promptText, 'gpt-4o-mini', true)
-    return JSON.parse(response)
   }
 
   private updateMetrics(taskDuration: number): void {
-    const totalTasks = this.metrics.tasksCompleted + this.metrics.tasksFaileds
-    this.metrics.averageTaskTime = 
+    const totalTasks = this.metrics.tasksCompleted + this.metrics.tasksFailed
+    this.metrics.averageTaskTime =
       (this.metrics.averageTaskTime * (totalTasks - 1) + taskDuration) / totalTasks
-    this.metrics.successRate = 
-      (this.metrics.tasksCompleted / totalTasks) * 100
+    this.metrics.successRate = (this.metrics.tasksCompleted / totalTasks) * 100
   }
 
   getMetrics(): AgentMetrics {
@@ -218,30 +184,33 @@ Score should be 0-100 (higher = more likely to be popular).`
   getQueueStatus(): { pending: number; running: number } {
     return {
       pending: this.taskQueue.length,
-      running: this.runningTasks.size
+      running: this.runningTasks.size,
     }
   }
 
-  /**
-   * Self-Healing Mechanism
-   * Adjusts the organism's metabolic rate (concurrency) based on
-   * environmental stress (task latency).
-   */
   async selfOptimize(): Promise<void> {
     const metrics = this.getMetrics()
-    
-    // If tasks are slow (> 3s), reduce cognitive load (concurrency)
+    let changed = false
+
     if (metrics.averageTaskTime > 3000 && this.maxConcurrent > 1) {
       this.maxConcurrent = Math.max(1, this.maxConcurrent - 1)
-    }
-    // If tasks are fast (< 1s), expand cognitive bandwidth
-    else if (metrics.averageTaskTime < 1000 && this.maxConcurrent < 5) {
+      changed = true
+    } else if (metrics.averageTaskTime < 1000 && this.maxConcurrent < 5) {
       this.maxConcurrent = Math.min(5, this.maxConcurrent + 1)
+      changed = true
     }
 
     this.metrics.lastOptimization = Date.now()
+
+    if (changed) {
+      this.processQueue()
+    }
   }
 }
 
 export const hyperSmolAgents = new HyperSmolAgents()
+
+// Factory function pattern
+export const createHyperSmolAgents = () => new HyperSmolAgents()
+
 export type { AgentTask, AgentMetrics }

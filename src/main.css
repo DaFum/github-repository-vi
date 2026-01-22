@@ -2,21 +2,18 @@
 
 @import './styles/theme.css';
 @import './index.css';
-@import "tw-animate-css";
-/*
-  ---break---
-*/
-@custom-variant dark (&:is(.dark *));
+@import 'tw-animate-css';
 
-@config '../tailwind.config.js';
+/* Variants */
+@custom-variant dark (&:is([data-appearance="dark"] *));
+@custom-variant coarse (@media (pointer: coarse));
+@custom-variant fine (@media (pointer: fine));
+@custom-variant pwa (@media (display-mode: standalone));
 
 /*
   The default border color has changed to `currentColor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
   looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
 */
 @layer base {
   *,
@@ -103,14 +100,118 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-/*
-  ---break---
-*/
-@theme inline {
+@theme {
+  /* Colors - Neutral */
+  --color-neutral-1: var(--color-neutral-1);
+  --color-neutral-2: var(--color-neutral-2);
+  --color-neutral-3: var(--color-neutral-3);
+  --color-neutral-4: var(--color-neutral-4);
+  --color-neutral-5: var(--color-neutral-5);
+  --color-neutral-6: var(--color-neutral-6);
+  --color-neutral-7: var(--color-neutral-7);
+  --color-neutral-8: var(--color-neutral-8);
+  --color-neutral-9: var(--color-neutral-9);
+  --color-neutral-10: var(--color-neutral-10);
+  --color-neutral-11: var(--color-neutral-11);
+  --color-neutral-12: var(--color-neutral-12);
+  --color-neutral-a1: var(--color-neutral-a1);
+  --color-neutral-a2: var(--color-neutral-a2);
+  --color-neutral-a3: var(--color-neutral-a3);
+  --color-neutral-a4: var(--color-neutral-a4);
+  --color-neutral-a5: var(--color-neutral-a5);
+  --color-neutral-a6: var(--color-neutral-a6);
+  --color-neutral-a7: var(--color-neutral-a7);
+  --color-neutral-a8: var(--color-neutral-a8);
+  --color-neutral-a9: var(--color-neutral-a9);
+  --color-neutral-a10: var(--color-neutral-a10);
+  --color-neutral-a11: var(--color-neutral-a11);
+  --color-neutral-a12: var(--color-neutral-a12);
+  --color-neutral-contrast: var(--color-neutral-contrast);
+
+  /* Colors - Accent */
+  --color-accent-1: var(--color-accent-1);
+  --color-accent-2: var(--color-accent-2);
+  --color-accent-3: var(--color-accent-3);
+  --color-accent-4: var(--color-accent-4);
+  --color-accent-5: var(--color-accent-5);
+  --color-accent-6: var(--color-accent-6);
+  --color-accent-7: var(--color-accent-7);
+  --color-accent-8: var(--color-accent-8);
+  --color-accent-9: var(--color-accent-9);
+  --color-accent-10: var(--color-accent-10);
+  --color-accent-11: var(--color-accent-11);
+  --color-accent-12: var(--color-accent-12);
+  --color-accent-contrast: var(--color-accent-contrast);
+
+  /* Colors - Accent Secondary */
+  --color-accent-secondary-1: var(--color-accent-secondary-1);
+  --color-accent-secondary-2: var(--color-accent-secondary-2);
+  --color-accent-secondary-3: var(--color-accent-secondary-3);
+  --color-accent-secondary-4: var(--color-accent-secondary-4);
+  --color-accent-secondary-5: var(--color-accent-secondary-5);
+  --color-accent-secondary-6: var(--color-accent-secondary-6);
+  --color-accent-secondary-7: var(--color-accent-secondary-7);
+  --color-accent-secondary-8: var(--color-accent-secondary-8);
+  --color-accent-secondary-9: var(--color-accent-secondary-9);
+  --color-accent-secondary-10: var(--color-accent-secondary-10);
+  --color-accent-secondary-11: var(--color-accent-secondary-11);
+  --color-accent-secondary-12: var(--color-accent-secondary-12);
+  --color-accent-secondary-contrast: var(--color-accent-secondary-contrast);
+
+  /* Colors - FG/BG/Misc */
+  --color-fg: var(--color-fg);
+  --color-fg-secondary: var(--color-fg-secondary);
+  --color-bg: var(--color-bg);
+  --color-bg-inset: var(--color-bg-inset);
+  --color-bg-overlay: var(--color-bg-overlay);
+  --color-focus-ring: var(--color-focus-ring);
+
+  /* Spacing */
+  --spacing-px: var(--size-px);
+  --spacing-0: var(--size-0);
+  --spacing-0-5: var(--size-0-5);
+  --spacing-1: var(--size-1);
+  --spacing-1-5: var(--size-1-5);
+  --spacing-2: var(--size-2);
+  --spacing-2-5: var(--size-2-5);
+  --spacing-3: var(--size-3);
+  --spacing-3-5: var(--size-3-5);
+  --spacing-4: var(--size-4);
+  --spacing-5: var(--size-5);
+  --spacing-6: var(--size-6);
+  --spacing-7: var(--size-7);
+  --spacing-8: var(--size-8);
+  --spacing-9: var(--size-9);
+  --spacing-10: var(--size-10);
+  --spacing-11: var(--size-11);
+  --spacing-12: var(--size-12);
+  --spacing-14: var(--size-14);
+  --spacing-16: var(--size-16);
+  --spacing-20: var(--size-20);
+  --spacing-24: var(--size-24);
+  --spacing-28: var(--size-28);
+  --spacing-32: var(--size-32);
+  --spacing-36: var(--size-36);
+  --spacing-40: var(--size-40);
+  --spacing-44: var(--size-44);
+  --spacing-48: var(--size-48);
+  --spacing-52: var(--size-52);
+  --spacing-56: var(--size-56);
+  --spacing-60: var(--size-60);
+  --spacing-64: var(--size-64);
+  --spacing-72: var(--size-72);
+  --spacing-80: var(--size-80);
+  --spacing-96: var(--size-96);
+
+  /* BorderRadius */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-full: 9999px;
+
+  /* Shadcn Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -142,39 +243,30 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Animations */
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
-  /*
-  ---break---
-*/
   @keyframes accordion-down {
     from {
       height: 0;
     }
-
     to {
       height: var(--radix-accordion-content-height);
     }
   }
 
-  /*
-  ---break---
-*/
   @keyframes accordion-up {
     from {
       height: var(--radix-accordion-content-height);
     }
-
     to {
       height: 0;
     }
   }
 }
 
-/*
-  ---break---
-*/
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -182,5 +274,12 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .container {
+    margin-inline: auto;
+    padding-inline: 2rem;
   }
 }

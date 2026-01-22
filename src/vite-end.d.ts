@@ -5,9 +5,16 @@ declare const BASE_KV_SERVICE_URL: string
 declare global {
   interface Window {
     spark: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       llmPrompt: (strings: TemplateStringsArray | string[], ...values: any[]) => string
       llm: (prompt: string, modelName?: string, jsonMode?: boolean) => Promise<string>
-      user: () => Promise<{ avatarUrl: string; email: string; id: string; isOwner: boolean; login: string }>
+      user: () => Promise<{
+        avatarUrl: string
+        email: string
+        id: string
+        isOwner: boolean
+        login: string
+      }>
       kv: {
         keys: () => Promise<string[]>
         get: <T>(key: string) => Promise<T | undefined>
