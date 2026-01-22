@@ -33,6 +33,7 @@ import {
   Heart,
   Tag,
   Pulse,
+  Robot,
 } from '@phosphor-icons/react'
 import { AgentInsights } from '@/components/AgentInsights'
 import { PredictionBadge } from '@/components/PredictionBadge'
@@ -465,7 +466,7 @@ function App() {
                 <span className="text-accent animate-pulse">█</span>
               </motion.div>
 
-              <div className="absolute top-4 right-4 flex gap-2 md:top-8 md:right-8">
+              <div className="mt-4 flex justify-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
@@ -473,15 +474,16 @@ function App() {
                   className={`gap-2 font-mono text-xs uppercase ${showBuilder ? 'bg-primary/20 border-primary text-primary' : 'text-muted-foreground'}`}
                 >
                   <Circuitry size={18} />
-                  {showBuilder ? 'AGENT_BUILDER_ACTIVE' : 'OPEN_BUILDER'}
+                  {showBuilder ? 'CLOSE_BUILDER' : 'OPEN_BUILDER'}
                 </Button>
                 <Button
-                  variant="ghost"
-                  size="icon"
+                  variant="outline"
+                  size="sm"
                   onClick={() => setShowSettings(true)}
-                  className="text-muted-foreground hover:text-primary"
+                  className="text-muted-foreground hover:text-primary font-mono text-xs uppercase"
                 >
-                  <Gear size={24} />
+                  <Gear size={18} />
+                  SETTINGS
                 </Button>
               </div>
             </motion.div>
@@ -504,14 +506,47 @@ function App() {
               </motion.div>
             ) : (
               <>
-                {links && links.length > 0 && (
-                  <AdvancedAnalytics links={links} totalClicks={totalClicks} />
-                )}
-
-                {links && links.length > 0 && (
-                  <div className="mb-8">
-                    <AgentInsights links={links} />
-                  </div>
+                {links && links.length > 0 ? (
+                  <>
+                    <AdvancedAnalytics links={links} totalClicks={totalClicks} />
+                    <div className="mb-8">
+                      <AgentInsights links={links} />
+                    </div>
+                  </>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-8"
+                  >
+                    <Card className="glass-card border-accent/30 border-2 p-6">
+                      <div className="text-center">
+                        <div className="bg-accent/20 border-accent mx-auto mb-4 inline-block border-2 p-3">
+                          <Robot size={32} weight="bold" className="text-accent" />
+                        </div>
+                        <h3 className="mb-2 text-lg font-black tracking-wider uppercase">
+                          AI_AGENTS_READY
+                        </h3>
+                        <p className="text-muted-foreground mx-auto max-w-md font-mono text-sm">
+                          <span className="text-primary">{'>'}</span>{' '}
+                          CREATE_LINKS_TO_UNLOCK_AI_ANALYSIS
+                        </p>
+                        <div className="mt-4 flex flex-wrap justify-center gap-2">
+                          {['PATTERN_ANALYSIS', 'OPTIMIZATION', "DEVIL'S_ADVOCATE"].map(
+                            (feature) => (
+                              <Badge
+                                key={feature}
+                                variant="outline"
+                                className="font-mono text-[10px] uppercase"
+                              >
+                                {feature}
+                              </Badge>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    </Card>
+                  </motion.div>
                 )}
 
                 <motion.div
