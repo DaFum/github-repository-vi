@@ -17,23 +17,11 @@ if [ ! -f "$CLAUDE_PROJECT_DIR/package.json" ]; then
   exit 0
 fi
 
-# Check if node_modules already exists and is up to date
-if [ -d "$CLAUDE_PROJECT_DIR/node_modules" ]; then
-  echo "Checking if dependencies are up to date..."
-
-  # Quick check: compare package.json modification time with node_modules
-  if [ "$CLAUDE_PROJECT_DIR/package.json" -nt "$CLAUDE_PROJECT_DIR/node_modules" ]; then
-    echo "package.json is newer than node_modules, reinstalling..."
-  else
-    echo "Dependencies are already installed and up to date!"
-    exit 0
-  fi
-fi
-
 # Install npm dependencies
+# npm install is already optimized to skip work if nothing changed
 echo "Installing npm dependencies..."
 
-if npm install --silent 2>&1 | grep -v "^npm WARN"; then
+if npm install --silent; then
   echo "Dependencies installed successfully!"
 
   # Optionally run a quick verification

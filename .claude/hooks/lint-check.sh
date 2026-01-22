@@ -5,12 +5,26 @@ set -euo pipefail
 # Runs ESLint on edited files to catch issues early
 # Usage: PostToolUse hook for Edit|Write tools
 
+# Check if jq is available for JSON parsing
+if ! command -v jq &> /dev/null; then
+  echo "Warning: 'jq' is not installed. Skipping lint check." >&2
+  exit 0
+fi
+
 # Read input from stdin
 INPUT=$(cat)
 
-# Extract tool info
-TOOL_NAME=$(echo "$INPUT" | grep -o '"tool_name":"[^"]*"' | cut -d'"' -f4)
-FILE_PATH=$(echo "$INPUT" | grep -o '"file_path":"[^"]*"' | cut -d'"' -f4 | head -n1)
+# Extract tool info using jq
+TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // ""')
+
+# Extract file path from tool_input
+# Different tools have different structures, so we try multiple approaches
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // .tool_input.notebook_path // ""')
+
+# If no file path found, exit silently
+if [ -z "$FILE_PATH" ]; then
+  exit 0
+fi
 
 # Only run for TypeScript/JavaScript files
 if [[ ! "$FILE_PATH" =~ \.(ts|tsx|js|jsx)$ ]]; then
@@ -35,9 +49,11 @@ fi
 echo "Running ESLint on $(basename "$FILE_PATH")..."
 
 # Run ESLint with proper error handling
-if ! npx eslint "$FILE_PATH" --max-warnings 0 2>/dev/null; then
+# Note: stderr is now shown so users can see specific ESLint errors
+if ! npx eslint "$FILE_PATH" --max-warnings 0; then
+  echo "" >&2
   echo "ESLint found issues in $FILE_PATH" >&2
-  echo "Run 'npm run lint' to see details or fix issues automatically" >&2
+  echo "Run 'npm run lint' to see all details or fix issues automatically" >&2
   # Exit with code 2 to block and show message to Claude
   exit 2
 fi
