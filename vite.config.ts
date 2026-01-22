@@ -11,6 +11,8 @@ const projectRoot = process.env.PROJECT_ROOT || import.meta.dirname
 
 // https://vite.dev/config/
 export default defineConfig({
+  // GitHub Pages deployment: Set base to repo name
+  base: process.env.GITHUB_PAGES === 'true' ? '/github-repository-vi/' : '/',
   test: {
     globals: true,
     environment: 'happy-dom',

@@ -18,6 +18,8 @@ Initial environment setup requires running npm install to ensure all dependencie
 
 The project uses Vite as the build tool and development server.
 
+Vite dependency resolution errors (e.g., "Failed to resolve import") can occur even when dependencies are installed due to stale cache. Run npm run optimize or rm -rf node_modules/.vite to clear Vite's dependency optimization cache and resolve these issues.
+
 The project uses Prettier (.prettierrc) for code formatting with singleQuote: true, semi: false, and prettier-plugin-tailwindcss enabled.
 
 The 'Black Box Recorder' (src/lib/graph/HistoryRecorder.ts) tracks provenance and immutable state snapshots for debugging.
@@ -85,3 +87,9 @@ The agent system implements a 'Self-Healing' mechanism where 'selfOptimize' trig
 The project's core agent logic is located in 'src/lib/hypersmolagents.ts', replacing the previous 'agent-kernel.ts'.
 
 'ARCHITECTURE.md' serves as the primary 'ARCHITECTURAL BLUEPRINT' and planning document for the project.
+
+The project is configured for GitHub Pages deployment via GitHub Actions with automatic builds on push to main branch.
+
+GitHub Pages deployment requires base URL configuration in vite.config.ts (set to '/github-repository-vi/' when GITHUB_PAGES=true environment variable is set).
+
+The build:gh-pages script in package.json creates production builds with the correct base URL for GitHub Pages deployment.
