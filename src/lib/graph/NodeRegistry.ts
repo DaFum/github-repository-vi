@@ -1,6 +1,6 @@
 import { NodeProcessor, ExecutionContext, NodeDefinition } from './types'
 import { pollinations } from '@/lib/pollinations'
-// import { compileExpression } from 'filtrex'; // Uncomment when implemented
+import { compileExpression } from 'filtrex'
 import { z } from 'zod'
 
 export class AgentProcessor implements NodeProcessor {
@@ -37,13 +37,22 @@ export class LogicProcessor implements NodeProcessor {
 
   async execute(
     inputs: Record<string, unknown>,
-    _config: unknown,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    config: any,
     _context: ExecutionContext
   ): Promise<unknown> {
-    // Placeholder for Filtrex logic
-    // const myFilter = compileExpression(config.expression);
-    // return myFilter(inputs);
-    return inputs // Pass-through for now
+    if (config?.expression) {
+      try {
+        const myFilter = compileExpression(config.expression)
+        return myFilter(inputs)
+      } catch (error) {
+        console.error('Filtrex execution failed:', error)
+        throw new Error(
+          `Logic execution failed: ${error instanceof Error ? error.message : String(error)}`
+        )
+      }
+    }
+    return inputs // Pass-through if no expression
   }
 }
 

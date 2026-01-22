@@ -1,10 +1,9 @@
-import { useRef } from 'react'
 import { ReactFlow, Background, Controls, MiniMap, ReactFlowProvider } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { useFlowStore } from '@/store/flowStore'
 import { nodeTypes } from './CustomNodes'
 import { Sidebar } from './Sidebar'
-import { DndContext, DragEndEvent } from '@dnd-kit/core'
+import { DndContext } from '@dnd-kit/core'
 import { Button } from '@/components/ui/button'
 import {
   Play,
@@ -16,11 +15,9 @@ import {
   UploadSimple,
 } from '@phosphor-icons/react'
 import { graphEngine } from '@/lib/graph/GraphEngine'
-import { BlueprintRegistry } from '@/lib/store/BlueprintRegistry'
-import { createP2PClient } from '@/lib/mesh/P2PClient'
-import { createScreenWatcher } from '@/lib/vision/ScreenWatcher'
-import { GeneticPrompt } from '@/lib/optimizer/GeneticPrompt'
-import { toast } from 'sonner'
+import { useFlowDragDrop } from '@/hooks/useFlowDragDrop'
+import { useFlowFileOperations } from '@/hooks/useFlowFileOperations'
+import { useFlowTools } from '@/hooks/useFlowTools'
 
 const FlowCanvas = () => {
   const {
@@ -29,28 +26,15 @@ const FlowCanvas = () => {
     onNodesChange,
     onEdgesChange,
     onConnect,
-    addNode,
     startExecution,
     stopExecution,
     executionContext,
   } = useFlowStore()
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active } = event
-    if (active.data.current) {
-      const type = active.data.current.type
-      const label = active.data.current.label
-      const position = { x: Math.random() * 400 + 100, y: Math.random() * 400 + 100 }
-      const newNode = {
-        id: `${type}-${Date.now()}`,
-        type,
-        position,
-        data: { label, type },
-      }
-      addNode(newNode)
-    }
-  }
+  const { handleDragEnd } = useFlowDragDrop()
+  const { fileInputRef, handleExport, handleImportClick, handleFileChange } =
+    useFlowFileOperations()
+  const { handleP2P, handleVision, handleEvolve } = useFlowTools()
 
   const handleRun = () => {
     startExecution()
@@ -60,39 +44,6 @@ const FlowCanvas = () => {
   const handleStop = () => {
     stopExecution()
     graphEngine.dispose()
-  }
-
-  const handleExport = () => BlueprintRegistry.exportBlueprint()
-
-  const handleImportClick = () => fileInputRef.current?.click()
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const success = await BlueprintRegistry.importBlueprint(file)
-      if (success) toast.success('Blueprint Imported')
-      else toast.error('Import Failed')
-    }
-  }
-
-  const handleP2P = () => {
-    const p2p = createP2PClient(true)
-    p2p.initialize()
-    toast.info('P2P Mesh Initialized (Console for Signal)')
-  }
-
-  const handleVision = () => {
-    const watcher = createScreenWatcher()
-    watcher.initialize()
-    toast.info('Ocular Cortex Active')
-  }
-
-  const handleEvolve = async () => {
-    toast.info('Genetic Optimization Started...')
-    // Mock prompt evolution
-    const optimized = await GeneticPrompt.evolve('Write a tweet', 'Viral, under 280 chars')
-    console.log('Optimized Prompt:', optimized)
-    toast.success('Optimization Complete')
   }
 
   const isRunning = executionContext.status === 'running'

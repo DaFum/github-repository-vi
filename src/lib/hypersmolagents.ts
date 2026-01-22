@@ -1,5 +1,14 @@
 import { Lifecycle } from './interfaces'
-import { pollinations } from './pollinations'
+import {
+  CategorizationAgent,
+  HealthCheckAgent,
+  OptimizationAgent,
+  AnalyticsAgent,
+  PredictionAgent,
+  AuditAgent,
+  RefinementAgent,
+  SpecializedAgent,
+} from './agents'
 
 type AgentTask = {
   id: string
@@ -27,12 +36,6 @@ type AgentMetrics = {
  * The biological heart of the HyperSmol ecosystem. This kernel orchestrates
  * asynchronous micro-intelligences to perform tasks without blocking the
  * main thread, mimicking a living organism's autonomic nervous system.
- *
- * Capabilities:
- * - Swarm Logic: Manages concurrent specialized agents
- * - Self-Healing: Automatically adjusts concurrency based on system load
- * - Asynchronous Mastery: Prioritizes user-facing tasks over background analysis
- * - Cognitive Mesh: Implements recursive refinement and audit loops
  */
 class HyperSmolAgents implements Lifecycle {
   private taskQueue: AgentTask[] = []
@@ -47,6 +50,17 @@ class HyperSmolAgents implements Lifecycle {
   private maxConcurrent = 3
   private isProcessing = false
   private isDisposed = false
+
+  // Agent instances
+  private agents = {
+    categorize: new CategorizationAgent(),
+    'health-check': new HealthCheckAgent(),
+    optimize: new OptimizationAgent(),
+    analyze: new AnalyticsAgent(),
+    predict: new PredictionAgent(),
+    audit: new AuditAgent(),
+    refine: new RefinementAgent(),
+  }
 
   async initialize(): Promise<void> {
     this.isDisposed = false
@@ -108,37 +122,14 @@ class HyperSmolAgents implements Lifecycle {
     const startTime = Date.now()
 
     try {
-      let result: unknown
-
-      switch (task.type) {
-        case 'categorize':
-          result = await this.categorizeUrl(task.payload as string)
-          break
-        case 'health-check':
-          result = await this.checkHealth(task.payload as string)
-          break
-        case 'optimize':
-          result = await this.optimizeLinks(
-            task.payload as Array<{ id: string; originalUrl: string; clicks: number }>
-          )
-          break
-        case 'analyze':
-          result = await this.analyzePattern(
-            task.payload as Array<{ originalUrl: string; category?: string; clicks: number }>
-          )
-          break
-        case 'predict':
-          result = await this.predictPopularity(task.payload as string)
-          break
-        case 'audit':
-          result = await this.auditContent(task.payload as string)
-          break
-        case 'refine':
-          result = await this.refineContent(task.payload as { content: string; context: string })
-          break
-        default:
-          throw new Error(`Unknown task type: ${task.type}`)
+      // Explicitly typecast to allow dynamic access while maintaining type safety
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const agent = this.agents[task.type] as SpecializedAgent<any, any>
+      if (!agent) {
+        throw new Error(`Unknown task type: ${task.type}`)
       }
+
+      const result = await agent.execute(task.payload)
 
       task.status = 'completed'
       task.result = result
@@ -154,233 +145,12 @@ class HyperSmolAgents implements Lifecycle {
       task.error = error instanceof Error ? error.message : 'Unknown error'
       task.completedAt = Date.now()
       this.metrics.tasksFaileds++
+      console.error(`Task ${task.id} failed:`, error)
     } finally {
       const duration = Date.now() - startTime
       this.updateMetrics(duration)
       this.runningTasks.delete(task.id)
     }
-  }
-
-  // --- Specialized Agents ---
-
-  private async categorizeUrl(url: string): Promise<string> {
-    const promptText = `Analyze this URL and categorize it into ONE of these categories: Social Media, E-commerce, News, Documentation, Entertainment, Business, Education, Technology, Health, Finance, Travel, Food, Sports, Gaming, Government, or Other.
-
-URL: ${url}
-
-Return ONLY the category name, nothing else.`
-
-    try {
-      const category = await pollinations.chat(
-        [
-          { role: 'system', content: 'You are a precise URL categorization agent.' },
-          { role: 'user', content: promptText },
-        ],
-        { model: 'openai', temperature: 0.1 }
-      )
-
-      return category.trim()
-    } catch (e) {
-      console.warn('Agent Cortex failed, falling back to heuristic', e)
-      return 'Uncategorized'
-    }
-  }
-
-  private async checkHealth(
-    url: string
-  ): Promise<{ status: 'healthy' | 'unknown'; timestamp: number }> {
-    try {
-      await fetch(url, { method: 'HEAD', mode: 'no-cors' })
-      return { status: 'healthy', timestamp: Date.now() }
-    } catch {
-      return { status: 'unknown', timestamp: Date.now() }
-    }
-  }
-
-  private async optimizeLinks(
-    links: Array<{ id: string; originalUrl: string; clicks: number }>
-  ): Promise<{ recommendations: string[]; optimizationScore: number }> {
-    const promptText = `You are an AI optimization agent. Analyze these shortened links and provide strategic recommendations.
-
-Links data:
-${JSON.stringify(
-  links.map((l) => ({ url: l.originalUrl, clicks: l.clicks })),
-  null,
-  2
-)}
-
-Provide 3-5 actionable recommendations to improve link management, categorization, or usage patterns. Return as a JSON object with this structure:
-{
-  "recommendations": ["recommendation 1", "recommendation 2", ...],
-  "optimizationScore": 85
-}
-
-The optimizationScore should be 0-100 based on current link organization quality.`
-
-    const response = await pollinations.chat(
-      [
-        {
-          role: 'system',
-          content: 'You are a strategic optimization expert. Return strictly valid JSON.',
-        },
-        { role: 'user', content: promptText },
-      ],
-      { model: 'openai', jsonMode: true }
-    )
-
-    return JSON.parse(response)
-  }
-
-  private async analyzePattern(
-    links: Array<{ originalUrl: string; category?: string; clicks: number }>
-  ): Promise<{ insights: string[]; trends: string[] }> {
-    const promptText = `You are an AI analytics agent. Analyze these link usage patterns and extract insights.
-
-Links data:
-${JSON.stringify(
-  links.map((l) => ({ url: l.originalUrl, category: l.category, clicks: l.clicks })),
-  null,
-  2
-)}
-
-Identify patterns, trends, and insights about the user's link usage. Return as JSON:
-{
-  "insights": ["insight 1", "insight 2", ...],
-  "trends": ["trend 1", "trend 2", ...]
-}
-
-Focus on actionable intelligence like most used categories, engagement patterns, or content preferences.`
-
-    const response = await pollinations.chat(
-      [
-        { role: 'system', content: 'You are a data analytics expert. Return strictly valid JSON.' },
-        { role: 'user', content: promptText },
-      ],
-      { model: 'openai', jsonMode: true }
-    )
-
-    return JSON.parse(response)
-  }
-
-  private async predictPopularity(url: string): Promise<{ score: number; reasoning: string }> {
-    const promptText = `You are a predictive AI agent. Analyze this URL and predict its potential popularity/click-through rate.
-
-URL: ${url}
-
-Consider factors like domain authority, content type, URL structure, and typical engagement patterns. Return as JSON:
-{
-  "score": 75,
-  "reasoning": "Brief explanation of the prediction"
-}
-
-Score should be 0-100 (higher = more likely to be popular).`
-
-    const response = await pollinations.chat(
-      [
-        {
-          role: 'system',
-          content: 'You are a viral trend prediction expert. Return strictly valid JSON.',
-        },
-        { role: 'user', content: promptText },
-      ],
-      { model: 'openai', jsonMode: true }
-    )
-
-    return JSON.parse(response)
-  }
-
-  /**
-   * The "Devil's Advocate" (Logic Auditor)
-   * Challenges assumptions and finds flaws.
-   */
-  private async auditContent(
-    content: string
-  ): Promise<{ flaws: string[]; riskLevel: 'low' | 'medium' | 'high'; critique: string }> {
-    const prompt = `Audit the following content/plan for logical fallacies, safety risks, and hidden assumptions. Be ruthless.
-
-Content: "${content}"
-
-Return JSON:
-{
-  "flaws": ["flaw 1", "flaw 2"],
-  "riskLevel": "low" | "medium" | "high",
-  "critique": "Overall assessment..."
-}`
-
-    const response = await pollinations.chat(
-      [
-        {
-          role: 'system',
-          content:
-            "You are the Devil's Advocate. You challenge assumptions and find critical flaws. You are not polite; you are accurate.",
-        },
-        { role: 'user', content: prompt },
-      ],
-      { model: 'claude', jsonMode: true }
-    ) // Prefer reasoning model
-
-    return JSON.parse(response)
-  }
-
-  /**
-   * The "Recursive Refinement" Loop
-   * Generates, Criticizes, and Refines content in a loop.
-   */
-  private async refineContent({
-    content,
-    context,
-  }: {
-    content: string
-    context: string
-  }): Promise<{ finalContent: string; iterations: number; confidence: number }> {
-    const MAX_ITERATIONS = 3
-    let currentDraft = content
-    let confidence = 0
-    let iterations = 0
-
-    while (iterations < MAX_ITERATIONS && confidence < 90) {
-      iterations++
-
-      // 1. Criticize
-      const critiqueResponse = await pollinations.chat(
-        [
-          {
-            role: 'system',
-            content:
-              'You are a strict critic. Rate confidence (0-100) and provide specific feedback.',
-          },
-          {
-            role: 'user',
-            content: `Context: ${context}\n\nDraft: ${currentDraft}\n\nProvide JSON: { "confidence": number, "feedback": "string" }`,
-          },
-        ],
-        { model: 'openai', jsonMode: true }
-      )
-
-      const critique = JSON.parse(critiqueResponse)
-      confidence = critique.confidence
-
-      if (confidence >= 90) break
-
-      // 2. Refine
-      const refineResponse = await pollinations.chat(
-        [
-          {
-            role: 'system',
-            content: 'You are an expert editor. Improve the draft based on feedback.',
-          },
-          {
-            role: 'user',
-            content: `Original: ${currentDraft}\nFeedback: ${critique.feedback}\n\nRewrite the draft.`,
-          },
-        ],
-        { model: 'openai' }
-      ) // Fast model for rewrite
-
-      currentDraft = refineResponse
-    }
-
-    return { finalContent: currentDraft, iterations, confidence }
   }
 
   private updateMetrics(taskDuration: number): void {
