@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Gear, Circuitry, Palette, ChatCircle, Archive } from '@phosphor-icons/react'
 import { FlowEditor } from '@/components/flow/FlowEditor'
+import { LiveCanvas } from '@/features/canvas/LiveCanvas'
 import { PollenStatus } from '@/components/PollenStatus'
 import { hyperSmolAgents } from '@/lib/hypersmolagents'
 import { useAetherStore } from '@/lib/store/useAetherStore'
@@ -130,8 +131,7 @@ function App() {
                   </TabsTrigger>
                   <TabsTrigger
                     value="canvas"
-                    disabled
-                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-2 text-[10px] tracking-wider uppercase opacity-50"
+                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-2 text-[10px] tracking-wider uppercase"
                   >
                     <Palette size={16} />
                     <span className="hidden sm:inline">CANVAS</span>
@@ -176,17 +176,7 @@ function App() {
                 </div>
               )}
 
-              {activeModule === 'canvas' && (
-                <div className="border-accent/30 glass-card flex h-[600px] items-center justify-center rounded-lg border-2 p-12">
-                  <div className="text-center">
-                    <Palette size={64} className="text-accent mx-auto mb-4 opacity-50" />
-                    <h3 className="mb-2 text-xl font-black uppercase">LIVE_CANVAS</h3>
-                    <p className="text-muted-foreground font-mono text-sm">
-                      <span className="text-primary">{'>'}</span> MODULE_IN_DEVELOPMENT
-                    </p>
-                  </div>
-                </div>
-              )}
+              {activeModule === 'canvas' && <LiveCanvas />}
 
               {activeModule === 'chat' && (
                 <div className="border-accent/30 glass-card flex h-[600px] items-center justify-center rounded-lg border-2 p-12">
