@@ -87,3 +87,9 @@ The agent system implements a 'Self-Healing' mechanism where 'selfOptimize' trig
 The project's core agent logic is located in 'src/lib/hypersmolagents.ts', replacing the previous 'agent-kernel.ts'.
 
 'ARCHITECTURE.md' serves as the primary 'ARCHITECTURAL BLUEPRINT' and planning document for the project.
+
+The project is configured for GitHub Pages deployment via GitHub Actions with automatic builds on push to main branch.
+
+GitHub Pages deployment requires base URL configuration in vite.config.ts (set to '/github-repository-vi/' when GITHUB_PAGES=true environment variable is set).
+
+The build:gh-pages script in package.json creates production builds with the correct base URL for GitHub Pages deployment.
