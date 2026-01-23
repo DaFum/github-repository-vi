@@ -127,9 +127,9 @@ function App() {
                   variant="ghost"
                   size="icon"
                   onClick={() => setShowSettings(true)}
-                  className="text-muted-foreground hover:text-primary"
+                  className="text-muted-foreground hover:text-primary ripple-container"
                 >
-                  <Gear size={24} />
+                  <Gear size={24} className="icon-hover-spin" />
                 </Button>
               </div>
             </motion.div>
@@ -176,31 +176,66 @@ function App() {
             </motion.div>
 
             {/* Module Content */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-            >
+            <AnimatePresence mode="wait">
               {activeModule === 'synapse' && (
-                <div className="border-primary/30 glass-card corner-accent glow-border relative h-[calc(100vh-280px)] min-h-[600px] overflow-hidden rounded-lg border-2 shadow-2xl">
-                  <FlowEditor />
-                  <div className="absolute top-2 right-2 z-10">
-                    <Badge
-                      variant="outline"
-                      className="border-primary/50 text-primary bg-black/50 font-mono text-xs backdrop-blur"
-                    >
-                      SYNAPSE_ENGINE_v2026
-                    </Badge>
+                <motion.div
+                  key="synapse"
+                  initial={{ opacity: 0, x: -20, filter: 'blur(4px)' }}
+                  animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, x: 20, filter: 'blur(4px)' }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <div className="border-primary/30 glass-card corner-accent glow-border relative h-[calc(100vh-280px)] min-h-[600px] overflow-hidden rounded-lg border-2 shadow-2xl">
+                    <FlowEditor />
+                    <div className="absolute top-2 right-2 z-10">
+                      <Badge
+                        variant="outline"
+                        className="border-primary/50 text-primary bg-black/50 font-mono text-xs backdrop-blur"
+                      >
+                        SYNAPSE_ENGINE_v2026
+                      </Badge>
+                    </div>
                   </div>
-                </div>
+                </motion.div>
               )}
 
-              {activeModule === 'canvas' && <LiveCanvas />}
+              {activeModule === 'canvas' && (
+                <motion.div
+                  key="canvas"
+                  initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <LiveCanvas />
+                </motion.div>
+              )}
 
-              {activeModule === 'chat' && <HoloChat />}
+              {activeModule === 'chat' && (
+                <motion.div
+                  key="chat"
+                  initial={{ opacity: 0, rotateX: 10 }}
+                  animate={{ opacity: 1, rotateX: 0 }}
+                  exit={{ opacity: 0, rotateX: -10 }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ transformPerspective: 1200 }}
+                >
+                  <HoloChat />
+                </motion.div>
+              )}
 
-              {activeModule === 'vault' && <ArtifactVault />}
-            </motion.div>
+              {activeModule === 'vault' && (
+                <motion.div
+                  key="vault"
+                  initial={{ opacity: 0, scale: 0.95, filter: 'brightness(0.5)' }}
+                  animate={{ opacity: 1, scale: 1, filter: 'brightness(1)' }}
+                  exit={{ opacity: 0, scale: 1.05, filter: 'brightness(0.5)' }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <ArtifactVault />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
@@ -244,13 +279,13 @@ function App() {
               <Button
                 variant="outline"
                 onClick={() => setShowSettings(false)}
-                className="font-mono text-xs uppercase"
+                className="ripple-container font-mono text-xs uppercase"
               >
                 CANCEL
               </Button>
               <Button
                 onClick={handleSaveSettings}
-                className="gradient-button font-mono text-xs font-bold uppercase"
+                className="gradient-button button-glitch ripple-container font-mono text-xs font-bold uppercase"
               >
                 SAVE_CONFIG
               </Button>
