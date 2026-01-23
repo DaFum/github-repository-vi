@@ -59,12 +59,16 @@ export function PreviewPane({
         setIsGenerating(false)
       }
       img.onerror = () => {
-        setError('Failed to generate preview')
+        setError(`Failed to generate preview for ${url}`)
         setIsGenerating(false)
       }
       img.src = url
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error')
+      setError(
+        err instanceof Error
+          ? `Preview generation failed: ${err.message}`
+          : `Preview generation failed: ${String(err)}`
+      )
       setIsGenerating(false)
     }
   }, [prompt, model, seed])
@@ -76,12 +80,13 @@ export function PreviewPane({
       clearTimeout(debounceTimerRef.current)
     }
 
-    if (!prompt.trim()) {
-      return
-    }
-
     // Set new timer
     debounceTimerRef.current = setTimeout(() => {
+      if (!prompt.trim()) {
+        setPreviewUrl(undefined)
+        setIsGenerating(false)
+        return
+      }
       generatePreview()
     }, 1000) // 1 second debounce
 

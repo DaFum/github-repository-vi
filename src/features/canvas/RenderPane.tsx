@@ -69,12 +69,16 @@ export function RenderPane({ prompt, model, onModelChange, seed }: RenderPanePro
         toast.success('Saved to Vault!', { icon: <Archive size={16} /> })
       }
       img.onerror = () => {
-        setError('Failed to generate render')
+        setError(`Failed to generate render for ${url}`)
         setIsRendering(false)
       }
       img.src = url
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error')
+      setError(
+        err instanceof Error
+          ? `Failed to generate render: ${err.message}`
+          : `Failed to generate render: ${String(err)}`
+      )
       setIsRendering(false)
     }
   }

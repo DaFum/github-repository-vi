@@ -25,6 +25,11 @@ export function BackgroundCanvas({ visualization }: BackgroundCanvasProps) {
       visualization.type !== 'image' ||
       typeof visualization.data !== 'string'
     ) {
+      // Clear previous background when visualization is null or not an image
+      queueMicrotask(() => {
+        setImageUrl('')
+        setIsLoading(false)
+      })
       return
     }
 
@@ -39,24 +44,26 @@ export function BackgroundCanvas({ visualization }: BackgroundCanvasProps) {
     // Preload image
     const img = new Image()
 
-    const handleLoadStart = () => setIsLoading(true)
     const handleLoad = () => {
       setImageUrl(url)
       setIsLoading(false)
     }
-    const handleError = () => setIsLoading(false)
+    const handleError = () => {
+      setImageUrl('')
+      setIsLoading(false)
+    }
 
-    img.addEventListener('loadstart', handleLoadStart)
     img.addEventListener('load', handleLoad)
     img.addEventListener('error', handleError)
 
     // Start preload
+    queueMicrotask(() => setIsLoading(true))
     img.src = url
 
     return () => {
-      img.removeEventListener('loadstart', handleLoadStart)
       img.removeEventListener('load', handleLoad)
       img.removeEventListener('error', handleError)
+      img.src = '' // Stop preload
     }
   }, [visualization])
 

@@ -11,40 +11,51 @@ import type { VisualizationCommand } from './HoloChat'
 
 /**
  * Parse visualization commands from AI response
+ * Preserves the order of commands as they appear in the text
  */
 export function parseVisualizationCommands(content: string): VisualizationCommand[] {
-  const commands: VisualizationCommand[] = []
+  const commandsWithPosition: Array<{ command: VisualizationCommand; position: number }> = []
 
   // Match [IMAGE: prompt]
   const imageRegex = /\[IMAGE:\s*([^\]]+)\]/gi
   let match
 
   while ((match = imageRegex.exec(content)) !== null) {
-    commands.push({
-      type: 'image',
-      data: match[1].trim(),
+    commandsWithPosition.push({
+      command: {
+        type: 'image',
+        data: match[1].trim(),
+      },
+      position: match.index,
     })
   }
 
   // Match [PLOT: data]
   const plotRegex = /\[PLOT:\s*([^\]]+)\]/gi
   while ((match = plotRegex.exec(content)) !== null) {
-    commands.push({
-      type: 'plot',
-      data: match[1].trim(),
+    commandsWithPosition.push({
+      command: {
+        type: 'plot',
+        data: match[1].trim(),
+      },
+      position: match.index,
     })
   }
 
   // Match [DIAGRAM: structure]
   const diagramRegex = /\[DIAGRAM:\s*([^\]]+)\]/gi
   while ((match = diagramRegex.exec(content)) !== null) {
-    commands.push({
-      type: 'diagram',
-      data: match[1].trim(),
+    commandsWithPosition.push({
+      command: {
+        type: 'diagram',
+        data: match[1].trim(),
+      },
+      position: match.index,
     })
   }
 
-  return commands
+  // Sort by position to maintain original order
+  return commandsWithPosition.sort((a, b) => a.position - b.position).map((item) => item.command)
 }
 
 /**

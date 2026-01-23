@@ -35,9 +35,15 @@ export function ArtifactCard({ artifact, onRemove }: ArtifactCardProps) {
     toast.success('Opening in editor...')
   }
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(JSON.stringify(artifact, null, 2))
-    toast.success('Copied to clipboard')
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(artifact, null, 2))
+      toast.success('Copied to clipboard')
+    } catch (error) {
+      toast.error(
+        `Failed to copy to clipboard: ${error instanceof Error ? error.message : String(error)}`
+      )
+    }
   }
 
   const handleOpen = () => {

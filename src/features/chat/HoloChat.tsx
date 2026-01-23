@@ -121,7 +121,7 @@ Be conversational and helpful. Use markdown for formatting.`
       const errorMessage: Message = {
         id: `msg-${Date.now()}-error`,
         role: 'assistant',
-        content: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        content: `Failed to generate response: ${error instanceof Error ? error.message : String(error)}`,
         timestamp: Date.now(),
       }
       setMessages((prev) => [...prev, errorMessage])
