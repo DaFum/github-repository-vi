@@ -21,6 +21,8 @@ import { LiveCanvas } from '@/features/canvas/LiveCanvas'
 import { HoloChat } from '@/features/chat/HoloChat'
 import { ArtifactVault } from '@/features/vault/ArtifactVault'
 import { PollenStatus } from '@/components/PollenStatus'
+import { BootSequence } from '@/components/BootSequence'
+import { AnimatePresence } from 'framer-motion'
 import { hyperSmolAgents } from '@/lib/hypersmolagents'
 import { useAetherStore } from '@/lib/store/useAetherStore'
 import { useNavigationStore } from '@/lib/store/useNavigationStore'
@@ -30,8 +32,18 @@ type ActiveModule = 'synapse' | 'canvas' | 'chat' | 'vault'
 function App() {
   const [showSettings, setShowSettings] = useState(false)
   const [apiKey, setApiKey] = useState('')
+  const [showBootSequence, setShowBootSequence] = useState(() => {
+    // Check if user has seen boot sequence before
+    const hasSeenBoot = localStorage.getItem('aether-boot-seen')
+    return !hasSeenBoot
+  })
   const { initialize, setApiKey: setStoreApiKey } = useAetherStore()
   const { activeModule, setActiveModule } = useNavigationStore()
+
+  const handleBootComplete = () => {
+    localStorage.setItem('aether-boot-seen', 'true')
+    setShowBootSequence(false)
+  }
 
   useEffect(() => {
     // Initialize systems
@@ -54,6 +66,12 @@ function App() {
   return (
     <>
       <Toaster />
+
+      {/* Boot Sequence */}
+      <AnimatePresence mode="wait">
+        {showBootSequence && <BootSequence onComplete={handleBootComplete} />}
+      </AnimatePresence>
+
       <div className="bg-background text-foreground relative min-h-screen overflow-hidden">
         {/* Cyberpunk Grid Background */}
         <div className="cyber-grid absolute inset-0 opacity-20"></div>
