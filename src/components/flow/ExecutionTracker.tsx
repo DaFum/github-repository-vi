@@ -85,16 +85,18 @@ export function ExecutionTracker({ isOpen }: ExecutionTrackerProps) {
               <div className="mt-3 space-y-1 font-mono text-[10px]">
                 <div className="text-muted-foreground flex justify-between">
                   <span>STATUS:</span>
-                  <span className="text-primary uppercase">{executionContext.status}</span>
+                  <span className="text-primary uppercase">
+                    {executionContext?.status ?? 'UNKNOWN'}
+                  </span>
                 </div>
                 <div className="text-muted-foreground flex justify-between">
                   <span>NODES:</span>
-                  <span className="text-primary">{nodeStates.size}</span>
+                  <span className="text-primary">{executionContext?.nodeStates?.size ?? 0}</span>
                 </div>
                 <div className="text-muted-foreground flex justify-between">
                   <span>RUN_ID:</span>
                   <span className="text-primary truncate">
-                    {executionContext.runId.slice(0, 8)}
+                    {executionContext?.runId ? executionContext.runId.slice(0, 8) : 'N/A'}
                   </span>
                 </div>
               </div>
@@ -154,7 +156,7 @@ export function ExecutionTracker({ isOpen }: ExecutionTrackerProps) {
             {/* History Summary */}
             <div className="border-border/50 border-t p-3">
               <div className="text-muted-foreground font-mono text-[10px]">
-                HISTORY: {executionContext.history.length} snapshots
+                HISTORY: {executionContext?.history?.length ?? 0} snapshots
               </div>
             </div>
           </div>

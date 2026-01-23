@@ -6,7 +6,7 @@ The **Heartbeat** of AETHER_OS — a Token-Passing execution engine for visual a
 
 Unlike traditional sequential execution, the Graph Engine uses a **Token-Passing Architecture** inspired by Petri Nets.
 
-```
+```text
 ┌─────────────────────────────────────┐
 │   Token                             │
 │   - id, data, sourceNodeId          │
@@ -73,7 +73,7 @@ A node is **ready** when:
 - All incoming edges have tokens OR signals
 
 Example:
-```
+```text
 Node A (completed) ──token──> Node C (waiting)
 Node B (completed) ──token──> Node C (now ready!)
 ```
@@ -82,7 +82,7 @@ Node B (completed) ──token──> Node C (now ready!)
 
 The engine can run multiple nodes simultaneously (default: 3 concurrent).
 
-```
+```text
        Start
       /  |  \
      A   B   C  ← All execute in parallel

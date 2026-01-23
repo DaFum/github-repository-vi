@@ -257,6 +257,7 @@ Be conversational and helpful. Use markdown for formatting.`
                 onClick={sendMessage}
                 disabled={!input.trim() || isGenerating}
                 className="gradient-button h-[80px] px-6 font-mono text-xs font-bold uppercase"
+                aria-label={isGenerating ? 'Senden, wird gesendet' : 'Senden'}
               >
                 {isGenerating ? (
                   <>

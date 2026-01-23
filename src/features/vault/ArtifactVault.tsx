@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -59,8 +60,8 @@ export function ArtifactVault() {
       )
     }
 
-    // Sort by timestamp (newest first)
-    return filtered.sort((a, b) => b.timestamp - a.timestamp)
+    // Sort by timestamp (newest first) - create a copy to avoid mutation
+    return [...filtered].sort((a, b) => b.timestamp - a.timestamp)
   }, [artifacts, activeTab, searchQuery])
 
   const handleExport = () => {
@@ -81,6 +82,7 @@ export function ArtifactVault() {
             importVault(data)
           } catch (error) {
             console.error('Failed to import vault:', error)
+            toast.error('Import fehlgeschlagen: Ungültiges JSON')
           }
         }
         reader.readAsText(file)

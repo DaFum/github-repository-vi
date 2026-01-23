@@ -76,7 +76,7 @@ export const useVaultStore = create<VaultStore>()(
 
       importVault: (data) => {
         if (!data.artifacts || !Array.isArray(data.artifacts)) {
-          alert('Invalid vault data')
+          alert("Import failed: missing or invalid 'artifacts' array in vault data")
           return
         }
 

@@ -49,9 +49,14 @@ const FlowCanvas = () => {
     useFlowFileOperations()
 
   const handleRun = () => {
-    startExecution()
-    graphEngine.initialize()
-    setShowTracker(true) // Auto-open tracker on execution
+    try {
+      graphEngine.initialize()
+      startExecution()
+      setShowTracker(true) // Auto-open tracker on execution
+    } catch (error) {
+      console.error('Failed to initialize graph engine:', error)
+      // Don't start execution if initialization fails
+    }
   }
 
   const handleStop = () => {
