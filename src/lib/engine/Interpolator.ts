@@ -474,7 +474,14 @@ export class Interpolator {
     return {
       value: validated.transformed || coerced,
       success: interpolated.success && validated.valid,
-      errors: interpolated.errors,
+      errors: [
+        ...interpolated.errors.map((err) => ({
+          path: [err.path],
+          message: err.message,
+          code: 'custom' as const,
+        })),
+        ...(validated.errors || []),
+      ],
       dependencies: interpolated.dependencies,
       valid: validated.valid,
       transformed: validated.transformed,

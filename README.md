@@ -24,7 +24,7 @@
 
 ## 🏗️ Architecture
 
-```
+```text
 ┌────────────────────────────────────────┐
 │   AETHER_OS (Browser-Native)          │
 ├────────────────────────────────────────┤
@@ -179,4 +179,4 @@ Built with ⚡ by [Architect Zero](https://github.com/DaFum/github-repository-vi
 
 ---
 
-_"The Browser is the Operating System. The Agent is the Interface."_
+> _"The Browser is the Operating System. The Agent is the Interface."_

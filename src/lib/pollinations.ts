@@ -43,9 +43,13 @@ class PollinationsClient implements Lifecycle {
 
   async initialize(): Promise<void> {
     // Load API key from localStorage if available
-    const storedKey = localStorage.getItem(this.storageKey)
-    if (storedKey && storedKey.startsWith('pk_')) {
-      this.apiKey = storedKey
+    try {
+      const storedKey = localStorage.getItem(this.storageKey)
+      if (storedKey && storedKey.startsWith('pk_')) {
+        this.apiKey = storedKey
+      }
+    } catch (error) {
+      console.warn('localStorage not available (private mode?):', error)
     }
   }
 
@@ -87,13 +91,12 @@ class PollinationsClient implements Lifecycle {
    */
   async getTextModels(): Promise<TextModel[]> {
     try {
-      const url = `${this.baseUrl}/v1/models`
-      const headers: Record<string, string> = {}
+      let url = `${this.baseUrl}/v1/models`
       if (this.apiKey) {
-        headers['Authorization'] = `Bearer ${this.apiKey}`
+        url += `?key=${this.apiKey}`
       }
 
-      const response = await fetch(url, { headers })
+      const response = await fetch(url)
       if (!response.ok) {
         throw new Error(`Failed to fetch text models: ${response.status}`)
       }
@@ -119,13 +122,12 @@ class PollinationsClient implements Lifecycle {
    */
   async getImageModels(): Promise<ImageModel[]> {
     try {
-      const url = `${this.baseUrl}/image/models`
-      const headers: Record<string, string> = {}
+      let url = `${this.baseUrl}/image/models`
       if (this.apiKey) {
-        headers['Authorization'] = `Bearer ${this.apiKey}`
+        url += `?key=${this.apiKey}`
       }
 
-      const response = await fetch(url, { headers })
+      const response = await fetch(url)
       if (!response.ok) {
         throw new Error(`Failed to fetch image models: ${response.status}`)
       }
@@ -225,12 +227,8 @@ class PollinationsClient implements Lifecycle {
     }
 
     try {
-      const url = `${this.baseUrl}/account/balance`
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${this.apiKey}`,
-        },
-      })
+      const url = `${this.baseUrl}/account/balance?key=${this.apiKey}`
+      const response = await fetch(url)
 
       if (!response.ok) {
         console.error(
@@ -320,22 +318,28 @@ class PollinationsClient implements Lifecycle {
       }
     }
 
-    // Construct URL
-    const url = `${this.baseUrl}/v1/chat/completions`
+    // Construct URL with key param if available (BYOP)
+    let url = `${this.baseUrl}/v1/chat/completions`
+    if (this.apiKey) {
+      url += `?key=${this.apiKey}&private=true`
+    }
 
-    // Construct headers with Authorization if API key is available
+    // Construct headers
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     }
 
-    if (this.apiKey) {
-      headers['Authorization'] = `Bearer ${this.apiKey}`
-      headers['X-Private'] = 'true'
+    // Construct body with explicit type
+    interface ChatRequestBody {
+      model: string
+      messages: PollinationsMessage[]
+      temperature: number
+      stream: boolean
+      response_format?: { type: string }
+      seed?: number
     }
 
-    // Construct body
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const body: any = {
+    const body: ChatRequestBody = {
       model,
       messages,
       temperature,
