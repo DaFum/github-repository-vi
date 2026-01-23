@@ -99,8 +99,10 @@ export const useAetherStore = create<AetherStore>((set, get) => ({
 
     // Update status based on balance
     if (balance === null) {
+      set({ pollenStatus: 'unknown' })
+    } else if (balance === 0) {
       set({ pollenStatus: 'empty' })
-    } else if (balance < 1) {
+    } else if (balance > 0 && balance < 1) {
       set({ pollenStatus: 'low' })
     } else {
       set({ pollenStatus: 'ok' })

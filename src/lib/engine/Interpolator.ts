@@ -175,7 +175,19 @@ export class Interpolator {
     }
 
     // Access the field
-    let value: unknown = field === 'output' ? nodeState.output : (nodeState as never)[field]
+    let value: unknown
+    if (field === 'output') {
+      value = nodeState.output
+    } else if (field in nodeState && typeof nodeState === 'object') {
+      value = (nodeState as Record<string, unknown>)[field]
+    } else {
+      errors.push({
+        path,
+        message: `Field "${field}" does not exist on node state`,
+        type: 'missing_dependency',
+      })
+      return undefined
+    }
 
     // Handle nested paths (e.g., "NodeID.output.user.name")
     if (parts.length > 2) {
@@ -316,25 +328,24 @@ export class Interpolator {
       return value
     }
 
-    // Try intelligent coercion based on target type
-    const schemaType = targetSchema._def.typeName
-
-    switch (schemaType) {
-      case 'ZodArray':
-        return this.coerceToArray(value)
-
-      case 'ZodObject':
-        return this.coerceToObject(value)
-
-      case 'ZodNumber':
-        return this.coerceToNumber(value)
-
-      case 'ZodBoolean':
-        return this.coerceToBoolean(value)
-
-      default:
-        return value
+    // Try intelligent coercion based on target type using instanceof checks
+    if (targetSchema instanceof z.ZodArray) {
+      return this.coerceToArray(value)
     }
+
+    if (targetSchema instanceof z.ZodObject) {
+      return this.coerceToObject(value)
+    }
+
+    if (targetSchema instanceof z.ZodNumber) {
+      return this.coerceToNumber(value)
+    }
+
+    if (targetSchema instanceof z.ZodBoolean) {
+      return this.coerceToBoolean(value)
+    }
+
+    return value
   }
 
   /**
@@ -446,7 +457,11 @@ export class Interpolator {
       return {
         ...interpolated,
         valid: false,
-        errors: [],
+        errors: interpolated.errors.map((err) => ({
+          path: [err.path],
+          message: err.message,
+          code: 'custom',
+        })),
       }
     }
 

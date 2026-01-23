@@ -147,7 +147,6 @@ Evolutionary prompt optimization using adversarial selection.
 
 - [Architecture Overview](./ARCHITECTURE.md)
 - [Agent System Design](./AGENTS.md)
-- [Development Guide](./memory.md)
 
 ---
 

@@ -55,6 +55,20 @@ class PollinationsClient implements Lifecycle {
 
   setApiKey(key: string) {
     // Store API key in localStorage for persistence (BYOP)
+    //
+    // SECURITY CONSIDERATION:
+    // API keys are stored in plain text in localStorage, which is accessible
+    // by any JavaScript running on this origin. This is acceptable for:
+    // - Development and prototyping
+    // - Personal use applications
+    // - Low-sensitivity API keys with usage limits
+    //
+    // For production applications with sensitive data:
+    // - Consider using secure session storage or encrypted storage
+    // - Implement proper authentication flow with backend token management
+    // - Use API key rotation and rate limiting
+    // - Monitor for XSS vulnerabilities that could expose keys
+    //
     if (key && key.startsWith('pk_')) {
       this.apiKey = key
       localStorage.setItem(this.storageKey, key)
@@ -73,12 +87,13 @@ class PollinationsClient implements Lifecycle {
    */
   async getTextModels(): Promise<TextModel[]> {
     try {
-      let url = `${this.baseUrl}/v1/models`
+      const url = `${this.baseUrl}/v1/models`
+      const headers: Record<string, string> = {}
       if (this.apiKey) {
-        url += `?key=${this.apiKey}`
+        headers['Authorization'] = `Bearer ${this.apiKey}`
       }
 
-      const response = await fetch(url)
+      const response = await fetch(url, { headers })
       if (!response.ok) {
         throw new Error(`Failed to fetch text models: ${response.status}`)
       }
@@ -104,12 +119,13 @@ class PollinationsClient implements Lifecycle {
    */
   async getImageModels(): Promise<ImageModel[]> {
     try {
-      let url = `${this.baseUrl}/image/models`
+      const url = `${this.baseUrl}/image/models`
+      const headers: Record<string, string> = {}
       if (this.apiKey) {
-        url += `?key=${this.apiKey}`
+        headers['Authorization'] = `Bearer ${this.apiKey}`
       }
 
-      const response = await fetch(url)
+      const response = await fetch(url, { headers })
       if (!response.ok) {
         throw new Error(`Failed to fetch image models: ${response.status}`)
       }
@@ -125,45 +141,59 @@ class PollinationsClient implements Lifecycle {
     }
   }
 
+  // Capability detection configuration mapping
+  private static readonly CAPABILITY_PATTERNS = {
+    video: ['veo', 'seedance', 'wan'],
+    code: ['gemini'], // Must not include 'search'
+    search: ['gemini-search', 'perplexity', 'grok', 'nomnom'],
+    reasoning: ['o1', 'deepseek', 'reasoning'],
+  } as const
+
   /**
    * Detect capabilities of a text model based on its properties
+   * Prefers explicit model properties (input_modalities) over name-based heuristics
    */
   detectCapabilities(model: TextModel): ModelCapability[] {
     const capabilities: ModelCapability[] = []
     const name = model.name.toLowerCase()
 
-    // Video generation
-    if (name.includes('veo') || name.includes('seedance') || name.includes('wan')) {
-      capabilities.push('video')
-    }
-
-    // Vision (multimodal input)
+    // Priority 1: Use explicit modality information from API
     if (model.input_modalities?.includes('image')) {
       capabilities.push('vision')
     }
 
-    // Audio
     if (model.input_modalities?.includes('audio')) {
       capabilities.push('audio')
     }
 
-    // Code execution (Gemini models)
-    if (name.includes('gemini') && !name.includes('search')) {
+    // Priority 2: Check model capabilities if provided by API
+    if (model.capabilities) {
+      return [...new Set([...capabilities, ...model.capabilities])]
+    }
+
+    // Priority 3: Fallback to name-based heuristics using configuration
+    for (const pattern of PollinationsClient.CAPABILITY_PATTERNS.video) {
+      if (name.includes(pattern)) {
+        capabilities.push('video')
+        break
+      }
+    }
+
+    // Code execution (Gemini models, excluding search variants)
+    if (
+      PollinationsClient.CAPABILITY_PATTERNS.code.some((p) => name.includes(p)) &&
+      !name.includes('search')
+    ) {
       capabilities.push('code')
     }
 
     // Web Search
-    if (
-      name.includes('gemini-search') ||
-      name.includes('perplexity') ||
-      name.includes('grok') ||
-      name.includes('nomnom')
-    ) {
+    if (PollinationsClient.CAPABILITY_PATTERNS.search.some((p) => name.includes(p))) {
       capabilities.push('search')
     }
 
-    // Reasoning (o1, DeepSeek, etc.)
-    if (name.includes('o1') || name.includes('deepseek') || name.includes('reasoning')) {
+    // Reasoning
+    if (PollinationsClient.CAPABILITY_PATTERNS.reasoning.some((p) => name.includes(p))) {
       capabilities.push('reasoning')
     }
 
@@ -190,21 +220,29 @@ class PollinationsClient implements Lifecycle {
    */
   async getBalance(): Promise<number | null> {
     if (!this.apiKey) {
+      console.warn('getBalance: No API key configured')
       return null
     }
 
     try {
-      const url = `${this.baseUrl}/account/balance?key=${this.apiKey}`
-      const response = await fetch(url)
+      const url = `${this.baseUrl}/account/balance`
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`,
+        },
+      })
 
       if (!response.ok) {
+        console.error(
+          `getBalance: API request failed with status ${response.status} ${response.statusText}`
+        )
         return null
       }
 
       const data = await response.json()
       return data.balance || 0
     } catch (error) {
-      console.error('Error fetching balance:', error)
+      console.error('getBalance: Request failed:', error)
       return null
     }
   }
@@ -282,15 +320,17 @@ class PollinationsClient implements Lifecycle {
       }
     }
 
-    // Construct URL with key param if available (BYOP)
-    let url = `${this.baseUrl}/v1/chat/completions`
-    if (this.apiKey) {
-      url += `?key=${this.apiKey}&private=true`
-    }
+    // Construct URL
+    const url = `${this.baseUrl}/v1/chat/completions`
 
-    // Construct headers
+    // Construct headers with Authorization if API key is available
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
+    }
+
+    if (this.apiKey) {
+      headers['Authorization'] = `Bearer ${this.apiKey}`
+      headers['X-Private'] = 'true'
     }
 
     // Construct body
@@ -334,6 +374,10 @@ class PollinationsClient implements Lifecycle {
    * Generates an image using Pollinations.ai
    * @param prompt The image description
    * @param options Additional options like model, width, height
+   *
+   * NOTE: Image URLs must include API key as query parameter since
+   * HTML <img> tags cannot send Authorization headers. Consider this
+   * security trade-off when using in production.
    */
   async generateImage(
     prompt: string,
@@ -359,6 +403,8 @@ class PollinationsClient implements Lifecycle {
       url += `&seed=${seed}`
     }
 
+    // Image URLs must use query parameter for authentication
+    // since <img> tags cannot send Authorization headers
     if (this.apiKey) {
       url += `&key=${this.apiKey}&private=true`
     }

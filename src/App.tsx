@@ -37,8 +37,15 @@ function App() {
     const hasSeenBoot = localStorage.getItem('aether-boot-seen')
     return !hasSeenBoot
   })
-  const { initialize, setApiKey: setStoreApiKey } = useAetherStore()
+  const { initialize, setApiKey: setStoreApiKey, apiKey: storedApiKey } = useAetherStore()
   const { activeModule, setActiveModule } = useNavigationStore()
+
+  // Load current API key when settings dialog opens
+  useEffect(() => {
+    if (showSettings && storedApiKey) {
+      setApiKey(storedApiKey)
+    }
+  }, [showSettings, storedApiKey])
 
   const handleBootComplete = () => {
     localStorage.setItem('aether-boot-seen', 'true')
@@ -53,7 +60,8 @@ function App() {
     return () => {
       // Global singletons persist across re-renders
     }
-  }, [initialize])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleSaveSettings = () => {
     setStoreApiKey(apiKey)
