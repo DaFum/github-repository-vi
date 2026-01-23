@@ -34,7 +34,7 @@ export function LiveCanvas() {
 
         <Badge variant="outline" className="text-accent border-accent/50 font-mono text-xs">
           <Sparkle size={12} weight="fill" className="mr-1" />
-          {seed ? `SEED_${seed}` : 'RANDOM_SEED'}
+          {seed !== undefined && seed !== null ? `SEED_${seed}` : 'RANDOM_SEED'}
         </Badge>
       </div>
 

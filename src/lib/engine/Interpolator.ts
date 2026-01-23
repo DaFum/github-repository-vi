@@ -355,17 +355,17 @@ export class Interpolator {
     if (Array.isArray(value)) return value
 
     if (typeof value === 'string') {
-      // Try CSV parsing
-      if (value.includes(',')) {
-        return value.split(',').map((v) => v.trim())
-      }
-
-      // Try JSON parsing
+      // Try JSON parsing first
       try {
         const parsed = JSON.parse(value)
         if (Array.isArray(parsed)) return parsed
       } catch {
-        // Not JSON
+        // Not JSON, try CSV parsing
+      }
+
+      // Try CSV parsing
+      if (value.includes(',')) {
+        return value.split(',').map((v) => v.trim())
       }
 
       // Single-item array
@@ -404,7 +404,8 @@ export class Interpolator {
       if (!isNaN(num)) return num
     }
 
-    return 0
+    // Return original value so validation fails downstream
+    return value
   }
 
   /**

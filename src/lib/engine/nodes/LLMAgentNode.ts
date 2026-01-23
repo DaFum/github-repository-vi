@@ -55,7 +55,7 @@ export const LLMAgentContract: NodeContract<LLMAgentInput, LLMAgentOutput> = {
 
 // Processor
 export class LLMAgentProcessor implements NodeProcessor<LLMAgentInput, LLMAgentOutput> {
-  isReady(inputs: Record<string, unknown>): boolean {
+  isReady(inputs: Record<string, unknown>, _config: Record<string, unknown>): boolean {
     return typeof inputs.prompt === 'string' && inputs.prompt.trim().length > 0
   }
 

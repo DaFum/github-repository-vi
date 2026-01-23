@@ -82,7 +82,7 @@ const CustomNodeContract: NodeContract<CustomNodeInput, CustomNodeOutput> = {
 
 // Step 3: Implement processor
 class CustomNodeProcessor implements NodeProcessor<CustomNodeInput, CustomNodeOutput> {
-  isReady(inputs: Record<string, unknown>): boolean {
+  isReady(inputs: Record<string, unknown>, _config: Record<string, unknown>): boolean {
     return typeof inputs.text === 'string'
   }
 

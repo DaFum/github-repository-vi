@@ -229,7 +229,7 @@ body::before {
   background-size: 200px 200px;
   opacity: 0.08;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 1;
   mix-blend-mode: overlay;
 }
 

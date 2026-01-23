@@ -1,6 +1,6 @@
 import type { ExecutionContext, NodeExecutionState, ExecutionSnapshot } from './types'
 import type { Token } from './Token'
-import { createToken, createNullToken, isNullToken } from './Token'
+import { createToken } from './Token'
 import { Interpolator } from './Interpolator'
 import { nodeRegistry } from './NodeRegistry'
 
@@ -44,7 +44,7 @@ export class GraphEngine {
   private context: ExecutionContext
   private graph: GraphDefinition
   private options: Required<ExecutionOptions>
-  private tickTimer: NodeJS.Timeout | null = null
+  private tickTimer: ReturnType<typeof setTimeout> | null = null
   private activeTokens = new Map<string, Token>() // Tokens waiting to be consumed
   private listeners = new Set<(context: ExecutionContext) => void>()
 
@@ -256,8 +256,8 @@ export class GraphEngine {
         throw new Error(`Node type "${nodeConfig.type}" not registered`)
       }
 
-      // Collect inputs from incoming edges
-      const inputs = this.collectInputs(nodeId)
+      // Collect inputs from incoming edges (uses cached buffer for retries)
+      const inputs = this.collectInputs(nodeId, state)
 
       // Interpolate inputs
       const interpolated = Interpolator.interpolate(inputs, this.context)
@@ -287,6 +287,10 @@ export class GraphEngine {
       state.output = result
       state.endTime = Date.now()
 
+      // Clear input buffer and consume tokens/signals on successful completion
+      state.inputBuffer = {}
+      this.consumeInputs(nodeId)
+
       // Record history
       this.recordSnapshot(nodeId, 'complete', state)
 
@@ -307,6 +311,9 @@ export class GraphEngine {
         console.warn(`Retrying node ${nodeId} (attempt ${state.retryCount})`)
       } else {
         console.error(`Node ${nodeId} failed after 3 retries:`, error)
+        // Clear input buffer and consume tokens/signals on final failure
+        state.inputBuffer = {}
+        this.consumeInputs(nodeId)
         this.recordSnapshot(nodeId, 'error', state)
       }
 
@@ -316,8 +323,15 @@ export class GraphEngine {
 
   /**
    * Collect inputs from incoming edges
+   * Uses cached inputBuffer for retries to preserve inputs
    */
-  private collectInputs(nodeId: string): Record<string, unknown> {
+  private collectInputs(nodeId: string, state: NodeExecutionState): Record<string, unknown> {
+    // If we already have a cached input buffer (from previous retry), use it
+    if (state.inputBuffer && Object.keys(state.inputBuffer).length > 0) {
+      return state.inputBuffer
+    }
+
+    // Collect fresh inputs (but don't delete them yet - only cache)
     const inputs: Record<string, unknown> = {}
     const incomingEdges = this.getIncomingEdges(nodeId)
 
@@ -327,7 +341,6 @@ export class GraphEngine {
       if (token) {
         const handleId = edge.targetHandle || 'default'
         inputs[handleId] = token.data
-        this.activeTokens.delete(edge.id) // Consume token
         continue
       }
 
@@ -336,11 +349,25 @@ export class GraphEngine {
       if (signal !== undefined) {
         const handleId = edge.targetHandle || 'default'
         inputs[handleId] = signal
-        this.context.edgeSignals.delete(edge.id) // Consume signal
       }
     }
 
+    // Cache the inputs for potential retries
+    state.inputBuffer = inputs
     return inputs
+  }
+
+  /**
+   * Consume inputs by deleting them from activeTokens and edgeSignals
+   * Called after successful execution or final failure
+   */
+  private consumeInputs(nodeId: string): void {
+    const incomingEdges = this.getIncomingEdges(nodeId)
+
+    for (const edge of incomingEdges) {
+      this.activeTokens.delete(edge.id)
+      this.context.edgeSignals.delete(edge.id)
+    }
   }
 
   /**
