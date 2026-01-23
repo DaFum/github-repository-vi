@@ -72,7 +72,7 @@ function App() {
         {showBootSequence && <BootSequence onComplete={handleBootComplete} />}
       </AnimatePresence>
 
-      <div className="bg-background text-foreground relative min-h-screen overflow-hidden">
+      <div className="bg-background text-foreground atmospheric-depth scanline-effect relative min-h-screen overflow-hidden">
         {/* Cyberpunk Grid Background */}
         <div className="cyber-grid absolute inset-0 opacity-20"></div>
         <div className="via-primary absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-transparent to-transparent"></div>
@@ -182,7 +182,7 @@ function App() {
               transition={{ delay: 0.5 }}
             >
               {activeModule === 'synapse' && (
-                <div className="border-primary/30 glass-card relative h-[calc(100vh-280px)] min-h-[600px] overflow-hidden rounded-lg border-2 shadow-2xl">
+                <div className="border-primary/30 glass-card corner-accent glow-border relative h-[calc(100vh-280px)] min-h-[600px] overflow-hidden rounded-lg border-2 shadow-2xl">
                   <FlowEditor />
                   <div className="absolute top-2 right-2 z-10">
                     <Badge

@@ -164,7 +164,7 @@ Be conversational and helpful. Use markdown for formatting.`
   }
 
   return (
-    <div className="border-primary/30 glass-card relative h-[calc(100vh-280px)] min-h-[600px] overflow-hidden rounded-lg border-2">
+    <div className="border-primary/30 glass-card corner-accent glow-border relative h-[calc(100vh-280px)] min-h-[600px] overflow-hidden rounded-lg border-2">
       {/* Background Visualization */}
       <BackgroundCanvas visualization={currentVisualization} />
 

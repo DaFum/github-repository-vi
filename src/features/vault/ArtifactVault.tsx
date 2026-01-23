@@ -111,7 +111,7 @@ export function ArtifactVault() {
   }
 
   return (
-    <div className="border-primary/30 glass-card flex h-[calc(100vh-280px)] min-h-[600px] flex-col overflow-hidden rounded-lg border-2">
+    <div className="border-primary/30 glass-card corner-accent glow-border flex h-[calc(100vh-280px)] min-h-[600px] flex-col overflow-hidden rounded-lg border-2">
       {/* Header */}
       <div className="border-border/50 flex items-center justify-between border-b bg-black/70 px-4 py-3 backdrop-blur">
         <div className="flex items-center gap-2">
