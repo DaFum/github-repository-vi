@@ -185,12 +185,12 @@ function App() {
                   exit={{ opacity: 0, x: 20, filter: 'blur(4px)' }}
                   transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <div className="border-primary/30 glass-card corner-accent glow-border relative h-[calc(100vh-280px)] min-h-[600px] overflow-hidden rounded-lg border-2 shadow-2xl">
+                  <div className="module-synapse border-primary/30 glass-card corner-accent glow-border relative h-[calc(100vh-280px)] min-h-[600px] overflow-hidden rounded-lg border-2 shadow-2xl">
                     <FlowEditor />
                     <div className="absolute top-2 right-2 z-10">
                       <Badge
                         variant="outline"
-                        className="border-primary/50 text-primary bg-black/50 font-mono text-xs backdrop-blur"
+                        className="badge-synapse bg-black/50 font-mono text-xs backdrop-blur"
                       >
                         SYNAPSE_ENGINE_v2026
                       </Badge>

@@ -19,11 +19,11 @@ export function LiveCanvas() {
   const [seed, setSeed] = useState<number | undefined>(undefined)
 
   return (
-    <div className="border-primary/30 glass-card corner-accent glow-border relative h-[calc(100vh-280px)] min-h-[600px] overflow-hidden rounded-lg border-2">
+    <div className="module-canvas border-primary/30 glass-card corner-accent glow-border relative h-[calc(100vh-280px)] min-h-[600px] overflow-hidden rounded-lg border-2">
       {/* Header */}
       <div className="border-border/50 flex items-center justify-between border-b bg-black/50 px-4 py-2 backdrop-blur">
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="border-primary/50 text-primary font-mono text-xs">
+          <Badge variant="outline" className="badge-canvas font-mono text-xs">
             <Lightning size={12} weight="fill" className="mr-1" />
             LIVE_CANVAS
           </Badge>

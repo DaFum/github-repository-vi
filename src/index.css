@@ -627,3 +627,262 @@ textarea:focus {
 .elastic-click:active {
   transform: scale(0.95);
 }
+
+/* ========================================
+   MODULE-SPECIFIC AESTHETICS
+   ======================================== */
+
+/* SYNAPSE MODULE - Neural Network / Circuit Board */
+.module-synapse {
+  --module-primary: oklch(0.78 0.25 168);
+  --module-glow: oklch(0.78 0.25 168 / 0.4);
+  background: radial-gradient(
+    circle at 30% 40%,
+    oklch(0.78 0.25 168 / 0.05) 0%,
+    transparent 50%
+  );
+}
+
+.module-synapse::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+      90deg,
+      oklch(0.78 0.25 168 / 0.03) 0px,
+      transparent 1px,
+      transparent 40px,
+      oklch(0.78 0.25 168 / 0.03) 41px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      oklch(0.78 0.25 168 / 0.03) 0px,
+      transparent 1px,
+      transparent 40px,
+      oklch(0.78 0.25 168 / 0.03) 41px
+    );
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+@keyframes neural-pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.module-synapse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    oklch(0.78 0.25 168 / 0.15) 0%,
+    transparent 40%
+  );
+  pointer-events: none;
+  animation: neural-pulse 3s ease-in-out infinite;
+}
+
+/* CANVAS MODULE - Creative Studio / Paint Palette */
+.module-canvas {
+  --module-primary: oklch(0.78 0.25 168);
+  --module-secondary: oklch(0.75 0.28 330);
+  background: radial-gradient(
+    circle at 60% 30%,
+    oklch(0.78 0.25 168 / 0.08) 0%,
+    transparent 30%
+  ),
+  radial-gradient(
+    circle at 40% 70%,
+    oklch(0.75 0.28 330 / 0.08) 0%,
+    transparent 30%
+  );
+}
+
+@keyframes color-wave {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+
+.module-canvas::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    oklch(0.78 0.25 168) 0%,
+    oklch(0.75 0.28 330) 50%,
+    oklch(0.78 0.25 168) 100%
+  );
+  animation: color-wave 10s linear infinite;
+  opacity: 0.5;
+}
+
+.module-canvas::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 80%, oklch(0.78 0.25 168 / 0.1) 0%, transparent 25%),
+    radial-gradient(circle at 80% 20%, oklch(0.75 0.28 330 / 0.1) 0%, transparent 25%);
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* HOLO-CHAT MODULE - Holographic Communication */
+.module-holochat {
+  --module-primary: oklch(0.7 0.2 230);
+  --module-glow: oklch(0.7 0.2 230 / 0.4);
+  background: radial-gradient(
+    ellipse at 50% 20%,
+    oklch(0.7 0.2 230 / 0.06) 0%,
+    transparent 50%
+  );
+}
+
+@keyframes hologram-scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.module-holochat::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    oklch(0.7 0.2 230 / 0.05) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  animation: hologram-scan 6s linear infinite;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+.module-holochat::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    oklch(0.7 0.2 230 / 0.1) 0%,
+    transparent 30%,
+    transparent 70%,
+    oklch(0.7 0.2 230 / 0.1) 100%
+  );
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* VAULT MODULE - Secure Archive / Database */
+.module-vault {
+  --module-primary: oklch(0.75 0.15 75);
+  --module-glow: oklch(0.75 0.15 75 / 0.4);
+  background: radial-gradient(
+    circle at 50% 50%,
+    oklch(0.75 0.15 75 / 0.04) 0%,
+    transparent 60%
+  );
+}
+
+@keyframes security-scan {
+  0% {
+    opacity: 0.2;
+    transform: scaleY(0);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scaleY(1);
+  }
+  100% {
+    opacity: 0.2;
+    transform: scaleY(0);
+  }
+}
+
+.module-vault::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      oklch(0.75 0.15 75 / 0.04) 0px,
+      transparent 1px,
+      transparent 30px
+    ),
+    repeating-linear-gradient(
+      60deg,
+      oklch(0.75 0.15 75 / 0.03) 0px,
+      transparent 1px,
+      transparent 30px
+    ),
+    repeating-linear-gradient(
+      120deg,
+      oklch(0.75 0.15 75 / 0.03) 0px,
+      transparent 1px,
+      transparent 30px
+    );
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.module-vault::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    oklch(0.75 0.15 75 / 0.2) 0%,
+    transparent 20%
+  );
+  animation: security-scan 4s ease-in-out infinite;
+  pointer-events: none;
+  transform-origin: top;
+}
+
+/* Module-specific Badge Colors */
+.badge-synapse {
+  border-color: oklch(0.78 0.25 168 / 0.5) !important;
+  color: oklch(0.78 0.25 168) !important;
+  box-shadow: 0 0 10px oklch(0.78 0.25 168 / 0.2);
+}
+
+.badge-canvas {
+  border-color: oklch(0.75 0.28 330 / 0.5) !important;
+  color: oklch(0.75 0.28 330) !important;
+  box-shadow: 0 0 10px oklch(0.75 0.28 330 / 0.2);
+}
+
+.badge-holochat {
+  border-color: oklch(0.7 0.2 230 / 0.5) !important;
+  color: oklch(0.7 0.2 230) !important;
+  box-shadow: 0 0 10px oklch(0.7 0.2 230 / 0.2);
+}
+
+.badge-vault {
+  border-color: oklch(0.75 0.15 75 / 0.5) !important;
+  color: oklch(0.75 0.15 75) !important;
+  box-shadow: 0 0 10px oklch(0.75 0.15 75 / 0.2);
+}
