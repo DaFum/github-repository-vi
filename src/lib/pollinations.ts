@@ -397,7 +397,8 @@ class PollinationsClient implements Lifecycle {
     const encodedPrompt = encodeURIComponent(prompt)
 
     // Construct URL with query params
-    let url = `${this.baseUrl}/image/${encodedPrompt}?model=${model}&width=${width}&height=${height}&nologo=true`
+    // Use dedicated image generation endpoint
+    let url = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=${model}&width=${width}&height=${height}&nologo=true`
 
     if (enhance) {
       url += '&enhance=true'
