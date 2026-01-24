@@ -8,6 +8,7 @@ import {
   AuditAgent,
   RefinementAgent,
   DevelopmentAgent,
+  TimeAgent,
   SpecializedAgent,
 } from './agents'
 
@@ -22,6 +23,7 @@ type AgentTask = {
     | 'audit'
     | 'refine'
     | 'development'
+    | 'time'
   payload: unknown
   priority: number
   status: 'pending' | 'running' | 'completed' | 'failed'
@@ -72,6 +74,7 @@ class HyperSmolAgents implements Lifecycle {
     audit: new AuditAgent(),
     refine: new RefinementAgent(),
     development: new DevelopmentAgent(),
+    time: new TimeAgent(),
   }
 
   async initialize(): Promise<void> {
