@@ -67,7 +67,10 @@ How you will handle the documentation files:
 
 ## 🧠 Skills
 
-- **Subagent-Driven Development**: `skills/subagent-driven-development/SKILL.md` - Methodology for breaking down complex tasks into sub-tasks with independent sub-agents and rigorous review loops.
+**CRITICAL:** Before starting any complex task, refer to the **[Skill Protocol Manual](docs/SKILL_PROTOCOL.md)**.
+
+- **Library**: All skills are located in `skills/`.
+- **Protocol**: `docs/SKILL_PROTOCOL.md` explains how to select and execute the correct skill for your task (e.g., `subagent-driven-development` for implementation, `systematic-debugging` for fixes).
 
 ---
 
