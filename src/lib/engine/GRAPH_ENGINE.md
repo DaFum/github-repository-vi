@@ -69,10 +69,12 @@ A token is a packet of data traveling through the graph:
 ### 3. **Readiness Check**
 
 A node is **ready** when:
+
 - Its status is `'pending'`
 - All incoming edges have tokens OR signals
 
 Example:
+
 ```text
 Node A (completed) ──token──> Node C (waiting)
 Node B (completed) ──token──> Node C (now ready!)
@@ -99,6 +101,7 @@ token.metadata.path = ['start', 'process1', 'process2']
 ```
 
 This enables:
+
 - "Where did this data come from?"
 - "Which nodes contributed to this result?"
 - Time-travel debugging
@@ -382,9 +385,7 @@ describe('GraphEngine', () => {
 
   it('should execute a simple graph', async () => {
     const graph = {
-      nodes: [
-        { id: 'start', type: 'llm-agent', config: {} },
-      ],
+      nodes: [{ id: 'start', type: 'llm-agent', config: {} }],
       edges: [],
     }
 

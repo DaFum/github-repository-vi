@@ -2,7 +2,7 @@
 
 > **HyperSmol Visual Agent Orchestrator**
 >
-> *"The Browser is the Operating System"*
+> _"The Browser is the Operating System"_
 
 ![Aether OS](https://image.pollinations.ai/prompt/A%20futuristic%20cypherpunk%20interface%20dashboard%20with%20neon%20cyan%20and%20magenta%20accents%20displaying%20network%20nodes%20and%20code%20fragments?model=flux&width=1024&height=512&nologo=true)
 
@@ -31,6 +31,7 @@ A local-first, privacy-focused visual environment for building, executing, and e
 ## ⚡ Quick Start
 
 1.  **Clone & Install**
+
     ```bash
     git clone https://github.com/yourusername/aether-os.git
     cd aether-os
@@ -38,6 +39,7 @@ A local-first, privacy-focused visual environment for building, executing, and e
     ```
 
 2.  **Start Dev Server**
+
     ```bash
     npm run dev
     ```
@@ -48,6 +50,7 @@ A local-first, privacy-focused visual environment for building, executing, and e
 ## 🧬 Architecture
 
 AETHER_OS follows the **HyperSmol** philosophy:
+
 - **Small Core**: The kernel (`HyperSmolAgents`) is minimal and extensible.
 - **Bio-Digital**: Components have lifecycles (`initialize`, `dispose`) and "pulses" (heartbeat).
 - **Agent-First**: The codebase itself is documented to be understood and modified by AI agents (`AGENTS.md`, `skills/`).
@@ -64,6 +67,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for a deep dive.
 ## 🤝 Contributing
 
 We use a **Skill-Based** contribution workflow.
+
 1.  Read `docs/SKILL_PROTOCOL.md`.
 2.  Select the appropriate skill (e.g., `subagent-driven-development`).
 3.  Execute the protocol.

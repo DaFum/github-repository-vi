@@ -38,7 +38,9 @@ Unlike traditional sequential execution, the Graph Engine uses a **Token-Passing
 ## Key Concepts
 
 ### 1. **Tick-Based Execution** (Non-Blocking)
+
 The engine runs in **ticks** (default: 50ms intervals). Each tick:
+
 1. Finds ready nodes (all inputs available).
 2. Executes up to `maxConcurrent` nodes in parallel.
 3. Propagates outputs as tokens.
@@ -47,14 +49,18 @@ The engine runs in **ticks** (default: 50ms intervals). Each tick:
 This ensures the UI never freezes and allows pause/resume.
 
 ### 2. **Tokens** (The Currency)
+
 A token is a packet of data traveling through the graph. Every token carries its history (provenance), enabling "time-travel" debugging.
 
 ### 3. **Readiness Check**
+
 A node is **ready** when:
+
 - Its status is `'pending'`.
 - All incoming edges have tokens OR signals.
 
 ### 4. **Deadlock Detection**
+
 The engine automatically detects when execution is stuck (nodes pending but no tokens moving) and halts to prevent infinite waits.
 
 ## Usage
@@ -80,4 +86,5 @@ engine.stop()
 ```
 
 ## Environment & Secrets
+
 Use `engine.setEnv('KEY', 'value')` to inject API keys or configuration safely. These are accessible in nodes via `{{$env.KEY}}`.

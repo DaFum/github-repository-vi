@@ -93,7 +93,7 @@ class PollinationsClient implements Lifecycle {
     try {
       // Use standard endpoint for models list
       // If API key is present, it returns all available models (including premium)
-      let url = `${this.baseUrl}/text/models`
+      const url = `${this.baseUrl}/text/models`
 
       const headers: Record<string, string> = {}
       if (this.apiKey) {
