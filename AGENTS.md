@@ -65,4 +65,10 @@ How you will handle the documentation files:
 
 ---
 
+## 🧠 Skills
+
+- **Subagent-Driven Development**: `skills/subagent-driven-development/SKILL.md` - Methodology for breaking down complex tasks into sub-tasks with independent sub-agents and rigorous review loops.
+
+---
+
 _“Complexity is not an excuse for friction.”_
