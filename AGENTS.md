@@ -41,6 +41,7 @@
 - **NO** loose types. `any` is forbidden. Use specific interfaces (e.g., `ShortenedLink`, `AgentTask`).
 - **NO** deleting `package-lock.json` unless absolutely necessary (and verify restoration).
 - **NO** creating "utils" folders without checking `src/lib/hypersmolagents.ts` capabilities first.
+- **NO** modifying `src/lib/pollinations.ts` base URLs without explicit verification.
 
 ---
 
@@ -54,23 +55,16 @@ Before marking a task as complete, you **MUST**:
 
 ---
 
-## 🗂️ Documentation
+## 🧠 Skills & Protocols
 
-How you will handle the documentation files:
+**CRITICAL:** This repository operates on a **Skill-Based Protocol**. You are expected to use formalized methodologies for complex tasks.
 
-1.  **`AGENTS.md` files**: Update when they are outdated and add new `AGENTS.md` files for folders so languagel model can easy understand the content of folder.
-2.  **`memory.md` file**: Collecting of memorys about things worthy of mention when work on the code.
-3.  **`ARCHITECTURE.md` file**: Executive Summary of the Vision
-4.  **`PRD.md` file**: deprecated file, initial plan of the project
-
----
-
-## 🧠 Skills
-
-**CRITICAL:** Before starting any complex task, refer to the **[Skill Protocol Manual](docs/SKILL_PROTOCOL.md)**.
-
-- **Library**: All skills are located in `skills/`.
-- **Protocol**: `docs/SKILL_PROTOCOL.md` explains how to select and execute the correct skill for your task (e.g., `subagent-driven-development` for implementation, `systematic-debugging` for fixes).
+- **Master Guide**: **[docs/SKILL_PROTOCOL.md](docs/SKILL_PROTOCOL.md)**. Read this first.
+- **Library**: `skills/` contains the executable protocols (e.g., `subagent-driven-development`, `systematic-debugging`).
+- **Usage**: When assigned a complex task (e.g., "Implement feature X"), you must:
+  1.  Identify the correct skill (e.g., `subagent-driven-development`).
+  2.  Read the `SKILL.md`.
+  3.  Execute the prompt chain defined in the skill.
 
 ---
 
