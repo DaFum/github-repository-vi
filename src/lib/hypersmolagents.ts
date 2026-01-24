@@ -133,8 +133,8 @@ class HyperSmolAgents implements Lifecycle {
 
     try {
       // Explicitly typecast to allow dynamic access while maintaining type safety
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const agent = this.agents[task.type] as SpecializedAgent<any, any>
+      // We use unknown to ensure strictness (Agent must handle validation)
+      const agent = this.agents[task.type] as SpecializedAgent<unknown, unknown>
       if (!agent) {
         throw new Error(`Unknown task type: ${task.type}`)
       }
