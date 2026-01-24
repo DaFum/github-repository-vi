@@ -7,12 +7,21 @@ import {
   PredictionAgent,
   AuditAgent,
   RefinementAgent,
+  DevelopmentAgent,
   SpecializedAgent,
 } from './agents'
 
 type AgentTask = {
   id: string
-  type: 'categorize' | 'health-check' | 'optimize' | 'analyze' | 'predict' | 'audit' | 'refine'
+  type:
+    | 'categorize'
+    | 'health-check'
+    | 'optimize'
+    | 'analyze'
+    | 'predict'
+    | 'audit'
+    | 'refine'
+    | 'development'
   payload: unknown
   priority: number
   status: 'pending' | 'running' | 'completed' | 'failed'
@@ -62,6 +71,7 @@ class HyperSmolAgents implements Lifecycle {
     predict: new PredictionAgent(),
     audit: new AuditAgent(),
     refine: new RefinementAgent(),
+    development: new DevelopmentAgent(),
   }
 
   async initialize(): Promise<void> {
