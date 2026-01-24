@@ -5,8 +5,7 @@ import { Lifecycle } from '../interfaces'
 
 export type PeerMessage = {
   type: 'handshake' | 'task_request' | 'task_response' | 'error'
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  payload: any
+  payload: unknown
 }
 
 export class P2PClient implements Lifecycle {
@@ -90,8 +89,7 @@ export class AgentHandshakeProtocol {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static createResponse(result: any): PeerMessage {
+  static createResponse(result: unknown): PeerMessage {
     return {
       type: 'task_response',
       payload: { result, timestamp: Date.now() },

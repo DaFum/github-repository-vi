@@ -12,9 +12,8 @@ export class Interpolator {
       return template.map((item) => this.hydrate(item, source))
     } else if (typeof template === 'object' && template !== null) {
       const result: Record<string, unknown> = {}
-      for (const key in template) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        result[key] = this.hydrate((template as any)[key], source)
+      for (const [key, value] of Object.entries(template as Record<string, unknown>)) {
+        result[key] = this.hydrate(value, source)
       }
       return result
     }
@@ -38,8 +37,12 @@ export class Interpolator {
   }
 
   private static getValueByPath(obj: unknown, path: string): unknown {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return path.split('.').reduce((acc, part) => acc && (acc as any)[part], obj)
+    return path.split('.').reduce((acc, part) => {
+      if (acc && typeof acc === 'object' && part in acc) {
+        return (acc as Record<string, unknown>)[part]
+      }
+      return undefined
+    }, obj)
   }
 
   /**
