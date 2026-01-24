@@ -3,6 +3,7 @@ import type { Token } from './Token'
 import { createToken } from './Token'
 import { Interpolator } from './Interpolator'
 import { nodeRegistry } from './NodeRegistry'
+import { Lifecycle } from '../interfaces'
 
 /**
  * Graph Execution Engine
@@ -40,7 +41,7 @@ export type ExecutionOptions = {
   autoStart?: boolean // Start execution immediately (default: true)
 }
 
-export class GraphEngine {
+export class GraphEngine implements Lifecycle {
   private context: ExecutionContext
   private graph: GraphDefinition
   private options: Required<ExecutionOptions>
@@ -48,7 +49,10 @@ export class GraphEngine {
   private activeTokens = new Map<string, Token>() // Tokens waiting to be consumed
   private listeners = new Set<(context: ExecutionContext) => void>()
 
-  constructor(graph: GraphDefinition, options: ExecutionOptions = {}) {
+  constructor(
+    graph: GraphDefinition = { nodes: [], edges: [] },
+    options: ExecutionOptions = {}
+  ) {
     this.graph = graph
     this.options = {
       maxConcurrent: options.maxConcurrent ?? 3,
@@ -62,6 +66,40 @@ export class GraphEngine {
 
     if (this.options.autoStart) {
       this.start()
+    }
+  }
+
+  // Lifecycle Interface
+  initialize(): void {
+    this.start()
+  }
+
+  dispose(): void {
+    this.stop()
+    this.listeners.clear()
+  }
+
+  /**
+   * Update the graph definition (for reactive editors)
+   */
+  updateGraph(graph: GraphDefinition): void {
+    this.graph = graph
+    // Potentially sync context nodes if they don't exist
+    for (const node of this.graph.nodes) {
+      if (!this.context.nodeStates.has(node.id)) {
+        this.context.nodeStates.set(node.id, {
+          id: node.id,
+          status: 'pending',
+          inputBuffer: {},
+          output: null,
+          error: null,
+          startTime: 0,
+          endTime: 0,
+          logs: [],
+          retryCount: 0,
+          executionVersion: 1,
+        })
+      }
     }
   }
 
@@ -104,7 +142,6 @@ export class GraphEngine {
    */
   start(): void {
     if (this.context.status === 'running') {
-      console.warn('Engine is already running')
       return
     }
 
@@ -130,7 +167,6 @@ export class GraphEngine {
    */
   resume(): void {
     if (this.context.status !== 'paused') {
-      console.warn('Engine is not paused')
       return
     }
     this.context.status = 'running'
@@ -485,3 +521,6 @@ export class GraphEngine {
     this.context.memory.set(key, value)
   }
 }
+
+// Export a singleton instance for global usage (matching legacy behavior)
+export const graphEngine = new GraphEngine({ autoStart: false })

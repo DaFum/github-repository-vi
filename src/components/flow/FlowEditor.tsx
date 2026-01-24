@@ -22,7 +22,7 @@ import {
   Pulse,
   Brain,
 } from '@phosphor-icons/react'
-import { graphEngine } from '@/lib/graph/GraphEngine'
+import { graphEngine } from '@/lib/engine/GraphEngine'
 import { useFlowDragDrop } from '@/hooks/useFlowDragDrop'
 import { useFlowFileOperations } from '@/hooks/useFlowFileOperations'
 
