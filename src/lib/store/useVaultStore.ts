@@ -29,11 +29,11 @@ export function useVaultStore() {
       timestamp: Date.now(),
     }
 
-    setArtifacts([newArtifact, ...artifacts])
+    setArtifacts((current) => [newArtifact, ...current])
   }
 
   const removeArtifact = (id: string) => {
-    setArtifacts(artifacts.filter((artifact) => artifact.id !== id))
+    setArtifacts((current) => current.filter((artifact) => artifact.id !== id))
   }
 
   const clearAll = () => {

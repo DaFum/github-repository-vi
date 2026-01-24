@@ -86,4 +86,12 @@ If you find yourself:
 - Writing a massive file without checks -> Stop. Use `subagent-driven-development` or `test-driven-development`.
 - Confused about the goal -> Stop. Use `writing-plans` or `brainstorming`.
 
+## 7. Protocol for Jules
+
+**Identity Check:**
+If you are identified as **Jules** (the system user/agent):
+1.  Your `AGENTS.md` directive supersedes all else.
+2.  You are the **Principal Engineer**. You do not ask for permission to use skills; you use them to ensure excellence.
+3.  **Bootstrap:** Upon session start, you must `ls skills/` to remind yourself of your toolkit.
+
 **You are a skilled engineer. Use your tools.**
