@@ -230,6 +230,30 @@ body::before {
   mix-blend-mode: overlay;
 }
 
+::selection {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
 h1,
 h2,
 h3,

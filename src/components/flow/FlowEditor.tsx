@@ -83,6 +83,7 @@ const FlowCanvas = () => {
                   variant="outline"
                   size="icon"
                   title="Neural Mesh (P2P)"
+                  aria-label="Neural Mesh (P2P)"
                   className="border-primary/50 text-primary hover:bg-primary/20"
                 >
                   <ShareNetwork weight="bold" />
@@ -92,6 +93,7 @@ const FlowCanvas = () => {
                   variant="outline"
                   size="icon"
                   title="Ocular Cortex (Vision)"
+                  aria-label="Ocular Cortex (Vision)"
                   className="border-blue-400/50 text-blue-400 hover:bg-blue-400/20"
                 >
                   <Eye weight="bold" />
@@ -101,6 +103,7 @@ const FlowCanvas = () => {
                   variant="outline"
                   size="icon"
                   title="Genetic Optimizer"
+                  aria-label="Genetic Optimizer"
                   className="border-purple-400/50 text-purple-400 hover:bg-purple-400/20"
                 >
                   <Dna weight="bold" />
@@ -113,6 +116,7 @@ const FlowCanvas = () => {
                   variant={showArchitect ? 'default' : 'outline'}
                   size="icon"
                   title="AI Architect"
+                  aria-label="AI Architect"
                   className="border-purple-400/50 text-purple-400 hover:bg-purple-400/20"
                 >
                   <Brain weight="bold" />
@@ -123,6 +127,7 @@ const FlowCanvas = () => {
                   variant={showTracker ? 'default' : 'outline'}
                   size="icon"
                   title="Execution Tracker"
+                  aria-label="Execution Tracker"
                   className="border-accent/50 text-accent hover:bg-accent/20"
                 >
                   <Pulse weight="bold" />
@@ -130,7 +135,13 @@ const FlowCanvas = () => {
 
                 <div className="mx-2 h-8 w-px bg-white/20" />
 
-                <Button onClick={handleExport} variant="ghost" size="icon" title="Export Blueprint">
+                <Button
+                  onClick={handleExport}
+                  variant="ghost"
+                  size="icon"
+                  title="Export Blueprint"
+                  aria-label="Export Blueprint"
+                >
                   <DownloadSimple />
                 </Button>
                 <Button
@@ -138,6 +149,7 @@ const FlowCanvas = () => {
                   variant="ghost"
                   size="icon"
                   title="Import Blueprint"
+                  aria-label="Import Blueprint"
                 >
                   <UploadSimple />
                 </Button>

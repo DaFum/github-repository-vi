@@ -132,6 +132,7 @@ export function RenderPane({ prompt, model, onModelChange, seed }: RenderPanePro
               variant="outline"
               size="icon"
               className="border-primary/50 text-primary"
+              aria-label="Download Render"
             >
               <Download size={16} weight="bold" />
             </Button>

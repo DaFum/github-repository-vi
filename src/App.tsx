@@ -174,28 +174,28 @@ function App() {
                 <TabsList className="bg-card border-border grid w-full grid-cols-4 border font-mono">
                   <TabsTrigger
                     value="synapse"
-                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-2 text-[10px] tracking-wider uppercase"
+                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex h-12 items-center gap-2 text-[10px] tracking-wider uppercase"
                   >
                     <Circuitry size={16} />
                     <span className="hidden sm:inline">SYNAPSE</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="canvas"
-                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-2 text-[10px] tracking-wider uppercase"
+                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex h-12 items-center gap-2 text-[10px] tracking-wider uppercase"
                   >
                     <Palette size={16} />
                     <span className="hidden sm:inline">CANVAS</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="chat"
-                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-2 text-[10px] tracking-wider uppercase"
+                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex h-12 items-center gap-2 text-[10px] tracking-wider uppercase"
                   >
                     <ChatCircle size={16} />
                     <span className="hidden sm:inline">HOLO-CHAT</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="vault"
-                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-2 text-[10px] tracking-wider uppercase"
+                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex h-12 items-center gap-2 text-[10px] tracking-wider uppercase"
                   >
                     <Archive size={16} />
                     <span className="hidden sm:inline">VAULT</span>
