@@ -523,4 +523,4 @@ export class GraphEngine implements Lifecycle {
 }
 
 // Export a singleton instance for global usage (matching legacy behavior)
-export const graphEngine = new GraphEngine({ autoStart: false })
+export const graphEngine = new GraphEngine(undefined, { autoStart: false })
