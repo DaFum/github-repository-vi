@@ -1,265 +1,108 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect, useState } from 'react'
+import { Circuitry, Cpu, Globe, WifiHigh } from '@phosphor-icons/react'
 
 type BootSequenceProps = {
   onComplete: () => void
 }
 
-const bootMessages = [
-  '> INITIALIZING_NEURAL_CORTEX...',
-  '> LOADING_AGENT_PROTOCOLS...',
-  '> ESTABLISHING_MESH_NETWORK...',
-  '> CALIBRATING_VISUAL_SYSTEMS...',
-  '> SYNCING_QUANTUM_STATES...',
-  '> MOUNTING_EXECUTION_ENGINE...',
+const bootSteps = [
+  { text: 'INITIALIZING_NEURAL_CORTEX', icon: Circuitry },
+  { text: 'LOADING_AGENT_PROTOCOLS', icon: Cpu },
+  { text: 'ESTABLISHING_MESH_NETWORK', icon: Globe },
+  { text: 'CALIBRATING_VISUAL_SYSTEMS', icon: WifiHigh },
 ]
 
-/**
- * Boot Sequence Component
- *
- * Dramatic system boot animation with:
- * - Terminal-style boot messages
- * - Grain texture overlay
- * - Geometric patterns
- * - Orchestrated reveals
- * - Neon glow effects
- */
 export function BootSequence({ onComplete }: BootSequenceProps) {
-  const [messageIndex, setMessageIndex] = useState(0)
-  const [showLogo, setShowLogo] = useState(false)
+  const [stepIndex, setStepIndex] = useState(0)
+  const [isComplete, setIsComplete] = useState(false)
 
   useEffect(() => {
-    // Boot messages sequence
-    if (messageIndex < bootMessages.length) {
-      const timer = setTimeout(() => {
-        setMessageIndex((prev) => prev + 1)
-      }, 400)
-      return () => clearTimeout(timer)
+    if (stepIndex < bootSteps.length) {
+      const timeout = setTimeout(() => {
+        setStepIndex((prev) => prev + 1)
+      }, 800) // Slower, more deliberate steps
+      return () => clearTimeout(timeout)
     } else {
-      // Show logo after all messages
-      const logoTimer = setTimeout(() => {
-        setShowLogo(true)
+      const timeout = setTimeout(() => {
+        setIsComplete(true)
+        setTimeout(onComplete, 1000)
       }, 500)
-
-      // Complete sequence
-      const completeTimer = setTimeout(() => {
-        onComplete()
-      }, 3500)
-
-      return () => {
-        clearTimeout(logoTimer)
-        clearTimeout(completeTimer)
-      }
+      return () => clearTimeout(timeout)
     }
-  }, [messageIndex, onComplete])
+  }, [stepIndex, onComplete])
 
   return (
     <motion.div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black font-mono text-primary overflow-hidden"
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 1, ease: 'easeInOut' }}
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black"
+      exit={{ opacity: 0, filter: 'blur(20px)' }}
+      style={{ backgroundColor: '#000000' }}
+      transition={{ duration: 1.5, ease: 'easeInOut' }}
     >
-      {/* Grain Texture Overlay */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.15]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-          backgroundRepeat: 'repeat',
-          backgroundSize: '200px 200px',
-        }}
-      />
+      {/* Background Grid & Scanlines */}
+      <div className="absolute inset-0 grid-bg opacity-20" />
+      <div className="scanlines" />
 
-      {/* Geometric Pattern Background */}
-      <div className="absolute inset-0 opacity-5">
-        <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path
-                d="M 40 0 L 0 0 0 40"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="0.5"
-                className="text-primary"
+      {/* Vignette */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#000_120%)]" />
+
+      <div className="relative z-10 w-full max-w-lg px-8">
+        {/* Main Logo Reveal */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1 }}
+          className="mb-12 text-center"
+        >
+          <h1 className="text-6xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-primary/50 font-orbitron drop-shadow-[0_0_15px_rgba(0,243,255,0.5)]">
+            AETHER_OS
+          </h1>
+          <div className="mt-2 h-1 w-full bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
+        </motion.div>
+
+        {/* Terminal Output */}
+        <div className="space-y-4 font-share-tech text-sm">
+          {bootSteps.map((step, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{
+                opacity: stepIndex >= index ? 1 : 0,
+                x: stepIndex >= index ? 0 : -20,
+                color: stepIndex === index ? 'var(--primary)' : 'var(--muted-foreground)'
+              }}
+              className="flex items-center gap-3"
+            >
+              <step.icon
+                size={18}
+                className={stepIndex === index ? "animate-spin-slow text-accent" : ""}
+                weight={stepIndex === index ? "fill" : "regular"}
               />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-      </div>
-
-      {/* Radial Gradient Mesh */}
-      <div
-        className="absolute inset-0 opacity-30"
-        style={{
-          background: `radial-gradient(circle at 50% 50%, oklch(0.78 0.25 168 / 0.2) 0%, transparent 50%),
-                       radial-gradient(circle at 80% 20%, oklch(0.75 0.28 330 / 0.15) 0%, transparent 40%),
-                       radial-gradient(circle at 20% 80%, oklch(0.75 0.28 330 / 0.15) 0%, transparent 40%)`,
-        }}
-      />
-
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center space-y-8 px-4">
-        {/* Boot Messages */}
-        <div className="h-[200px] space-y-2">
-          <AnimatePresence mode="popLayout">
-            {bootMessages.slice(0, messageIndex).map((message, index) => (
-              <motion.div
-                key={message}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{
-                  duration: 0.3,
-                  delay: index * 0.05,
-                  ease: 'easeOut',
-                }}
-                className="text-primary font-mono text-sm tracking-wider"
-                style={{
-                  textShadow: '0 0 10px oklch(0.78 0.25 168 / 0.5)',
-                }}
-              >
-                {message}
-              </motion.div>
-            ))}
-          </AnimatePresence>
+              <span className="tracking-widest">
+                {step.text}
+                {stepIndex === index && <span className="animate-pulse">_</span>}
+              </span>
+              {stepIndex > index && <span className="ml-auto text-accent text-xs">[OK]</span>}
+            </motion.div>
+          ))}
         </div>
 
-        {/* Logo Reveal */}
-        <AnimatePresence>
-          {showLogo && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{
-                duration: 1,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="flex flex-col items-center"
-            >
-              {/* Decorative Top Line */}
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: '300px' }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="via-primary mb-6 h-[2px] bg-gradient-to-r from-transparent to-transparent"
-                style={{
-                  boxShadow: '0 0 20px oklch(0.78 0.25 168 / 0.8)',
-                }}
-              />
-
-              {/* Main Logo */}
-              <motion.h1
-                className="neon-text mb-4 font-black tracking-tighter"
-                style={{
-                  fontSize: 'clamp(3rem, 10vw, 6rem)',
-                  textShadow: `
-                    0 0 10px oklch(0.78 0.25 168 / 1),
-                    0 0 20px oklch(0.78 0.25 168 / 0.8),
-                    0 0 40px oklch(0.78 0.25 168 / 0.6),
-                    0 0 80px oklch(0.78 0.25 168 / 0.4)
-                  `,
-                  background: `linear-gradient(135deg,
-                    oklch(0.78 0.25 168) 0%,
-                    oklch(0.75 0.28 330) 50%,
-                    oklch(0.78 0.25 168) 100%)`,
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
-                AETHER_OS
-              </motion.h1>
-
-              {/* Tagline */}
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8, duration: 0.6 }}
-                className="text-muted-foreground font-mono text-sm tracking-widest"
-              >
-                VISUAL_AGENT_ORCHESTRATOR
-              </motion.p>
-
-              {/* Decorative Bottom Line */}
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: '300px' }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="via-accent mt-6 h-[2px] bg-gradient-to-r from-transparent to-transparent"
-                style={{
-                  boxShadow: '0 0 20px oklch(0.75 0.28 330 / 0.8)',
-                }}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Loading Bar */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="border-primary/30 w-[300px] overflow-hidden rounded-full border bg-black/50 p-1 backdrop-blur"
-        >
+        <div className="mt-8 h-1 w-full bg-secondary overflow-hidden">
           <motion.div
+            className="h-full bg-primary box-shadow-[0_0_10px_var(--primary)]"
             initial={{ width: '0%' }}
-            animate={{ width: '100%' }}
-            transition={{
-              duration: 2.5,
-              ease: 'easeInOut',
-              delay: 0.5,
-            }}
-            className="from-primary via-accent to-primary h-1 rounded-full bg-gradient-to-r"
-            style={{
-              boxShadow: '0 0 10px oklch(0.78 0.25 168 / 0.8)',
-            }}
+            animate={{ width: `${(Math.min(stepIndex, bootSteps.length) / bootSteps.length) * 100}%` }}
+            transition={{ type: 'spring', stiffness: 50 }}
           />
-        </motion.div>
+        </div>
+
+        <div className="mt-2 flex justify-between text-[10px] text-muted-foreground font-share-tech">
+          <span>SYS.VER.2.0.4</span>
+          <span>MEM: 64TB OK</span>
+        </div>
       </div>
-
-      {/* Corner Decorations (Art Deco) */}
-      <svg
-        className="pointer-events-none absolute top-0 left-0 h-32 w-32 opacity-20"
-        viewBox="0 0 100 100"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M0 0 L50 0 L0 50 Z"
-          fill="url(#corner-gradient)"
-          stroke="currentColor"
-          strokeWidth="0.5"
-          className="text-primary"
-        />
-        <defs>
-          <linearGradient id="corner-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="oklch(0.78 0.25 168 / 0.2)" />
-            <stop offset="100%" stopColor="transparent" />
-          </linearGradient>
-        </defs>
-      </svg>
-
-      <svg
-        className="pointer-events-none absolute right-0 bottom-0 h-32 w-32 rotate-180 opacity-20"
-        viewBox="0 0 100 100"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M0 0 L50 0 L0 50 Z"
-          fill="url(#corner-gradient-2)"
-          stroke="currentColor"
-          strokeWidth="0.5"
-          className="text-accent"
-        />
-        <defs>
-          <linearGradient id="corner-gradient-2" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="oklch(0.75 0.28 330 / 0.2)" />
-            <stop offset="100%" stopColor="transparent" />
-          </linearGradient>
-        </defs>
-      </svg>
     </motion.div>
   )
 }

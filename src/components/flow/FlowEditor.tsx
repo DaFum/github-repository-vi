@@ -11,6 +11,7 @@ import { VisionPanel } from '@/components/advanced/VisionPanel'
 import { GeneticPanel } from '@/components/advanced/GeneticPanel'
 import { DndContext } from '@dnd-kit/core'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import {
   Play,
   Stop,
@@ -21,6 +22,7 @@ import {
   UploadSimple,
   Pulse,
   Brain,
+  Circuitry,
 } from '@phosphor-icons/react'
 import { graphEngine } from '@/lib/engine/GraphEngine'
 import { useFlowDragDrop } from '@/hooks/useFlowDragDrop'
@@ -52,10 +54,9 @@ const FlowCanvas = () => {
     try {
       graphEngine.initialize()
       startExecution()
-      setShowTracker(true) // Auto-open tracker on execution
+      setShowTracker(true)
     } catch (error) {
       console.error('Failed to initialize graph engine:', error)
-      // Don't start execution if initialization fails
     }
   }
 
@@ -68,114 +69,111 @@ const FlowCanvas = () => {
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
-      <div className="relative flex h-full w-full">
+      <div className="relative flex h-full w-full font-share-tech overflow-hidden">
         <Sidebar />
         <div className="relative flex h-full flex-1 flex-col bg-black/90">
-          {/* Architect Panel */}
+
+          {/* Header Bar */}
+          <div className="flex items-center justify-between border-b border-primary/20 bg-black/60 p-2 backdrop-blur z-20">
+            <div className="flex items-center gap-2">
+               <Badge variant="neon" className="gap-2">
+                 <Circuitry size={14} weight="fill" />
+                 SYNAPSE_CORE
+               </Badge>
+               <span className="text-[10px] text-primary/50 uppercase tracking-widest">
+                  NODES: {nodes.length} | EDGES: {edges.length}
+               </span>
+            </div>
+            <div className="flex items-center gap-2">
+               <Button
+                  onClick={isRunning ? handleStop : handleRun}
+                  variant={isRunning ? 'destructive' : 'neon'}
+                  size="sm"
+                  className="font-bold shadow-[0_0_15px_rgba(0,243,255,0.3)]"
+                >
+                  {isRunning ? (
+                    <>
+                      <Stop weight="fill" className="mr-2" /> STOP_ENGINE
+                    </>
+                  ) : (
+                    <>
+                      <Play weight="fill" className="mr-2" /> RUN_FLOW
+                    </>
+                  )}
+                </Button>
+            </div>
+          </div>
+
+          {/* Architect Panel Overlay */}
           {showArchitect && <ArchitectPanel />}
 
           {/* Main Canvas Area */}
           <div className="relative flex flex-1">
-            <div className="relative flex-1">
-              <div className="absolute top-4 right-4 z-20 flex gap-2">
-                <Button
-                  onClick={() => setShowP2P(true)}
-                  variant="outline"
-                  size="icon"
-                  title="Neural Mesh (P2P)"
-                  aria-label="Neural Mesh (P2P)"
-                  className="border-primary/50 text-primary hover:bg-primary/20"
-                >
-                  <ShareNetwork weight="bold" />
-                </Button>
-                <Button
-                  onClick={() => setShowVision(true)}
-                  variant="outline"
-                  size="icon"
-                  title="Ocular Cortex (Vision)"
-                  aria-label="Ocular Cortex (Vision)"
-                  className="border-blue-400/50 text-blue-400 hover:bg-blue-400/20"
-                >
-                  <Eye weight="bold" />
-                </Button>
-                <Button
-                  onClick={() => setShowGenetic(true)}
-                  variant="outline"
-                  size="icon"
-                  title="Genetic Optimizer"
-                  aria-label="Genetic Optimizer"
-                  className="border-purple-400/50 text-purple-400 hover:bg-purple-400/20"
-                >
-                  <Dna weight="bold" />
-                </Button>
+             {/* Toolbar Overlay */}
+             <div className="absolute top-4 right-4 z-20 flex flex-col gap-2 p-2 bg-black/60 border border-primary/20 backdrop-blur rounded-none shadow-xl">
+                 <div className="flex gap-2 justify-end">
+                    <Button
+                      onClick={() => setShowP2P(true)}
+                      variant="holographic"
+                      size="icon"
+                      title="Neural Mesh (P2P)"
+                      className="text-primary"
+                    >
+                      <ShareNetwork weight="bold" />
+                    </Button>
+                    <Button
+                      onClick={() => setShowVision(true)}
+                      variant="holographic"
+                      size="icon"
+                      title="Ocular Cortex"
+                      className="text-blue-400 border-blue-400/30"
+                    >
+                      <Eye weight="bold" />
+                    </Button>
+                    <Button
+                      onClick={() => setShowGenetic(true)}
+                      variant="holographic"
+                      size="icon"
+                      title="Genetic Optimizer"
+                      className="text-purple-400 border-purple-400/30"
+                    >
+                      <Dna weight="bold" />
+                    </Button>
+                 </div>
 
-                <div className="mx-2 h-8 w-px bg-white/20" />
+                 <div className="h-px w-full bg-primary/20" />
 
-                <Button
-                  onClick={() => setShowArchitect(!showArchitect)}
-                  variant={showArchitect ? 'default' : 'outline'}
-                  size="icon"
-                  title="AI Architect"
-                  aria-label="AI Architect"
-                  className="border-purple-400/50 text-purple-400 hover:bg-purple-400/20"
-                >
-                  <Brain weight="bold" />
-                </Button>
+                 <div className="flex gap-2 justify-end">
+                    <Button
+                      onClick={() => setShowArchitect(!showArchitect)}
+                      variant={showArchitect ? 'neon' : 'holographic'}
+                      size="icon"
+                      title="AI Architect"
+                    >
+                      <Brain weight="bold" />
+                    </Button>
+                    <Button
+                      onClick={() => setShowTracker(!showTracker)}
+                      variant={showTracker ? 'neon' : 'holographic'}
+                      size="icon"
+                      title="Execution Tracker"
+                    >
+                      <Pulse weight="bold" />
+                    </Button>
+                 </div>
 
-                <Button
-                  onClick={() => setShowTracker(!showTracker)}
-                  variant={showTracker ? 'default' : 'outline'}
-                  size="icon"
-                  title="Execution Tracker"
-                  aria-label="Execution Tracker"
-                  className="border-accent/50 text-accent hover:bg-accent/20"
-                >
-                  <Pulse weight="bold" />
-                </Button>
+                 <div className="h-px w-full bg-primary/20" />
 
-                <div className="mx-2 h-8 w-px bg-white/20" />
-
-                <Button
-                  onClick={handleExport}
-                  variant="ghost"
-                  size="icon"
-                  title="Export Blueprint"
-                  aria-label="Export Blueprint"
-                >
-                  <DownloadSimple />
-                </Button>
-                <Button
-                  onClick={handleImportClick}
-                  variant="ghost"
-                  size="icon"
-                  title="Import Blueprint"
-                  aria-label="Import Blueprint"
-                >
-                  <UploadSimple />
-                </Button>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  className="hidden"
-                  accept=".zip"
-                />
-
-                <div className="mx-2 h-8 w-px bg-white/20" />
-
-                <Button
-                  onClick={isRunning ? handleStop : handleRun}
-                  variant={isRunning ? 'destructive' : 'default'}
-                  className="border-2 border-white/20 font-mono font-bold uppercase shadow-xl"
-                >
-                  {isRunning ? (
-                    <Stop weight="fill" className="mr-2" />
-                  ) : (
-                    <Play weight="fill" className="mr-2" />
-                  )}
-                  {isRunning ? 'STOP_ENGINE' : 'RUN_FLOW'}
-                </Button>
-              </div>
+                 <div className="flex gap-2 justify-end">
+                    <Button onClick={handleExport} variant="ghost" size="icon" title="Export">
+                      <DownloadSimple />
+                    </Button>
+                    <Button onClick={handleImportClick} variant="ghost" size="icon" title="Import">
+                      <UploadSimple />
+                    </Button>
+                    <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".zip" />
+                 </div>
+             </div>
 
               <ReactFlow
                 nodes={nodes}
@@ -186,12 +184,17 @@ const FlowCanvas = () => {
                 nodeTypes={nodeTypes}
                 fitView
                 colorMode="dark"
+                className="bg-black/80"
               >
-                <Background color="#333" gap={20} />
-                <Controls />
-                <MiniMap className="!bg-background/50 !border-border" />
+                <Background color="#1a2236" gap={24} size={1} />
+                <Controls className="!bg-black/80 !border-primary/30 !rounded-none [&>button]:!border-b-primary/30 [&>button]:!text-primary [&>button:hover]:!bg-primary/20" />
+                <MiniMap
+                   className="!bg-black/90 !border-primary/30 !rounded-none"
+                   maskColor="rgba(0, 0, 0, 0.6)"
+                   nodeColor="#00f3ff"
+                />
               </ReactFlow>
-            </div>
+
 
             {/* Execution Tracker */}
             <ExecutionTracker isOpen={showTracker} />

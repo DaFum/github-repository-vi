@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { Toaster } from '@/components/ui/sonner'
 import { Button } from '@/components/ui/button'
@@ -15,14 +15,13 @@ import {
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Gear, Circuitry, Palette, ChatCircle, Archive } from '@phosphor-icons/react'
+import { Gear, Circuitry, Palette, ChatCircle, Archive, Hexagon } from '@phosphor-icons/react'
 import { FlowEditor } from '@/components/flow/FlowEditor'
 import { LiveCanvas } from '@/features/canvas/LiveCanvas'
 import { HoloChat } from '@/features/chat/HoloChat'
 import { ArtifactVault } from '@/features/vault/ArtifactVault'
 import { PollenStatus } from '@/components/PollenStatus'
 import { BootSequence } from '@/components/BootSequence'
-import { AnimatePresence } from 'framer-motion'
 import { hyperSmolAgents } from '@/lib/hypersmolagents'
 import { useAetherStore } from '@/lib/store/useAetherStore'
 import { useNavigationStore } from '@/lib/store/useNavigationStore'
@@ -35,18 +34,16 @@ function App() {
   const [showSettings, setShowSettings] = useState(false)
   const [apiKey, setApiKey] = useState('')
   const [showBootSequence, setShowBootSequence] = useState(() => {
-    // Check if user has seen boot sequence before
     const hasSeenBoot = localStorage.getItem('aether-boot-seen')
     return !hasSeenBoot
   })
   const { initialize, setApiKey: setStoreApiKey, apiKey: storedApiKey } = useAetherStore()
   const { activeModule, setActiveModule } = useNavigationStore()
 
-  // Handle Pollinations Auth Callback
   useEffect(() => {
     const hash = window.location.hash
     if (hash.includes('api_key=')) {
-      const params = new URLSearchParams(hash.slice(1)) // Remove #
+      const params = new URLSearchParams(hash.slice(1))
       const key = params.get('api_key')
       if (key) {
         pollinations.setApiKey(key)
@@ -54,13 +51,11 @@ function App() {
         toast.success('Pollinations Connected', {
           description: 'API Key successfully linked',
         })
-        // Clean URL
         window.history.pushState(null, '', window.location.pathname)
       }
     }
   }, [setStoreApiKey])
 
-  // Load current API key when settings dialog opens
   useEffect(() => {
     if (showSettings && storedApiKey) {
       setApiKey(storedApiKey)
@@ -73,14 +68,8 @@ function App() {
   }
 
   useEffect(() => {
-    // Initialize systems
     hyperSmolAgents.initialize()
     initialize()
-
-    return () => {
-      // Global singletons persist across re-renders
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleSaveSettings = () => {
@@ -95,235 +84,161 @@ function App() {
     <>
       <Toaster />
 
-      {/* Boot Sequence */}
       <AnimatePresence mode="wait">
         {showBootSequence && <BootSequence onComplete={handleBootComplete} />}
       </AnimatePresence>
 
-      <div className="bg-background text-foreground atmospheric-depth scanline-effect relative min-h-screen overflow-hidden">
-        {/* Cyberpunk Grid Background */}
-        <div className="cyber-grid absolute inset-0 opacity-20"></div>
-        <div className="via-primary absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-transparent to-transparent"></div>
+      <div className="relative min-h-screen overflow-hidden bg-background text-foreground font-rajdhani selection:bg-primary/30 selection:text-white">
+        {/* Atmosphere Layers */}
+        <div className="fixed inset-0 grid-bg opacity-30 pointer-events-none" />
+        <div className="fixed inset-0 scanlines pointer-events-none" />
+        <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,rgba(0,243,255,0.05)_0%,transparent_50%)] pointer-events-none" />
 
-        <div className="relative z-10">
-          <div className="mx-auto max-w-7xl px-6 py-8 md:px-8 md:py-12">
-            {/* Header */}
-            <motion.div
+        <div className="relative z-10 flex flex-col min-h-screen">
+          <div className="mx-auto w-full max-w-[1600px] px-4 py-6 md:px-8">
+
+            {/* Header / HUD Top Bar */}
+            <motion.header
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="mb-8 text-center"
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="flex items-center justify-between mb-8 border-b border-white/10 pb-4 backdrop-blur-sm"
             >
-              <div className="mb-6 flex items-center justify-center gap-4">
-                <motion.div
-                  className="relative"
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
-                >
-                  <div className="bg-card border-primary relative border-2 p-4">
-                    <Circuitry size={40} weight="bold" className="text-primary terminal-flicker" />
-                    <div className="bg-accent border-background absolute -top-1 -right-1 h-3 w-3 border"></div>
-                    <div className="bg-primary border-background absolute -bottom-1 -left-1 h-2 w-2 border"></div>
+              <div className="flex items-center gap-4">
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-primary/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <Hexagon size={32} weight="duotone" className="text-primary animate-pulse-slow relative z-10" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-orbitron font-black tracking-widest text-white glow-text-cyan">
+                    AETHER_OS
+                  </h1>
+                  <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-share-tech tracking-widest uppercase">
+                    <span className="text-primary">●</span> ONLINE
+                    <span className="text-white/20">|</span>
+                    <span>V.2.0.4-ALPHA</span>
                   </div>
-                </motion.div>
+                </div>
               </div>
 
-              <motion.h1
-                className="neon-text text-primary mb-3 text-5xl font-black md:text-7xl"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                AETHER_OS
-              </motion.h1>
-
-              <motion.div
-                className="text-muted-foreground flex items-center justify-center gap-2 font-mono text-xs md:text-sm"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                <span className="text-primary">{'>'}</span>
-                <span>VISUAL_AGENT_ORCHESTRATOR</span>
-                <span className="text-accent animate-pulse">█</span>
-              </motion.div>
-
-              {/* Settings Button */}
-              <div className="absolute top-4 right-4 flex items-center gap-4 md:top-8 md:right-8">
+              <div className="flex items-center gap-4">
                 <PollinationsAuth />
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setShowSettings(true)}
-                  className="text-muted-foreground hover:text-primary ripple-container"
+                  className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
                 >
-                  <Gear size={24} className="icon-hover-spin" />
+                  <Gear size={20} className="animate-spin-slow-hover" />
                 </Button>
               </div>
-            </motion.div>
+            </motion.header>
 
-            {/* Module Navigation */}
+            {/* Navigation Deck */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.3 }}
               className="mb-8"
             >
-              <Tabs value={activeModule} onValueChange={(v) => setActiveModule(v as ActiveModule)}>
-                <TabsList className="bg-card border-border grid w-full grid-cols-4 border font-mono">
-                  <TabsTrigger
-                    value="synapse"
-                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex h-12 items-center gap-2 text-[10px] tracking-wider uppercase"
-                  >
-                    <Circuitry size={16} />
-                    <span className="hidden sm:inline">SYNAPSE</span>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="canvas"
-                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex h-12 items-center gap-2 text-[10px] tracking-wider uppercase"
-                  >
-                    <Palette size={16} />
-                    <span className="hidden sm:inline">CANVAS</span>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="chat"
-                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex h-12 items-center gap-2 text-[10px] tracking-wider uppercase"
-                  >
-                    <ChatCircle size={16} />
-                    <span className="hidden sm:inline">HOLO-CHAT</span>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="vault"
-                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex h-12 items-center gap-2 text-[10px] tracking-wider uppercase"
-                  >
-                    <Archive size={16} />
-                    <span className="hidden sm:inline">VAULT</span>
-                  </TabsTrigger>
+              <Tabs value={activeModule} onValueChange={(v) => setActiveModule(v as ActiveModule)} className="w-full">
+                <TabsList className="w-full h-14 bg-black/40 border border-white/10 backdrop-blur-md p-1 grid grid-cols-4 gap-2">
+                  {[
+                    { id: 'synapse', icon: Circuitry, label: 'SYNAPSE' },
+                    { id: 'canvas', icon: Palette, label: 'CANVAS' },
+                    { id: 'chat', icon: ChatCircle, label: 'HOLO-CHAT' },
+                    { id: 'vault', icon: Archive, label: 'VAULT' }
+                  ].map((tab) => (
+                    <TabsTrigger
+                      key={tab.id}
+                      value={tab.id}
+                      className="h-full data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:border-primary/50 border border-transparent transition-all duration-300 font-orbitron text-xs tracking-widest hover:bg-white/5"
+                    >
+                      <tab.icon size={20} className="mr-2 mb-0.5" weight="duotone" />
+                      <span className="hidden sm:inline">{tab.label}</span>
+                    </TabsTrigger>
+                  ))}
                 </TabsList>
               </Tabs>
             </motion.div>
 
-            {/* Module Content */}
+            {/* Main Viewport */}
             <AnimatePresence mode="wait">
-              {activeModule === 'synapse' && (
-                <motion.div
-                  key="synapse"
-                  initial={{ opacity: 0, x: -20, filter: 'blur(4px)' }}
-                  animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, x: 20, filter: 'blur(4px)' }}
-                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  <div className="module-synapse border-primary/30 glass-card corner-accent glow-border relative h-[calc(100vh-280px)] min-h-[600px] overflow-hidden rounded-lg border-2 shadow-2xl">
-                    <FlowEditor />
-                    <div className="absolute top-2 right-2 z-10">
-                      <Badge
-                        variant="outline"
-                        className="badge-synapse bg-black/50 font-mono text-xs backdrop-blur"
-                      >
-                        SYNAPSE_ENGINE_v2026
-                      </Badge>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
+              <motion.main
+                key={activeModule}
+                initial={{ opacity: 0, scale: 0.98, filter: 'blur(10px)' }}
+                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, scale: 1.02, filter: 'blur(10px)' }}
+                transition={{ duration: 0.3 }}
+                className="relative min-h-[70vh] rounded-lg border border-white/10 bg-black/40 backdrop-blur-md overflow-hidden shadow-2xl"
+              >
+                {/* HUD Corners */}
+                <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-primary/50 rounded-tl-sm pointer-events-none z-20" />
+                <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-primary/50 rounded-tr-sm pointer-events-none z-20" />
+                <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-primary/50 rounded-bl-sm pointer-events-none z-20" />
+                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-primary/50 rounded-br-sm pointer-events-none z-20" />
 
-              {activeModule === 'canvas' && (
-                <motion.div
-                  key="canvas"
-                  initial={{ opacity: 0, y: 20, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -20, scale: 0.98 }}
-                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  <LiveCanvas />
-                </motion.div>
-              )}
-
-              {activeModule === 'chat' && (
-                <motion.div
-                  key="chat"
-                  initial={{ opacity: 0, rotateX: 10 }}
-                  animate={{ opacity: 1, rotateX: 0 }}
-                  exit={{ opacity: 0, rotateX: -10 }}
-                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                  style={{ transformPerspective: 1200 }}
-                >
-                  <HoloChat />
-                </motion.div>
-              )}
-
-              {activeModule === 'vault' && (
-                <motion.div
-                  key="vault"
-                  initial={{ opacity: 0, scale: 0.95, filter: 'brightness(0.5)' }}
-                  animate={{ opacity: 1, scale: 1, filter: 'brightness(1)' }}
-                  exit={{ opacity: 0, scale: 1.05, filter: 'brightness(0.5)' }}
-                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  <ArtifactVault />
-                </motion.div>
-              )}
+                <div className="relative z-10 h-full p-1">
+                  {activeModule === 'synapse' && <FlowEditor />}
+                  {activeModule === 'canvas' && <LiveCanvas />}
+                  {activeModule === 'chat' && <HoloChat />}
+                  {activeModule === 'vault' && <ArtifactVault />}
+                </div>
+              </motion.main>
             </AnimatePresence>
+
           </div>
         </div>
 
-        {/* Settings Dialog */}
+        {/* System Status Footer */}
+        <div className="fixed bottom-0 left-0 w-full border-t border-white/5 bg-black/80 backdrop-blur text-[10px] py-1 px-4 flex justify-between items-center text-muted-foreground font-share-tech z-50">
+          <div className="flex gap-4">
+             <span>CPU: NORMAL</span>
+             <span>NET: CONNECTED</span>
+          </div>
+          <PollenStatus />
+        </div>
+
+        {/* Settings Modal */}
         <Dialog open={showSettings} onOpenChange={setShowSettings}>
-          <DialogContent className="border-primary/50 glass-card border-2">
+          <DialogContent className="border-primary/50 bg-black/90 backdrop-blur-xl border font-rajdhani sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle className="text-primary font-black tracking-wider uppercase">
-                SYSTEM_CONFIGURATION
+              <DialogTitle className="text-primary font-orbitron tracking-widest flex items-center gap-2">
+                <Gear size={20} weight="fill" /> SYSTEM_CONFIG
               </DialogTitle>
-              <DialogDescription className="font-mono text-xs">
-                CONFIGURE_POLLINATIONS_AI_CORTEX
+              <DialogDescription className="font-share-tech text-xs uppercase tracking-wider">
+                Establish neural link with Pollinations.ai
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="apiKey" className="font-mono text-xs uppercase">
-                  API_KEY (Optional for limited use)
-                </Label>
+              <div className="space-y-2">
+                <Label htmlFor="apiKey" className="text-xs uppercase tracking-widest text-primary/80">API_KEY</Label>
                 <Input
                   id="apiKey"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
                   placeholder="pk_..."
-                  className="font-mono text-xs"
+                  className="bg-black/50 border-primary/30 text-primary font-mono text-xs focus:ring-primary/50"
                 />
-                <p className="text-muted-foreground font-mono text-[10px]">
-                  Get your key at{' '}
-                  <a
-                    href="https://enter.pollinations.ai"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    enter.pollinations.ai
-                  </a>
-                </p>
               </div>
             </div>
             <DialogFooter>
               <Button
                 variant="outline"
                 onClick={() => setShowSettings(false)}
-                className="ripple-container font-mono text-xs uppercase"
+                className="border-white/20 hover:bg-white/10 text-xs uppercase tracking-wider"
               >
-                CANCEL
+                Abort
               </Button>
               <Button
                 onClick={handleSaveSettings}
-                className="gradient-button button-glitch ripple-container font-mono text-xs font-bold uppercase"
+                className="bg-primary/20 border border-primary/50 text-primary hover:bg-primary/40 text-xs uppercase tracking-wider font-bold shadow-[0_0_15px_rgba(0,243,255,0.2)]"
               >
-                SAVE_CONFIG
+                Save Protocol
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
-
-        {/* Pollen Balance Status */}
-        <PollenStatus />
       </div>
     </>
   )

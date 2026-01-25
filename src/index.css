@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap');
 
 @layer base {
   * {
@@ -8,34 +9,41 @@
 }
 
 :root {
-  --background: oklch(0.08 0 0);
-  --foreground: oklch(0.98 0 0);
+  /* Aether-OS Palette - Void Black & Electric Cyan */
+  --background: #030712;
+  --foreground: #e2e8f0;
 
-  --card: oklch(0.12 0 0);
-  --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.1 0 0);
-  --popover-foreground: oklch(0.98 0 0);
+  --card: #0b1221;
+  --card-foreground: #e2e8f0;
 
-  --primary: oklch(0.78 0.25 168);
-  --primary-foreground: oklch(0.08 0 0);
-  --secondary: oklch(0.18 0 0);
-  --secondary-foreground: oklch(0.98 0 0);
-  --accent: oklch(0.75 0.28 330);
-  --accent-foreground: oklch(0.98 0 0);
-  --destructive: oklch(0.65 0.26 25);
-  --destructive-foreground: oklch(0.98 0 0);
+  --popover: #0b1221;
+  --popover-foreground: #e2e8f0;
 
-  --muted: oklch(0.2 0 0);
-  --muted-foreground: oklch(0.5 0 0);
-  --border: oklch(0.22 0 0);
-  --input: oklch(0.18 0 0);
-  --ring: oklch(0.78 0.25 168);
+  --primary: #00f3ff;
+  --primary-foreground: #000000;
 
-  --radius: 0.125rem;
+  --secondary: #1a2236;
+  --secondary-foreground: #94a3b8;
 
-  --glow-cyan: oklch(0.78 0.25 168);
-  --glow-magenta: oklch(0.75 0.28 330);
-  --glow-yellow: oklch(0.85 0.2 95);
+  --accent: #ff00ff;
+  --accent-foreground: #000000;
+
+  --destructive: #ff3333;
+  --destructive-foreground: #ffffff;
+
+  --muted: #1e293b;
+  --muted-foreground: #64748b;
+
+  --border: #1e293b;
+  --input: #1e293b;
+  --ring: #00f3ff;
+
+  --radius: 0; /* Sharp edges for Sci-Fi feel */
+
+  /* Glow Effects */
+  --glow-cyan: #00f3ff;
+  --glow-magenta: #ff00ff;
+  --glow-amber: #ff9e00;
 }
 
 @theme {
@@ -60,825 +68,165 @@
   --color-ring: var(--ring);
 
   --radius-sm: 0;
-  --radius-md: calc(var(--radius));
-  --radius-lg: calc(var(--radius) * 2);
-  --radius-xl: calc(var(--radius) * 3);
-  --radius-2xl: calc(var(--radius) * 4);
+  --radius-md: 2px;
+  --radius-lg: 4px;
+  --radius-xl: 8px;
+  --radius-2xl: 16px;
   --radius-full: 9999px;
-}
 
-.gradient-button {
-  background: var(--primary);
-  position: relative;
-  overflow: hidden;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow:
-    0 0 20px var(--glow-cyan),
-    0 0 40px oklch(0.78 0.25 168 / 0.3);
-}
-
-.gradient-button::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, oklch(1 0 0 / 0.2), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.6s;
-}
-
-.gradient-button:hover::before {
-  transform: translateX(100%);
-}
-
-.gradient-button:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 0 30px var(--glow-cyan),
-    0 0 60px oklch(0.78 0.25 168 / 0.4),
-    0 10px 30px oklch(0 0 0 / 0.5);
-}
-
-.gradient-button:active {
-  transform: translateY(0);
-}
-
-.input-glow:focus-visible {
-  box-shadow:
-    0 0 0 2px var(--glow-cyan),
-    0 0 30px oklch(0.78 0.25 168 / 0.2);
-  border-color: var(--primary);
-}
-
-.glass-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  position: relative;
-  backdrop-filter: blur(12px);
-}
-
-.glass-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    oklch(0.78 0.25 168 / 0.03) 0px,
-    transparent 1px,
-    transparent 2px,
-    oklch(0.78 0.25 168 / 0.03) 3px
-  );
-  pointer-events: none;
-  opacity: 0.5;
-}
-
-/* Enhanced glass-card with atmospheric depth */
-.glass-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 0%, oklch(0.78 0.25 168 / 0.05) 0%, transparent 60%);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.glass-card:hover::after {
-  opacity: 1;
-}
-
-.cyber-grid {
-  background-image:
-    linear-gradient(oklch(0.78 0.25 168 / 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, oklch(0.78 0.25 168 / 0.1) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-
-.neon-text {
-  text-shadow:
-    0 0 10px var(--glow-cyan),
-    0 0 20px var(--glow-cyan),
-    0 0 30px oklch(0.78 0.25 168 / 0.5);
-}
-
-.agent-pulse {
-  animation: agent-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes agent-pulse {
-  0%,
-  100% {
-    opacity: 1;
-    box-shadow:
-      0 0 10px var(--glow-magenta),
-      0 0 20px oklch(0.75 0.28 330 / 0.3);
-  }
-  50% {
-    opacity: 0.7;
-    box-shadow:
-      0 0 20px var(--glow-magenta),
-      0 0 40px oklch(0.75 0.28 330 / 0.5);
-  }
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-.terminal-flicker {
-  animation: terminal-flicker 0.15s infinite alternate;
-}
-
-@keyframes terminal-flicker {
-  0% {
-    opacity: 0.95;
-  }
-  100% {
-    opacity: 1;
-  }
+  --font-orbitron: 'Orbitron', sans-serif;
+  --font-rajdhani: 'Rajdhani', sans-serif;
+  --font-share-tech: 'Share Tech Mono', monospace;
 }
 
 body {
-  font-family: 'JetBrains Mono', monospace;
-  letter-spacing: -0.01em;
-  cursor:
-    url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2 L12 22 M2 12 L22 12' stroke='%2300FFFF' stroke-width='1.5' opacity='0.8'/%3E%3Ccircle cx='12' cy='12' r='3' fill='none' stroke='%23FF00FF' stroke-width='1' opacity='0.6'/%3E%3C/svg%3E")
-      12 12,
-    crosshair;
-}
-
-/* Global Grain Texture Overlay */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 200px 200px;
-  opacity: 0.08;
-  pointer-events: none;
-  z-index: 1;
-  mix-blend-mode: overlay;
-}
-
-::selection {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--background);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 0;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: 'Archivo Black', sans-serif;
-  text-transform: uppercase;
+  font-family: 'Rajdhani', sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
   letter-spacing: 0.02em;
+  overflow-x: hidden;
+  cursor: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2 L12 22 M2 12 L22 12' stroke='%2300f3ff' stroke-width='1.5'/%3E%3Ccircle cx='12' cy='12' r='2' fill='%23ff00ff'/%3E%3C/svg%3E") 12 12, crosshair;
 }
 
-/* Atmospheric Depth Layers */
-.atmospheric-depth {
-  position: relative;
+/* Typography Overrides */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Orbitron', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.atmospheric-depth::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 20% 30%, oklch(0.78 0.25 168 / 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, oklch(0.75 0.28 330 / 0.08) 0%, transparent 50%);
-  pointer-events: none;
-  opacity: 0.6;
+code, pre, .font-mono {
+  font-family: 'Share Tech Mono', monospace;
 }
 
-/* Decorative Corner Accent */
-.corner-accent {
-  position: relative;
-}
+/* =========================================
+   AETHER-OS UTILITIES & FX
+   ========================================= */
 
-.corner-accent::before {
-  content: '';
-  position: absolute;
+/* 1. Global Scanline Overlay */
+.scanlines {
+  position: fixed;
   top: 0;
   left: 0;
-  width: 32px;
-  height: 32px;
-  border-top: 2px solid oklch(0.78 0.25 168 / 0.3);
-  border-left: 2px solid oklch(0.78 0.25 168 / 0.3);
-  pointer-events: none;
-}
-
-.corner-accent::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 32px;
-  height: 32px;
-  border-bottom: 2px solid oklch(0.75 0.28 330 / 0.3);
-  border-right: 2px solid oklch(0.75 0.28 330 / 0.3);
-  pointer-events: none;
-}
-
-/* Enhanced Button Hover with Glow */
-button:not(:disabled):hover {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Glowing Border Effect */
-.glow-border {
-  position: relative;
-  border: 1px solid oklch(0.78 0.25 168 / 0.3);
-  box-shadow: 0 0 20px oklch(0.78 0.25 168 / 0.1);
-  transition: all 0.3s ease;
-}
-
-.glow-border:hover {
-  border-color: oklch(0.78 0.25 168 / 0.6);
-  box-shadow: 0 0 40px oklch(0.78 0.25 168 / 0.2);
-}
-
-/* Scanline Effect (subtle) */
-@keyframes scanline {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(100%);
-  }
-}
-
-.scanline-effect {
-  position: relative;
-  overflow: hidden;
-}
-
-.scanline-effect::after {
-  content: '';
-  position: absolute;
-  inset: 0;
+  width: 100vw;
+  height: 100vh;
   background: linear-gradient(
     to bottom,
-    transparent 0%,
-    oklch(0.78 0.25 168 / 0.05) 50%,
-    transparent 100%
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 0) 50%,
+    rgba(0, 0, 0, 0.4) 50%,
+    rgba(0, 0, 0, 0.4)
   );
-  animation: scanline 8s linear infinite;
+  background-size: 100% 3px;
   pointer-events: none;
-  opacity: 0.3;
+  z-index: 50;
+  opacity: 0.1;
 }
 
-/* ========================================
-   MOTION CHOREOGRAPHY - SURPRISING INTERACTIONS
-   ======================================== */
-
-/* Button Glitch Effect on Hover */
-@keyframes glitch {
-  0% {
-    transform: translate(0);
-  }
-  20% {
-    transform: translate(-2px, 2px);
-  }
-  40% {
-    transform: translate(-2px, -2px);
-  }
-  60% {
-    transform: translate(2px, 2px);
-  }
-  80% {
-    transform: translate(2px, -2px);
-  }
-  100% {
-    transform: translate(0);
-  }
-}
-
-.button-glitch {
-  position: relative;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.button-glitch:hover {
-  animation: glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.button-glitch:active {
-  transform: scale(0.98);
-}
-
-/* Tab Magnetic Skew Effect */
-button[role='tab'] {
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-button[role='tab']:hover:not([data-state='active']) {
-  transform: skewX(-2deg) translateY(-1px);
-  background: oklch(0.15 0 0);
-}
-
-button[role='tab'][data-state='active'] {
-  transform: translateY(-2px);
-  box-shadow:
-    0 0 20px oklch(0.78 0.25 168 / 0.3),
-    0 4px 12px oklch(0 0 0 / 0.4);
-}
-
-/* Badge Pulse Micro-Interaction */
-@keyframes badge-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 10px oklch(0.78 0.25 168 / 0.2);
-  }
-  50% {
-    box-shadow: 0 0 20px oklch(0.78 0.25 168 / 0.4);
-  }
-}
-
-.badge-interactive {
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.badge-interactive:hover {
-  animation: badge-pulse 1s ease-in-out infinite;
-  transform: scale(1.05);
-}
-
-/* Input Focus Border Dance */
-@keyframes border-dance {
-  0% {
-    border-color: oklch(0.78 0.25 168);
-  }
-  50% {
-    border-color: oklch(0.75 0.28 330);
-  }
-  100% {
-    border-color: oklch(0.78 0.25 168);
-  }
-}
-
-input:focus,
-textarea:focus {
-  animation: border-dance 2s ease-in-out infinite;
-  box-shadow:
-    0 0 0 2px oklch(0.78 0.25 168 / 0.2),
-    0 0 30px oklch(0.78 0.25 168 / 0.1);
-}
-
-/* Icon Spin on Hover */
-.icon-hover-spin {
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.icon-hover-spin:hover {
-  transform: rotate(180deg);
-}
-
-/* Icon Scale Bounce */
-.icon-hover-bounce {
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.icon-hover-bounce:hover {
-  transform: scale(1.2);
-}
-
-/* Card Lift Effect */
-.card-hover-lift {
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.card-hover-lift:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow:
-    0 20px 40px oklch(0 0 0 / 0.3),
-    0 0 0 1px oklch(0.78 0.25 168 / 0.3),
-    0 0 40px oklch(0.78 0.25 168 / 0.2);
-}
-
-/* Ripple Click Effect */
-@keyframes ripple {
-  0% {
-    transform: scale(0);
-    opacity: 0.6;
-  }
-  100% {
-    transform: scale(4);
-    opacity: 0;
-  }
-}
-
-.ripple-container {
-  position: relative;
-  overflow: hidden;
-}
-
-.ripple-container::after {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
-  background: oklch(0.78 0.25 168 / 0.5);
-  width: 100px;
-  height: 100px;
-  margin-left: -50px;
-  margin-top: -50px;
-  pointer-events: none;
-  transform: scale(0);
-  opacity: 0;
-}
-
-.ripple-container:active::after {
-  animation: ripple 0.6s ease-out;
-}
-
-/* Staggered List Animation Helper */
-@keyframes stagger-in {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.stagger-item {
-  animation: stagger-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.stagger-item:nth-child(1) {
-  animation-delay: 0.05s;
-}
-.stagger-item:nth-child(2) {
-  animation-delay: 0.1s;
-}
-.stagger-item:nth-child(3) {
-  animation-delay: 0.15s;
-}
-.stagger-item:nth-child(4) {
-  animation-delay: 0.2s;
-}
-.stagger-item:nth-child(5) {
-  animation-delay: 0.25s;
-}
-.stagger-item:nth-child(6) {
-  animation-delay: 0.3s;
-}
-
-/* Parallax Hover Effect */
-.parallax-hover {
-  transition: transform 0.3s ease;
-  transform-style: preserve-3d;
-}
-
-.parallax-hover:hover {
-  transform: perspective(1000px) rotateX(2deg) rotateY(2deg);
-}
-
-/* Split Text Reveal on Hover */
-@keyframes split-reveal-top {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-2px);
-  }
-}
-
-@keyframes split-reveal-bottom {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(2px);
-  }
-}
-
-.split-hover {
-  display: inline-block;
-  position: relative;
-}
-
-.split-hover::before,
-.split-hover::after {
-  content: attr(data-text);
-  position: absolute;
-  left: 0;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.split-hover::before {
-  color: oklch(0.78 0.25 168);
-  top: 0;
-  animation: split-reveal-top 0.3s ease-out both;
-}
-
-.split-hover::after {
-  color: oklch(0.75 0.28 330);
-  bottom: 0;
-  animation: split-reveal-bottom 0.3s ease-out both;
-}
-
-.split-hover:hover::before,
-.split-hover:hover::after {
-  opacity: 0.3;
-}
-
-/* Neon Glow Intensify */
-@keyframes neon-intensify {
-  0%,
-  100% {
-    filter: brightness(1);
-  }
-  50% {
-    filter: brightness(1.3);
-  }
-}
-
-.neon-hover:hover {
-  animation: neon-intensify 0.6s ease-in-out;
-}
-
-/* Magnetic Cursor Follow Effect (requires JS) */
-.magnetic {
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Elastic Scale on Click */
-.elastic-click {
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.elastic-click:active {
-  transform: scale(0.95);
-}
-
-/* ========================================
-   MODULE-SPECIFIC AESTHETICS
-   ======================================== */
-
-/* SYNAPSE MODULE - Neural Network / Circuit Board */
-.module-synapse {
-  --module-primary: oklch(0.78 0.25 168);
-  --module-glow: oklch(0.78 0.25 168 / 0.4);
-  background: radial-gradient(circle at 30% 40%, oklch(0.78 0.25 168 / 0.05) 0%, transparent 50%);
-}
-
-.module-synapse::before {
-  content: '';
-  position: absolute;
-  inset: 0;
+/* 2. Holographic Grid Background */
+.grid-bg {
+  background-size: 40px 40px;
   background-image:
-    repeating-linear-gradient(
-      90deg,
-      oklch(0.78 0.25 168 / 0.03) 0px,
-      transparent 1px,
-      transparent 40px,
-      oklch(0.78 0.25 168 / 0.03) 41px
-    ),
-    repeating-linear-gradient(
-      0deg,
-      oklch(0.78 0.25 168 / 0.03) 0px,
-      transparent 1px,
-      transparent 40px,
-      oklch(0.78 0.25 168 / 0.03) 41px
-    );
-  pointer-events: none;
-  opacity: 0.6;
+    linear-gradient(to right, rgba(0, 243, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 243, 255, 0.08) 1px, transparent 1px);
+  mask-image: radial-gradient(circle at center, black 50%, transparent 100%);
 }
 
-@keyframes neural-pulse {
-  0%,
-  100% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 0.8;
-  }
+/* 3. HUD Borders & Panels */
+.hud-panel {
+  background: rgba(3, 7, 18, 0.7);
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.05);
+  backdrop-filter: blur(8px);
+  position: relative;
 }
 
-.module-synapse::after {
+.hud-panel::before {
+  /* Corner bracket top-left */
   content: '';
   position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    oklch(0.78 0.25 168 / 0.15) 0%,
-    transparent 40%
-  );
-  pointer-events: none;
-  animation: neural-pulse 3s ease-in-out infinite;
+  top: -1px;
+  left: -1px;
+  width: 12px;
+  height: 12px;
+  border-top: 2px solid var(--primary);
+  border-left: 2px solid var(--primary);
 }
 
-/* CANVAS MODULE - Creative Studio / Paint Palette */
-.module-canvas {
-  --module-primary: oklch(0.78 0.25 168);
-  --module-secondary: oklch(0.75 0.28 330);
-  background:
-    radial-gradient(circle at 60% 30%, oklch(0.78 0.25 168 / 0.08) 0%, transparent 30%),
-    radial-gradient(circle at 40% 70%, oklch(0.75 0.28 330 / 0.08) 0%, transparent 30%);
-}
-
-@keyframes color-wave {
-  0% {
-    filter: hue-rotate(0deg);
-  }
-  100% {
-    filter: hue-rotate(360deg);
-  }
-}
-
-.module-canvas::before {
+.hud-panel::after {
+  /* Corner bracket bottom-right */
   content: '';
   position: absolute;
-  top: 0;
+  bottom: -1px;
+  right: -1px;
+  width: 12px;
+  height: 12px;
+  border-bottom: 2px solid var(--primary);
+  border-right: 2px solid var(--primary);
+}
+
+/* 4. Text Glitch Effect */
+@keyframes text-glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.glitch-text:hover {
+  animation: text-glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+  color: var(--primary);
+  text-shadow: 2px 0 var(--accent), -2px 0 var(--destructive);
+}
+
+/* 5. Neon Glow Classes */
+.glow-text-cyan {
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.5), 0 0 20px rgba(0, 243, 255, 0.3);
+}
+
+.glow-box-cyan {
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.3), inset 0 0 20px rgba(0, 243, 255, 0.1);
+}
+
+/* 6. Animations */
+@keyframes hud-scan {
+  0% { top: 0%; opacity: 0; }
+  50% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.scan-line {
+  position: absolute;
   left: 0;
-  right: 0;
+  width: 100%;
   height: 2px;
-  background: linear-gradient(
-    90deg,
-    oklch(0.78 0.25 168) 0%,
-    oklch(0.75 0.28 330) 50%,
-    oklch(0.78 0.25 168) 100%
-  );
-  animation: color-wave 10s linear infinite;
+  background: var(--primary);
+  box-shadow: 0 0 10px var(--primary);
   opacity: 0.5;
-}
-
-.module-canvas::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 20% 80%, oklch(0.78 0.25 168 / 0.1) 0%, transparent 25%),
-    radial-gradient(circle at 80% 20%, oklch(0.75 0.28 330 / 0.1) 0%, transparent 25%);
+  animation: hud-scan 4s linear infinite;
   pointer-events: none;
-  mix-blend-mode: screen;
 }
 
-/* HOLO-CHAT MODULE - Holographic Communication */
-.module-holochat {
-  --module-primary: oklch(0.7 0.2 230);
-  --module-glow: oklch(0.7 0.2 230 / 0.4);
-  background: radial-gradient(ellipse at 50% 20%, oklch(0.7 0.2 230 / 0.06) 0%, transparent 50%);
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #030712;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border: 1px solid #00f3ff;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00f3ff;
 }
 
-@keyframes hologram-scan {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(100%);
-  }
-}
-
-.module-holochat::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent 0px,
-    oklch(0.7 0.2 230 / 0.05) 1px,
-    transparent 2px,
-    transparent 4px
-  );
-  animation: hologram-scan 6s linear infinite;
-  pointer-events: none;
-  opacity: 0.4;
-}
-
-.module-holochat::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    oklch(0.7 0.2 230 / 0.1) 0%,
-    transparent 30%,
-    transparent 70%,
-    oklch(0.7 0.2 230 / 0.1) 100%
-  );
-  pointer-events: none;
-  mix-blend-mode: overlay;
-}
-
-/* VAULT MODULE - Secure Archive / Database */
-.module-vault {
-  --module-primary: oklch(0.75 0.15 75);
-  --module-glow: oklch(0.75 0.15 75 / 0.4);
-  background: radial-gradient(circle at 50% 50%, oklch(0.75 0.15 75 / 0.04) 0%, transparent 60%);
-}
-
-@keyframes security-scan {
-  0% {
-    opacity: 0.2;
-    transform: scaleY(0);
-  }
-  50% {
-    opacity: 0.6;
-    transform: scaleY(1);
-  }
-  100% {
-    opacity: 0.2;
-    transform: scaleY(0);
-  }
-}
-
-.module-vault::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      oklch(0.75 0.15 75 / 0.04) 0px,
-      transparent 1px,
-      transparent 30px
-    ),
-    repeating-linear-gradient(
-      60deg,
-      oklch(0.75 0.15 75 / 0.03) 0px,
-      transparent 1px,
-      transparent 30px
-    ),
-    repeating-linear-gradient(
-      120deg,
-      oklch(0.75 0.15 75 / 0.03) 0px,
-      transparent 1px,
-      transparent 30px
-    );
-  pointer-events: none;
-  opacity: 0.8;
-}
-
-.module-vault::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  background: linear-gradient(180deg, oklch(0.75 0.15 75 / 0.2) 0%, transparent 20%);
-  animation: security-scan 4s ease-in-out infinite;
-  pointer-events: none;
-  transform-origin: top;
-}
-
-/* Module-specific Badge Colors */
-.badge-synapse {
-  border-color: oklch(0.78 0.25 168 / 0.5) !important;
-  color: oklch(0.78 0.25 168) !important;
-  box-shadow: 0 0 10px oklch(0.78 0.25 168 / 0.2);
-}
-
-.badge-canvas {
-  border-color: oklch(0.75 0.28 330 / 0.5) !important;
-  color: oklch(0.75 0.28 330) !important;
-  box-shadow: 0 0 10px oklch(0.75 0.28 330 / 0.2);
-}
-
-.badge-holochat {
-  border-color: oklch(0.7 0.2 230 / 0.5) !important;
-  color: oklch(0.7 0.2 230) !important;
-  box-shadow: 0 0 10px oklch(0.7 0.2 230 / 0.2);
-}
-
-.badge-vault {
-  border-color: oklch(0.75 0.15 75 / 0.5) !important;
-  color: oklch(0.75 0.15 75) !important;
-  box-shadow: 0 0 10px oklch(0.75 0.15 75 / 0.2);
+/* Selection */
+::selection {
+  background: rgba(0, 243, 255, 0.3);
+  color: white;
 }

@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Card } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { useVaultStore } from '@/lib/store/useVaultStore'
@@ -16,30 +17,17 @@ import {
   FlowArrow,
   Trash,
   DownloadSimple,
+  UploadSimple
 } from '@phosphor-icons/react'
 
-/**
- * Artifact Vault Module
- *
- * Centralized history and storage management:
- * - Image generations (from Canvas)
- * - Chat conversations (from Holo-Chat)
- * - Workflow blueprints (from Synapse)
- * - Search and filter artifacts
- * - Remix functionality (restore settings)
- * - Export/Import capabilities
- */
 export function ArtifactVault() {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTab, setActiveTab] = useState<'all' | 'images' | 'chats' | 'workflows'>('all')
 
   const { artifacts, removeArtifact, clearAll, exportVault, importVault } = useVaultStore()
 
-  // Filter artifacts by type and search query
   const filteredArtifacts = useMemo(() => {
     let filtered = artifacts
-
-    // Filter by type
     if (activeTab !== 'all') {
       filtered = filtered.filter((artifact) => {
         if (activeTab === 'images') return artifact.type === 'image'
@@ -48,8 +36,6 @@ export function ArtifactVault() {
         return true
       })
     }
-
-    // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
       filtered = filtered.filter(
@@ -59,15 +45,10 @@ export function ArtifactVault() {
           artifact.tags?.some((tag) => tag.toLowerCase().includes(query))
       )
     }
-
-    // Sort by timestamp (newest first) - create a copy to avoid mutation
     return [...filtered].sort((a, b) => b.timestamp - a.timestamp)
   }, [artifacts, activeTab, searchQuery])
 
-  const handleExport = () => {
-    exportVault()
-  }
-
+  const handleExport = () => exportVault()
   const handleImport = () => {
     const input = document.createElement('input')
     input.type = 'file'
@@ -81,8 +62,7 @@ export function ArtifactVault() {
             const data = JSON.parse(event.target?.result as string)
             importVault(data)
           } catch (error) {
-            console.error('Failed to import vault:', error)
-            toast.error('Import fehlgeschlagen: Ungültiges JSON')
+            toast.error('Import failed: Invalid JSON')
           }
         }
         reader.readAsText(file)
@@ -93,14 +73,10 @@ export function ArtifactVault() {
 
   const getTabIcon = (tab: typeof activeTab) => {
     switch (tab) {
-      case 'images':
-        return <ImageIcon size={16} weight="fill" />
-      case 'chats':
-        return <ChatCircle size={16} weight="fill" />
-      case 'workflows':
-        return <FlowArrow size={16} weight="fill" />
-      default:
-        return <Vault size={16} weight="fill" />
+      case 'images': return <ImageIcon size={16} weight="fill" />
+      case 'chats': return <ChatCircle size={16} weight="fill" />
+      case 'workflows': return <FlowArrow size={16} weight="fill" />
+      default: return <Vault size={16} weight="fill" />
     }
   }
 
@@ -113,131 +89,89 @@ export function ArtifactVault() {
   }
 
   return (
-    <div className="module-vault border-primary/30 glass-card corner-accent glow-border flex h-[calc(100vh-280px)] min-h-[600px] flex-col overflow-hidden rounded-lg border-2">
+    <Card className="flex flex-col h-full bg-black/80 border-primary/20 backdrop-blur-md rounded-none overflow-hidden">
       {/* Header */}
-      <div className="border-border/50 flex items-center justify-between border-b bg-black/70 px-4 py-3 backdrop-blur">
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="badge-vault font-mono text-xs">
-            <Vault size={12} weight="fill" className="mr-1" />
+      <div className="flex items-center justify-between p-4 border-b border-primary/20 bg-black/40">
+        <div className="flex items-center gap-3">
+          <Badge variant="neon" className="gap-2 px-3 py-1">
+            <Vault size={14} weight="fill" />
             ARTIFACT_VAULT
           </Badge>
-          <span className="text-muted-foreground font-mono text-xs">
-            <span className="text-primary">{'>'}</span> HISTORY_STORAGE
+          <span className="text-[10px] text-primary/50 font-share-tech uppercase tracking-widest hidden sm:inline-block">
+            SECURE_STORAGE_V2
           </span>
         </div>
-
         <div className="flex items-center gap-2">
-          <Button
-            onClick={handleExport}
-            variant="ghost"
-            size="sm"
-            className="font-mono text-xs uppercase"
-          >
-            <DownloadSimple size={16} className="mr-1" />
-            EXPORT
+          <Button onClick={handleExport} variant="holographic" size="sm">
+            <DownloadSimple size={16} className="mr-2" /> EXPORT
           </Button>
-          <Button
-            onClick={handleImport}
-            variant="ghost"
-            size="sm"
-            className="font-mono text-xs uppercase"
-          >
-            <DownloadSimple size={16} className="mr-1 rotate-180" />
-            IMPORT
+          <Button onClick={handleImport} variant="holographic" size="sm">
+            <UploadSimple size={16} className="mr-2" /> IMPORT
           </Button>
           <Button
             onClick={clearAll}
-            variant="ghost"
+            variant="destructive"
             size="sm"
-            className="text-destructive font-mono text-xs uppercase"
             disabled={artifacts.length === 0}
+            className="ml-2"
           >
-            <Trash size={16} className="mr-1" />
-            CLEAR_ALL
+            <Trash size={16} className="mr-2" /> PURGE
           </Button>
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="border-border/50 border-b bg-black/30 p-4">
+      {/* Controls */}
+      <div className="p-4 border-b border-primary/20 space-y-4 bg-black/20">
         <div className="relative">
-          <MagnifyingGlass
-            size={20}
-            className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2"
-          />
+          <MagnifyingGlass size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/50" />
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search artifacts by title, description, or tags..."
-            className="pl-10 font-mono text-sm"
+            placeholder="SEARCH_DATABASE..."
+            className="pl-10 bg-black/50 border-primary/30 text-primary font-share-tech uppercase placeholder:text-primary/20 rounded-none focus-visible:ring-1 focus-visible:ring-primary/50"
           />
         </div>
+
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+          <TabsList className="bg-transparent border-b border-primary/20 w-full justify-start gap-4 p-0 h-auto rounded-none">
+            {['all', 'images', 'chats', 'workflows'].map((tab) => (
+               <TabsTrigger
+                 key={tab}
+                 value={tab}
+                 className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-4 py-2 font-orbitron text-xs uppercase tracking-wider text-muted-foreground transition-all hover:text-primary"
+               >
+                 {getTabIcon(tab as any)}
+                 <span className="ml-2">{tab.toUpperCase()} ({getTabCount(tab as any)})</span>
+               </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
       </div>
 
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-        <div className="border-border/50 border-b bg-black/20 px-4">
-          <TabsList className="w-full justify-start">
-            <TabsTrigger value="all" className="font-mono text-xs uppercase">
-              {getTabIcon('all')}
-              <span className="ml-2">ALL ({getTabCount('all')})</span>
-            </TabsTrigger>
-            <TabsTrigger value="images" className="font-mono text-xs uppercase">
-              {getTabIcon('images')}
-              <span className="ml-2">IMAGES ({getTabCount('images')})</span>
-            </TabsTrigger>
-            <TabsTrigger value="chats" className="font-mono text-xs uppercase">
-              {getTabIcon('chats')}
-              <span className="ml-2">CHATS ({getTabCount('chats')})</span>
-            </TabsTrigger>
-            <TabsTrigger value="workflows" className="font-mono text-xs uppercase">
-              {getTabIcon('workflows')}
-              <span className="ml-2">WORKFLOWS ({getTabCount('workflows')})</span>
-            </TabsTrigger>
-          </TabsList>
-        </div>
-
-        <TabsContent value={activeTab} className="m-0 flex-1">
-          <ScrollArea className="h-[calc(100vh-500px)] min-h-[400px]">
-            <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
-              <AnimatePresence mode="popLayout">
-                {filteredArtifacts.length === 0 ? (
-                  <motion.div
-                    key="empty"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="col-span-full py-12 text-center"
-                  >
-                    <Vault size={64} className="text-muted-foreground mx-auto mb-4 opacity-30" />
-                    <h3 className="mb-2 text-lg font-black uppercase">VAULT_EMPTY</h3>
-                    <p className="text-muted-foreground font-mono text-xs">
-                      {searchQuery ? (
-                        <>
-                          <span className="text-primary">{'>'}</span> NO_RESULTS_FOR &quot;
-                          {searchQuery}&quot;
-                        </>
-                      ) : (
-                        <>
-                          <span className="text-primary">{'>'}</span> CREATE_ARTIFACTS_TO_START
-                        </>
-                      )}
-                    </p>
-                  </motion.div>
-                ) : (
-                  filteredArtifacts.map((artifact) => (
-                    <ArtifactCard
-                      key={artifact.id}
-                      artifact={artifact}
-                      onRemove={() => removeArtifact(artifact.id)}
-                    />
-                  ))
-                )}
-              </AnimatePresence>
+      {/* Grid */}
+      <div className="flex-1 bg-black/60 relative">
+         <div className="absolute inset-0 grid-bg opacity-10 pointer-events-none" />
+         <ScrollArea className="h-full p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-20">
+               <AnimatePresence mode="popLayout">
+                  {filteredArtifacts.length === 0 ? (
+                     <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="col-span-full py-20 text-center text-primary/30"
+                     >
+                        <Vault size={64} className="mx-auto mb-4 opacity-50" />
+                        <h3 className="text-xl font-orbitron tracking-widest">NO_DATA_FOUND</h3>
+                     </motion.div>
+                  ) : (
+                     filteredArtifacts.map((artifact) => (
+                        <ArtifactCard key={artifact.id} artifact={artifact} onRemove={() => removeArtifact(artifact.id)} />
+                     ))
+                  )}
+               </AnimatePresence>
             </div>
-          </ScrollArea>
-        </TabsContent>
-      </Tabs>
-    </div>
+         </ScrollArea>
+      </div>
+    </Card>
   )
 }
