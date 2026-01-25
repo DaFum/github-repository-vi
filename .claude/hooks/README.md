@@ -22,6 +22,7 @@ Claude Code hooks are scripts that run automatically in response to specific eve
 This hook ensures that all npm dependencies are installed when you start working with Claude Code in a web environment, making sure the development environment is ready.
 
 **Features**:
+
 - Only runs in Claude Code on the web (`CLAUDE_CODE_REMOTE=true`)
 - Checks if dependencies are already up to date before reinstalling
 - Installs all npm dependencies from `package.json`
@@ -36,6 +37,7 @@ This hook ensures that all npm dependencies are installed when you start working
 Adds relevant information about the project structure, tech stack, and development guidelines to help Claude better understand the project context.
 
 **Features**:
+
 - Runs once per session (uses secure per-user session marker)
 - Provides project overview (React, TypeScript, Vite)
 - Lists available npm scripts
@@ -53,6 +55,7 @@ Adds relevant information about the project structure, tech stack, and developme
 Catches code quality issues immediately after code changes, preventing style violations and common errors.
 
 **Features**:
+
 - Only runs for `.ts`, `.tsx`, `.js`, `.jsx` files
 - Skips check if dependencies aren't installed (web environment)
 - Uses `--max-warnings 0` to enforce zero warnings
@@ -168,6 +171,7 @@ Inject relevant project information at the start of conversations:
 ### Basic Structure
 
 All hooks should:
+
 1. Start with a shebang: `#!/bin/bash`
 2. Use `set -euo pipefail` for safety
 3. Read JSON input from stdin (if needed)
@@ -194,6 +198,7 @@ exit 0
 ### Using Environment Variables
 
 Available environment variables:
+
 - `$CLAUDE_PROJECT_DIR`: Absolute path to project root
 - `$CLAUDE_CODE_REMOTE`: `"true"` if running in web environment
 - `$CLAUDE_ENV_FILE`: (SessionStart only) File path for persisting environment variables

@@ -1,157 +1,90 @@
 # Graph Execution Engine
 
-The core execution system for AETHER_OS agent workflows.
+The **Heartbeat** of AETHER_OS — a Token-Passing execution engine for visual agent workflows.
 
-## Components
+## Architecture: Token-Passing Model
 
-### 📝 Types (`types.ts`)
+Unlike traditional sequential execution, the Graph Engine uses a **Token-Passing Architecture** inspired by Petri Nets.
 
-Core TypeScript types for the execution engine:
-
-- **ExecutionContext** - Global state of a workflow run
-- **NodeExecutionState** - State of individual nodes
-- **InterpolationResult** - Result of variable resolution
-- **ValidationResult** - Result of Zod schema validation
-
-### 🔄 Interpolator (`Interpolator.ts`)
-
-The **Universal Translator** - handles dynamic variable interpolation, type coercion, and schema validation.
-
-#### Features:
-
-1. **Variable Interpolation**
-   - `{{NodeID.output}}` - Reference node outputs
-   - `{{NodeID.output.nested.field}}` - Access nested fields
-   - `{{$env.API_KEY}}` - Environment variables
-   - `{{$global.variable}}` - Global memory scope
-
-2. **Type-Aware Coercion**
-   - CSV string → Array: `"a,b,c"` → `["a", "b", "c"]`
-   - JSON string → Object: `'{"x":1}'` → `{x: 1}`
-   - String → Number: `"42"` → `42`
-   - String → Boolean: `"true"` → `true`
-
-3. **JIT Schema Validation**
-   - Zod-based validation before node execution
-   - Clear error messages for type mismatches
-   - Automatic transformation
-
-#### Usage:
-
-```typescript
-import { Interpolator } from './Interpolator'
-import { z } from 'zod'
-
-// Simple interpolation
-const result = Interpolator.interpolate(
-  '{{node1.output}}',
-  executionContext
-)
-
-// Full pipeline (interpolate → coerce → validate)
-const schema = z.object({ name: z.string() })
-const processed = Interpolator.process(
-  '{{node1.output}}',
-  schema,
-  executionContext
-)
-```
-
-#### Example:
-
-```typescript
-// Given:
-// - node1.output = { message: "Hello", count: 42 }
-// - $env.API_KEY = "sk-123"
-// - $global.userName = "Alice"
-
-const template = {
-  user: '{{$global.userName}}',
-  apiKey: '{{$env.API_KEY}}',
-  greeting: '{{node1.output.message}}',
-  count: '{{node1.output.count}}'
-}
-
-const result = Interpolator.interpolate(template, context)
-
-// Result:
-// {
-//   user: "Alice",
-//   apiKey: "sk-123",
-//   greeting: "Hello",
-//   count: "42" (string)
-// }
-```
-
-## Architecture
-
-```
+```text
 ┌─────────────────────────────────────┐
-│   ExecutionContext                  │
-│   ┌───────────────────────────┐     │
-│   │ memory (global vars)      │     │
-│   │ nodeStates (outputs)      │     │
-│   │ environment ($env.*)      │     │
-│   └───────────────────────────┘     │
-└─────────────────────────────────────┘
-                │
-                ▼
+│   Token                             │
+│   - id, data, sourceNodeId          │
+│   - provenance, metadata            │
+└──────────────┬──────────────────────┘
+               │
+               ▼
 ┌─────────────────────────────────────┐
-│   Interpolator.process()            │
-│                                     │
-│   1. Interpolate placeholders       │
-│      {{NodeID.output}} → value      │
-│                                     │
-│   2. Coerce types                   │
-│      "42" → 42 (if schema=number)   │
-│                                     │
-│   3. Validate with Zod              │
-│      Ensure data matches schema     │
-│                                     │
+│   Node (Ready when all inputs       │
+│         have tokens)                │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│   Execute                           │
+│   - Interpolate inputs              │
+│   - Validate with Zod               │
+│   - Run processor                   │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│   Emit Tokens                       │
+│   - Create tokens for each edge     │
+│   - Place on outgoing wires         │
 └─────────────────────────────────────┘
-                │
-                ▼
-         ✅ Ready for Node Execution
 ```
 
-## Error Handling
+## Key Concepts
 
-The Interpolator provides detailed error information:
+### 1. **Tick-Based Execution** (Non-Blocking)
 
-- **missing_dependency** - Referenced node hasn't completed
-- **type_mismatch** - Data doesn't match expected type (after coercion)
-- **validation_error** - Zod schema validation failed
-- **syntax_error** - Invalid placeholder syntax
+The engine runs in **ticks** (default: 50ms intervals). Each tick:
 
-Example error:
+1. Finds ready nodes (all inputs available).
+2. Executes up to `maxConcurrent` nodes in parallel.
+3. Propagates outputs as tokens.
+4. Checks for completion or deadlock.
+
+This ensures the UI never freezes and allows pause/resume.
+
+### 2. **Tokens** (The Currency)
+
+A token is a packet of data traveling through the graph. Every token carries its history (provenance), enabling "time-travel" debugging.
+
+### 3. **Readiness Check**
+
+A node is **ready** when:
+
+- Its status is `'pending'`.
+- All incoming edges have tokens OR signals.
+
+### 4. **Deadlock Detection**
+
+The engine automatically detects when execution is stuck (nodes pending but no tokens moving) and halts to prevent infinite waits.
+
+## Usage
 
 ```typescript
-{
-  path: "node2.output",
-  message: "Node \"node2\" not found in execution context",
-  type: "missing_dependency"
-}
+import { GraphEngine } from './GraphEngine'
+
+const engine = new GraphEngine(graph, {
+  maxConcurrent: 3,
+  tickInterval: 50,
+})
+
+// Subscribe to updates for reactive UI
+engine.subscribe((context) => {
+  console.log('Status:', context.status)
+})
+
+// Lifecycle control
+engine.start()
+engine.pause()
+engine.resume()
+engine.stop()
 ```
 
-## Testing
+## Environment & Secrets
 
-Run tests with:
-
-```bash
-npm test -- interpolator.test.ts
-```
-
-## Integration
-
-The Interpolator is used by the Graph Execution Engine to:
-
-1. **Pre-process node inputs** - Resolve placeholders before execution
-2. **Validate data flow** - Ensure type safety at edges
-3. **Enable dynamic workflows** - Reference previous outputs automatically
-
-## Future Enhancements
-
-- [ ] Custom coercion functions per node type
-- [ ] Support for array indexing (`{{node1.output[0]}}`)
-- [ ] Support for filtering (`{{node1.output|filter:active}}`)
-- [ ] Caching of resolved paths for performance
+Use `engine.setEnv('KEY', 'value')` to inject API keys or configuration safely. These are accessible in nodes via `{{$env.KEY}}`.

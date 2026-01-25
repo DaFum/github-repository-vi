@@ -36,6 +36,7 @@ export function PreviewPane({
   const [error, setError] = useState<string | null>(null)
   const [seedInput, setSeedInput] = useState('')
   const debounceTimerRef = useRef<NodeJS.Timeout>()
+  const currentRequestIdRef = useRef(0)
 
   const generatePreview = useCallback(async () => {
     if (!prompt.trim()) return
@@ -43,9 +44,10 @@ export function PreviewPane({
     setIsGenerating(true)
     setError(null)
 
+    const requestId = ++currentRequestIdRef.current
+
     try {
-      const url = pollinations.generateImageUrl({
-        prompt,
+      const url = await pollinations.generateImage(prompt, {
         model,
         width: 512,
         height: 512,
@@ -55,12 +57,16 @@ export function PreviewPane({
       // Preload image to detect errors
       const img = new Image()
       img.onload = () => {
-        setPreviewUrl(url)
-        setIsGenerating(false)
+        if (requestId === currentRequestIdRef.current) {
+          setPreviewUrl(url)
+          setIsGenerating(false)
+        }
       }
       img.onerror = () => {
-        setError(`Failed to generate preview for ${url}`)
-        setIsGenerating(false)
+        if (requestId === currentRequestIdRef.current) {
+          setError(`Failed to generate preview for ${url}`)
+          setIsGenerating(false)
+        }
       }
       img.src = url
     } catch (err) {
@@ -83,7 +89,8 @@ export function PreviewPane({
     // Set new timer
     debounceTimerRef.current = setTimeout(() => {
       if (!prompt.trim()) {
-        setPreviewUrl(undefined)
+        setPreviewUrl(null)
+        setError(null)
         setIsGenerating(false)
         return
       }
@@ -197,7 +204,7 @@ export function PreviewPane({
               <img
                 src={previewUrl}
                 alt="Preview"
-                className="border-primary/30 h-full w-full rounded-lg border-2 object-contain shadow-2xl"
+                className="border-primary/30 h-full w-full rounded-sm border-2 object-contain shadow-2xl"
               />
               <Badge
                 variant="outline"

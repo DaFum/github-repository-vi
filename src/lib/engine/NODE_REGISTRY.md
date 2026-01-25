@@ -40,7 +40,7 @@ The Dynamic Node Registry enables hot-swappable, extensible node types for the A
 
 ### 1. **NodeContract** — The Blueprint
 
-Defines what a node *is* and what it *needs*.
+Defines what a node _is_ and what it _needs_.
 
 ```typescript
 const MyContract: NodeContract = {
@@ -55,7 +55,7 @@ const MyContract: NodeContract = {
   ui: {
     icon: 'star',
     color: '#f59e0b',
-  }
+  },
 }
 ```
 
@@ -112,15 +112,18 @@ const unsubscribe = nodeRegistry.subscribe(() => {
 Sends prompts to AI models.
 
 **Inputs:**
+
 - `prompt` (string)
 - `systemPrompt` (optional string)
 - `model` (optional string)
 - `temperature` (optional number)
 
 **Output:**
+
 - `string` - AI response
 
 **Example:**
+
 ```typescript
 {
   prompt: "Explain quantum computing",
@@ -134,11 +137,13 @@ Sends prompts to AI models.
 Evaluates conditions and routes data.
 
 **Inputs:**
+
 - `value` (any)
 - `condition` (equals | greater_than | less_than | contains | exists)
 - `compareValue` (optional any)
 
 **Output:**
+
 ```typescript
 {
   result: boolean,
@@ -148,6 +153,7 @@ Evaluates conditions and routes data.
 ```
 
 **Example:**
+
 ```typescript
 {
   value: 42,
@@ -162,11 +168,13 @@ Evaluates conditions and routes data.
 Pauses execution for human input.
 
 **Inputs:**
+
 - `message` (string)
 - `data` (any)
 - `requiresInput` (optional boolean)
 
 **Output:**
+
 ```typescript
 {
   approved: boolean,
@@ -216,9 +224,7 @@ class WeatherProcessor implements NodeProcessor {
 
   async execute(inputs, config, context): Promise<any> {
     const apiKey = context.environment.get('WEATHER_API_KEY')
-    const response = await fetch(
-      `https://api.weather.com/${inputs.city}?key=${apiKey}`
-    )
+    const response = await fetch(`https://api.weather.com/${inputs.city}?key=${apiKey}`)
     return response.json()
   }
 }
@@ -251,7 +257,9 @@ function registerMCPTool(mcpTool: MCPToolDefinition) {
     async execute(inputs) {
       return await callMCPTool(mcpTool.name, inputs)
     }
-    isReady() { return true }
+    isReady() {
+      return true
+    }
   }
 
   nodeRegistry.register({
@@ -349,11 +357,7 @@ describe('MyNode', () => {
 
   it('should execute', async () => {
     const processor = nodeRegistry.getProcessor('my-node')
-    const result = await processor.execute(
-      { input: 'test' },
-      {},
-      mockContext
-    )
+    const result = await processor.execute({ input: 'test' }, {}, mockContext)
     expect(result).toBe('expected output')
   })
 })

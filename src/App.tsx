@@ -26,6 +26,8 @@ import { AnimatePresence } from 'framer-motion'
 import { hyperSmolAgents } from '@/lib/hypersmolagents'
 import { useAetherStore } from '@/lib/store/useAetherStore'
 import { useNavigationStore } from '@/lib/store/useNavigationStore'
+import { PollinationsAuth } from '@/features/auth/PollinationsAuth'
+import { pollinations } from '@/lib/pollinations'
 
 type ActiveModule = 'synapse' | 'canvas' | 'chat' | 'vault'
 
@@ -39,6 +41,24 @@ function App() {
   })
   const { initialize, setApiKey: setStoreApiKey, apiKey: storedApiKey } = useAetherStore()
   const { activeModule, setActiveModule } = useNavigationStore()
+
+  // Handle Pollinations Auth Callback
+  useEffect(() => {
+    const hash = window.location.hash
+    if (hash.includes('api_key=')) {
+      const params = new URLSearchParams(hash.slice(1)) // Remove #
+      const key = params.get('api_key')
+      if (key) {
+        pollinations.setApiKey(key)
+        setStoreApiKey(key)
+        toast.success('Pollinations Connected', {
+          description: 'API Key successfully linked',
+        })
+        // Clean URL
+        window.history.pushState(null, '', window.location.pathname)
+      }
+    }
+  }, [setStoreApiKey])
 
   // Load current API key when settings dialog opens
   useEffect(() => {
@@ -130,7 +150,8 @@ function App() {
               </motion.div>
 
               {/* Settings Button */}
-              <div className="absolute top-4 right-4 md:top-8 md:right-8">
+              <div className="absolute top-4 right-4 flex items-center gap-4 md:top-8 md:right-8">
+                <PollinationsAuth />
                 <Button
                   variant="ghost"
                   size="icon"

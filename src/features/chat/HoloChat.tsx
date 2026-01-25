@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { useKV } from '@github/spark/hooks'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -39,7 +40,7 @@ export type VisualizationCommand = {
 export function HoloChat() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
-  const [model, setModel] = useState('openai')
+  const [model, setModel] = useKV('holo:model', 'openai')
   const [isGenerating, setIsGenerating] = useState(false)
   const [currentVisualization, setCurrentVisualization] = useState<VisualizationCommand | null>(
     null

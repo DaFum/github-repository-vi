@@ -100,6 +100,7 @@ export function ArtifactCard({ artifact, onRemove }: ArtifactCardProps) {
       transition={{ duration: 0.2 }}
     >
       <Card
+        tabIndex={0}
         className={`group overflow-hidden border-2 transition-all hover:shadow-xl ${getTypeColor()}`}
       >
         {/* Preview/Thumbnail */}
@@ -133,7 +134,7 @@ export function ArtifactCard({ artifact, onRemove }: ArtifactCardProps) {
           </div>
 
           {/* Overlay Actions */}
-          <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/70 opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/70 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
             <Button
               onClick={handleOpen}
               size="sm"
