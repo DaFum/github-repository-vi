@@ -100,7 +100,7 @@ describe('Interpolator', () => {
         user: 'Alice',
         apiKey: 'sk-test-123',
         data: {
-          nested: '42',
+          nested: 42,
         },
       })
     })
