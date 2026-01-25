@@ -91,12 +91,16 @@ class PollinationsClient implements Lifecycle {
    */
   async getTextModels(): Promise<TextModel[]> {
     try {
-      let url = `${this.baseUrl}/v1/models`
+      // Use standard endpoint for models list
+      // If API key is present, it returns all available models (including premium)
+      const url = `${this.baseUrl}/text/models`
+
+      const headers: Record<string, string> = {}
       if (this.apiKey) {
-        url += `?key=${this.apiKey}`
+        headers['Authorization'] = `Bearer ${this.apiKey}`
       }
 
-      const response = await fetch(url)
+      const response = await fetch(url, { headers })
       if (!response.ok) {
         throw new Error(`Failed to fetch text models: ${response.status}`)
       }
@@ -318,15 +322,17 @@ class PollinationsClient implements Lifecycle {
       }
     }
 
-    // Construct URL with key param if available (BYOP)
-    let url = `${this.baseUrl}/v1/chat/completions`
-    if (this.apiKey) {
-      url += `?key=${this.apiKey}&private=true`
-    }
+    // Construct URL
+    const url = `${this.baseUrl}/v1/chat/completions`
 
     // Construct headers
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
+    }
+
+    // Add Bearer token for Auth
+    if (this.apiKey) {
+      headers['Authorization'] = `Bearer ${this.apiKey}`
     }
 
     // Construct body with explicit type
@@ -397,7 +403,8 @@ class PollinationsClient implements Lifecycle {
     const encodedPrompt = encodeURIComponent(prompt)
 
     // Construct URL with query params
-    let url = `${this.baseUrl}/image/${encodedPrompt}?model=${model}&width=${width}&height=${height}&nologo=true`
+    // Use dedicated image generation endpoint
+    let url = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=${model}&width=${width}&height=${height}&nologo=true`
 
     if (enhance) {
       url += '&enhance=true'

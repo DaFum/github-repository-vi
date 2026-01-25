@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -27,6 +27,7 @@ export function RenderPane({ prompt, model, onModelChange, seed }: RenderPanePro
   const [isRendering, setIsRendering] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { addArtifact } = useVaultStore()
+  const renderRequestIdRef = useRef(0)
 
   const generateRender = async () => {
     if (!prompt.trim()) {
@@ -37,9 +38,10 @@ export function RenderPane({ prompt, model, onModelChange, seed }: RenderPanePro
     setIsRendering(true)
     setError(null)
 
+    const requestId = ++renderRequestIdRef.current
+
     try {
-      const url = pollinations.generateImageUrl({
-        prompt,
+      const url = await pollinations.generateImage(prompt, {
         model,
         width: 1024,
         height: 1024,
@@ -49,28 +51,32 @@ export function RenderPane({ prompt, model, onModelChange, seed }: RenderPanePro
       // Preload image to detect errors
       const img = new Image()
       img.onload = () => {
-        setRenderUrl(url)
-        setIsRendering(false)
+        if (requestId === renderRequestIdRef.current) {
+          setRenderUrl(url)
+          setIsRendering(false)
 
-        // Auto-save to vault
-        addArtifact({
-          type: 'image',
-          title: prompt.slice(0, 50),
-          description: `Generated with ${model}`,
-          model,
-          tags: ['canvas', 'hq-render'],
-          data: {
-            imageUrl: url,
-            prompt,
-            seed,
-            resolution: '1024x1024',
-          },
-        })
-        toast.success('Saved to Vault!', { icon: <Archive size={16} /> })
+          // Auto-save to vault
+          addArtifact({
+            type: 'image',
+            title: prompt.slice(0, 50),
+            description: `Generated with ${model}`,
+            model,
+            tags: ['canvas', 'hq-render'],
+            data: {
+              imageUrl: url,
+              prompt,
+              seed,
+              resolution: '1024x1024',
+            },
+          })
+          toast.success('Saved to Vault!', { icon: <Archive size={16} /> })
+        }
       }
       img.onerror = () => {
-        setError(`Failed to generate render for ${url}`)
-        setIsRendering(false)
+        if (requestId === renderRequestIdRef.current) {
+          setError(`Failed to generate render for ${url}`)
+          setIsRendering(false)
+        }
       }
       img.src = url
     } catch (err) {
