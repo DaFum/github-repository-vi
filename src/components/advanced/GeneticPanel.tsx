@@ -11,7 +11,6 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { GeneticPrompt } from '@/lib/optimizer/GeneticPrompt'
 import { toast } from 'sonner'
@@ -63,28 +62,35 @@ export function GeneticPanel({ isOpen, onClose }: GeneticPanelProps) {
       const evs: Evolution[] = []
 
       for (let gen = 1; gen <= generations; gen++) {
-        setCurrentGeneration(gen)
+        // Offload to microtask to prevent blocking UI
+        await new Promise<void>((resolve) => {
+          queueMicrotask(async () => {
+            setCurrentGeneration(gen)
 
-        // Simulate evolution (in real implementation, this would use the GeneticPrompt class)
-        const evolved = await GeneticPrompt.evolve(basePrompt, fitnessGoal)
+            // Simulate evolution (in real implementation, this would use the GeneticPrompt class)
+            const evolved = await GeneticPrompt.evolve(basePrompt, fitnessGoal)
 
-        const evolution: Evolution = {
-          generation: gen,
-          prompt: evolved,
-          fitness: Math.random() * 0.5 + 0.5, // Mock fitness 0.5-1.0
-        }
+            const evolution: Evolution = {
+              generation: gen,
+              prompt: evolved,
+              fitness: Math.random() * 0.5 + 0.5, // Mock fitness 0.5-1.0
+            }
 
-        evs.push(evolution)
-        setEvolutions([...evs])
+            evs.push(evolution)
+            setEvolutions([...evs])
 
-        // Simulate generation delay
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+            // Simulate generation delay to yield to UI
+            setTimeout(resolve, 1000)
+          })
+        })
       }
 
       // Best prompt is from last generation
       const best = evs[evs.length - 1]
-      setBestPrompt(best.prompt)
-      toast.success('Evolution Complete!')
+      queueMicrotask(() => {
+        setBestPrompt(best.prompt)
+        toast.success('Evolution Complete!')
+      })
     } catch (error) {
       console.error('Evolution failed:', error)
       toast.error('Evolution failed')
@@ -93,10 +99,16 @@ export function GeneticPanel({ isOpen, onClose }: GeneticPanelProps) {
     }
   }
 
-  const handleCopyBest = () => {
+  const handleCopyBest = async () => {
     if (bestPrompt) {
-      navigator.clipboard.writeText(bestPrompt)
-      toast.success('Optimized prompt copied to clipboard')
+      try {
+        await navigator.clipboard.writeText(bestPrompt)
+        toast.success('Optimized prompt copied to clipboard')
+      } catch (error) {
+        toast.error(
+          `Failed to copy to clipboard: ${error instanceof Error ? error.message : String(error)}`
+        )
+      }
     }
   }
 

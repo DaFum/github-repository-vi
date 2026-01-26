@@ -39,14 +39,17 @@ export function VisionPanel({ isOpen, onClose }: VisionPanelProps) {
   useEffect(() => {
     if (isOpen && isWatching) {
       // Listen for captures
-      watcher.on('capture', (imageData: string) => {
+      const handleCapture = (imageData: string) => {
         setLastCapture(imageData)
         setCaptureCount((prev) => prev + 1)
-      })
-    }
+      }
 
-    return () => {
-      // Cleanup listeners
+      watcher.on('capture', handleCapture)
+
+      return () => {
+        // Cleanup listeners
+        watcher.off('capture', handleCapture)
+      }
     }
   }, [isOpen, isWatching, watcher])
 

@@ -67,7 +67,7 @@ export class HumanApprovalProcessor implements NodeProcessor<
   async execute(
     inputs: HumanApprovalInput,
     _config: Record<string, unknown>,
-    _context: ExecutionContext
+    context: ExecutionContext
   ): Promise<HumanApprovalOutput> {
     // In a real implementation, this would:
     // 1. Store the current execution state
@@ -75,20 +75,35 @@ export class HumanApprovalProcessor implements NodeProcessor<
     // 3. Wait for the user's response
     // 4. Resume execution with the response
 
-    // For now, we return a placeholder
-    // The execution engine will detect this special output
-    // and handle the suspension logic
+    // Store approval request in execution context for UI to handle
+    return new Promise((resolve, reject) => {
+      // Store the approval resolver in context so UI can complete it
+      if (!context.pendingApprovals) {
+        context.pendingApprovals = new Map()
+      }
 
-    return new Promise((resolve) => {
-      // This would be replaced by actual UI interaction logic
-      // For demonstration, we'll auto-approve after a delay
-      setTimeout(() => {
-        resolve({
-          approved: true,
-          userInput: inputs.requiresInput ? 'User input placeholder' : undefined,
-          data: inputs.data,
+      const approvalId = `approval-${Date.now()}-${Math.random()}`
+      context.pendingApprovals.set(approvalId, {
+        message: inputs.message,
+        data: inputs.data,
+        requiresInput: inputs.requiresInput,
+        inputLabel: inputs.inputLabel,
+        resolve,
+        reject,
+      })
+
+      // Emit event for UI to show approval dialog
+      if (context.eventEmitter) {
+        context.eventEmitter.emit('approval-required', {
+          approvalId,
+          message: inputs.message,
+          requiresInput: inputs.requiresInput,
+          inputLabel: inputs.inputLabel,
         })
-      }, 100)
+      } else {
+        // Fallback: reject if no event system available
+        reject(new Error('Human approval required but no UI event system available'))
+      }
     })
   }
 }

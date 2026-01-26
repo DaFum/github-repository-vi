@@ -56,25 +56,36 @@ export function P2PMeshPanel({ isOpen, onClose }: P2PMeshPanelProps) {
         })
 
       // Listen for peer connections
-      p2pClient.on('peer-connected', (peerId: string) => {
+      const handlePeerConnected = (peerId: string) => {
         setPeers((prev) => [...prev, peerId])
         toast.success(`Peer connected: ${peerId.slice(0, 8)}`)
-      })
+      }
 
-      p2pClient.on('peer-disconnected', (peerId: string) => {
+      const handlePeerDisconnected = (peerId: string) => {
         setPeers((prev) => prev.filter((id) => id !== peerId))
         toast.info(`Peer disconnected: ${peerId.slice(0, 8)}`)
-      })
-    }
+      }
 
-    return () => {
-      // Cleanup listeners
+      p2pClient.on('peer-connected', handlePeerConnected)
+      p2pClient.on('peer-disconnected', handlePeerDisconnected)
+
+      return () => {
+        // Cleanup listeners
+        p2pClient.off('peer-connected', handlePeerConnected)
+        p2pClient.off('peer-disconnected', handlePeerDisconnected)
+      }
     }
   }, [isOpen, p2pClient])
 
-  const handleCopySignal = () => {
-    navigator.clipboard.writeText(signal)
-    toast.success('Signal copied to clipboard')
+  const handleCopySignal = async () => {
+    try {
+      await navigator.clipboard.writeText(signal)
+      toast.success('Signal copied to clipboard')
+    } catch (error) {
+      toast.error(
+        `Failed to copy to clipboard: ${error instanceof Error ? error.message : String(error)}`
+      )
+    }
   }
 
   const handleConnect = async () => {
