@@ -3,6 +3,7 @@ import { useKV } from '@github/spark/hooks'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ChatMessage } from './ChatMessage'
@@ -11,7 +12,7 @@ import { ModelSelector } from '@/components/ModelSelector'
 import { pollinations } from '@/lib/pollinations'
 import { parseVisualizationCommands } from './VisualizationEngine'
 import { useVaultStore } from '@/lib/store/useVaultStore'
-import { PaperPlaneRight, Sparkle, CircleNotch, FloppyDisk } from '@phosphor-icons/react'
+import { PaperPlaneRight, Sparkle, CircleNotch, FloppyDisk, TerminalWindow } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 export type Message = {
@@ -27,34 +28,19 @@ export type VisualizationCommand = {
   data: unknown
 }
 
-/**
- * Holo-Chat Module
- *
- * Chat interface where AI controls background visualization.
- * Features:
- * - Markdown rendering in messages
- * - AI-generated visualizations
- * - System prompt injection for JSON responses
- * - Background canvas controlled by AI
- */
 export function HoloChat() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [model, setModel] = useKV('holo:model', 'openai')
   const [isGenerating, setIsGenerating] = useState(false)
-  const [currentVisualization, setCurrentVisualization] = useState<VisualizationCommand | null>(
-    null
-  )
+  const [currentVisualization, setCurrentVisualization] = useState<VisualizationCommand | null>(null)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const { addArtifact } = useVaultStore()
 
-  // Auto-scroll to bottom on new messages
   useEffect(() => {
     if (scrollAreaRef.current) {
-      const scrollContainer = scrollAreaRef.current.querySelector(
-        '[data-radix-scroll-area-viewport]'
-      )
+      const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
       if (scrollContainer) {
         scrollContainer.scrollTop = scrollContainer.scrollHeight
       }
@@ -76,7 +62,6 @@ export function HoloChat() {
     setIsGenerating(true)
 
     try {
-      // System prompt to encourage visual responses
       const systemPrompt = `You are a visual AI assistant. When appropriate, generate visualizations using these commands:
 - For images: Include [IMAGE: detailed prompt] in your response
 - For plots: Include [PLOT: data description] in your response
@@ -95,16 +80,10 @@ Be conversational and helpful. Use markdown for formatting.`
           ...chatHistory,
           { role: 'user', content: input.trim() },
         ],
-        {
-          model,
-          temperature: 0.8,
-        }
+        { model, temperature: 0.8 }
       )
 
-      // Parse visualization commands
       const visualizations = parseVisualizationCommands(response)
-
-      // Update current visualization if any
       if (visualizations.length > 0) {
         setCurrentVisualization(visualizations[0])
       }
@@ -160,128 +139,100 @@ Be conversational and helpful. Use markdown for formatting.`
         lastMessage: messages[messages.length - 1]?.timestamp,
       },
     })
-
     toast.success('Conversation saved to Vault!')
   }
 
   return (
-    <div className="module-holochat border-primary/30 glass-card corner-accent glow-border relative h-[calc(100vh-280px)] min-h-[600px] overflow-hidden rounded-lg border-2">
-      {/* Background Visualization */}
+    <Card className="relative h-full flex flex-col overflow-hidden border-primary/20 bg-black/60">
       <BackgroundCanvas visualization={currentVisualization} />
 
-      {/* Chat Interface Overlay */}
-      <div className="relative z-10 flex h-full flex-col">
-        {/* Header */}
-        <div className="border-border/50 flex items-center justify-between border-b bg-black/70 px-4 py-2 backdrop-blur">
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="badge-holochat font-mono text-xs">
-              <Sparkle size={12} weight="fill" className="mr-1" />
-              HOLO-CHAT
-            </Badge>
-            <span className="text-muted-foreground font-mono text-xs">
-              <span className="text-primary">{'>'}</span> VISUAL_AI_ASSISTANT
+      {/* Glass Overlay for Chat */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent pointer-events-none" />
+
+      <CardHeader className="relative z-10 flex-row items-center justify-between py-3 border-b border-primary/20 backdrop-blur-md bg-black/20">
+        <div className="flex items-center gap-3">
+          <Badge variant="neon" className="gap-2 px-3 py-1">
+            <TerminalWindow size={14} weight="fill" />
+            HOLO_TERMINAL
+          </Badge>
+          <div className="flex flex-col">
+            <span className="text-[10px] text-muted-foreground font-share-tech tracking-widest uppercase">
+              STATUS: <span className="text-primary animate-pulse">ACTIVE</span>
             </span>
           </div>
-
-          <div className="flex items-center gap-2">
-            <Button
-              onClick={saveConversation}
-              disabled={messages.length === 0}
-              size="sm"
-              variant="ghost"
-              className="font-mono text-xs uppercase"
-            >
-              <FloppyDisk size={16} className="mr-1" />
-              SAVE
-            </Button>
-            <div className="w-48">
-              <ModelSelector type="text" value={model} onChange={setModel} />
-            </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={saveConversation}
+            disabled={messages.length === 0}
+            variant="holographic"
+            size="sm"
+          >
+            <FloppyDisk size={16} className="mr-2" />
+            SAVE_LOG
+          </Button>
+          <div className="w-48">
+            <ModelSelector type="text" value={model} onChange={setModel} />
           </div>
         </div>
+      </CardHeader>
 
-        {/* Messages */}
-        <ScrollArea ref={scrollAreaRef} className="flex-1 p-4">
-          <div className="space-y-4">
+      <CardContent className="relative z-10 flex-1 p-0 overflow-hidden">
+        <ScrollArea ref={scrollAreaRef} className="h-full p-4">
+          <div className="space-y-6 max-w-3xl">
             <AnimatePresence initial={false}>
               {messages.length === 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="py-12 text-center"
+                  className="py-20 text-center"
                 >
-                  <Sparkle size={64} className="text-muted-foreground mx-auto mb-4 opacity-30" />
-                  <h3 className="mb-2 text-lg font-black uppercase">START_CONVERSATION</h3>
-                  <p className="text-muted-foreground font-mono text-xs">
-                    <span className="text-primary">{'>'}</span> Ask me anything. I can generate
-                    visualizations!
+                  <Sparkle size={48} className="text-primary/20 mx-auto mb-6 animate-pulse" />
+                  <h3 className="mb-2 text-xl font-orbitron font-bold text-primary/80">SYSTEM_READY</h3>
+                  <p className="text-muted-foreground font-share-tech text-sm tracking-wide">
+                    INITIALIZE CONVERSATION PROTOCOL...
                   </p>
                 </motion.div>
               )}
-
               {messages.map((message, index) => (
                 <ChatMessage key={message.id} message={message} index={index} />
               ))}
             </AnimatePresence>
-
             {isGenerating && (
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-muted-foreground flex items-center gap-2 font-mono text-xs"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex items-center gap-2 text-primary/70 font-share-tech text-xs pl-2"
               >
-                <CircleNotch size={16} className="animate-spin" />
-                <span>AI_THINKING...</span>
+                <CircleNotch size={14} className="animate-spin" />
+                <span>PROCESSING_NEURAL_RESPONSE...</span>
               </motion.div>
             )}
           </div>
         </ScrollArea>
+      </CardContent>
 
-        {/* Input Area */}
-        <div className="border-border/50 border-t bg-black/70 p-4 backdrop-blur">
-          <div className="space-y-2">
-            <div className="flex gap-2">
-              <div className="flex-1">
-                <Textarea
-                  ref={textareaRef}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Ask me anything..."
-                  className="min-h-[80px] resize-none font-mono text-sm"
-                  disabled={isGenerating}
-                />
-              </div>
-
-              <Button
-                onClick={sendMessage}
-                disabled={!input.trim() || isGenerating}
-                className="gradient-button h-[80px] px-6 font-mono text-xs font-bold uppercase"
-                aria-label={isGenerating ? 'Senden, wird gesendet' : 'Senden'}
-              >
-                {isGenerating ? (
-                  <>
-                    <CircleNotch size={20} className="animate-spin" />
-                  </>
-                ) : (
-                  <>
-                    <PaperPlaneRight size={20} weight="fill" />
-                  </>
-                )}
-              </Button>
-            </div>
-
-            <div className="text-muted-foreground flex items-center justify-between font-mono text-[10px]">
-              <span>
-                <span className="text-primary">ENTER</span> to send •{' '}
-                <span className="text-primary">SHIFT+ENTER</span> for new line
-              </span>
-              <span>{messages.length} messages</span>
-            </div>
-          </div>
+      <CardFooter className="relative z-10 p-0 bg-black/80 border-t border-primary/20 backdrop-blur-xl">
+        <div className="w-full flex">
+          <Textarea
+            ref={textareaRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="ENTER COMMAND..."
+            className="flex-1 min-h-[60px] bg-transparent border-0 rounded-none focus-visible:ring-0 font-share-tech text-primary placeholder:text-primary/30 resize-none py-4 px-6"
+            disabled={isGenerating}
+          />
+          <Button
+            onClick={sendMessage}
+            disabled={!input.trim() || isGenerating}
+            variant="default"
+            className="h-auto rounded-none w-24 border-l border-primary/20"
+          >
+            {isGenerating ? <CircleNotch size={20} className="animate-spin" /> : <PaperPlaneRight size={20} weight="fill" />}
+          </Button>
         </div>
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   )
 }
