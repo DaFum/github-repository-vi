@@ -2,12 +2,11 @@ import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { ModelSelector } from '@/components/ModelSelector'
 import { Label } from '@/components/ui/label'
 import { pollinations } from '@/lib/pollinations'
 import { useVaultStore } from '@/lib/store/useVaultStore'
-import { CircleNotch, Sparkle, Download, Warning, Archive, Aperture, CornersOut } from '@phosphor-icons/react'
+import { CircleNotch, Download, Warning, Archive, Aperture } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 type RenderPaneProps = {
@@ -102,7 +101,13 @@ export function RenderPane({ prompt, model, onModelChange, seed }: RenderPanePro
               )}
             </Button>
             {renderUrl && (
-              <Button onClick={downloadRender} variant="outline" size="icon" title="Download">
+              <Button
+                onClick={downloadRender}
+                variant="outline"
+                size="icon"
+                title="Download"
+                aria-label="Download Render"
+              >
                 <Download size={16} />
               </Button>
             )}
@@ -190,7 +195,7 @@ export function RenderPane({ prompt, model, onModelChange, seed }: RenderPanePro
               animate={{ opacity: 1 }}
               className="text-center text-primary/30 z-10"
             >
-              <CornersOut size={64} className="mx-auto mb-4 opacity-50" />
+              <Aperture size={64} className="mx-auto mb-4 opacity-50" />
               <p className="text-sm tracking-widest">AWAITING_INPUT_STREAM</p>
             </motion.div>
           )}

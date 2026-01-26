@@ -117,6 +117,7 @@ const FlowCanvas = () => {
                       variant="holographic"
                       size="icon"
                       title="Neural Mesh (P2P)"
+                      aria-label="Neural Mesh (P2P)"
                       className="text-primary"
                     >
                       <ShareNetwork weight="bold" />
@@ -126,6 +127,7 @@ const FlowCanvas = () => {
                       variant="holographic"
                       size="icon"
                       title="Ocular Cortex"
+                      aria-label="Ocular Cortex"
                       className="text-blue-400 border-blue-400/30"
                     >
                       <Eye weight="bold" />
@@ -135,6 +137,7 @@ const FlowCanvas = () => {
                       variant="holographic"
                       size="icon"
                       title="Genetic Optimizer"
+                      aria-label="Genetic Optimizer"
                       className="text-purple-400 border-purple-400/30"
                     >
                       <Dna weight="bold" />
@@ -149,6 +152,7 @@ const FlowCanvas = () => {
                       variant={showArchitect ? 'neon' : 'holographic'}
                       size="icon"
                       title="AI Architect"
+                      aria-label="AI Architect"
                     >
                       <Brain weight="bold" />
                     </Button>
@@ -157,6 +161,7 @@ const FlowCanvas = () => {
                       variant={showTracker ? 'neon' : 'holographic'}
                       size="icon"
                       title="Execution Tracker"
+                      aria-label="Execution Tracker"
                     >
                       <Pulse weight="bold" />
                     </Button>
@@ -165,10 +170,10 @@ const FlowCanvas = () => {
                  <div className="h-px w-full bg-primary/20" />
 
                  <div className="flex gap-2 justify-end">
-                    <Button onClick={handleExport} variant="ghost" size="icon" title="Export">
+                    <Button onClick={handleExport} variant="ghost" size="icon" title="Export" aria-label="Export">
                       <DownloadSimple />
                     </Button>
-                    <Button onClick={handleImportClick} variant="ghost" size="icon" title="Import">
+                    <Button onClick={handleImportClick} variant="ghost" size="icon" title="Import" aria-label="Import">
                       <UploadSimple />
                     </Button>
                     <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".zip" />

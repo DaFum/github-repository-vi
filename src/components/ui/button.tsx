@@ -31,7 +31,7 @@ const buttonVariants = cva(
       },
       shape: {
         default: 'rounded-none', // Sharp industrial edges
-        chamfer: 'clip-path-polygon-[10px_0,100%_0,100%_calc(100%-10px),calc(100%-10px)_100%,0_100%,0_10px]', // Needs custom clip-path
+        chamfer: '[clip-path:polygon(10px_0,100%_0,100%_calc(100%-10px),calc(100%-10px)_100%,0_100%,0_10px)]', // Custom clip-path via Tailwind arbitrary property
         rounded: 'rounded-md',
       }
     },

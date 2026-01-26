@@ -107,7 +107,7 @@ function App() {
               <div className="flex items-center gap-4">
                 <div className="relative group">
                   <div className="absolute -inset-1 bg-primary/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <Hexagon size={32} weight="duotone" className="text-primary animate-pulse-slow relative z-10" />
+                  <Hexagon size={32} weight="duotone" className="text-primary animate-pulse relative z-10" />
                 </div>
                 <div>
                   <h1 className="text-3xl font-orbitron font-black tracking-widest text-white glow-text-cyan">
@@ -129,7 +129,7 @@ function App() {
                   onClick={() => setShowSettings(true)}
                   className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
                 >
-                  <Gear size={20} className="animate-spin-slow-hover" />
+                  <Gear size={20} className="hover:animate-spin" />
                 </Button>
               </div>
             </motion.header>

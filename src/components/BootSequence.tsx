@@ -15,7 +15,6 @@ const bootSteps = [
 
 export function BootSequence({ onComplete }: BootSequenceProps) {
   const [stepIndex, setStepIndex] = useState(0)
-  const [isComplete, setIsComplete] = useState(false)
 
   useEffect(() => {
     if (stepIndex < bootSteps.length) {
@@ -25,7 +24,6 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
       return () => clearTimeout(timeout)
     } else {
       const timeout = setTimeout(() => {
-        setIsComplete(true)
         setTimeout(onComplete, 1000)
       }, 500)
       return () => clearTimeout(timeout)
@@ -76,7 +74,7 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
             >
               <step.icon
                 size={18}
-                className={stepIndex === index ? "animate-spin-slow text-accent" : ""}
+                className={stepIndex === index ? "animate-spin text-accent" : ""}
                 weight={stepIndex === index ? "fill" : "regular"}
               />
               <span className="tracking-widest">
@@ -91,7 +89,7 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
         {/* Loading Bar */}
         <div className="mt-8 h-1 w-full bg-secondary overflow-hidden">
           <motion.div
-            className="h-full bg-primary box-shadow-[0_0_10px_var(--primary)]"
+            className="h-full bg-primary shadow-[0_0_10px_var(--primary)]"
             initial={{ width: '0%' }}
             animate={{ width: `${(Math.min(stepIndex, bootSteps.length) / bootSteps.length) * 100}%` }}
             transition={{ type: 'spring', stiffness: 50 }}
