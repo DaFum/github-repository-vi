@@ -295,8 +295,9 @@ class PollinationsClient implements Lifecycle {
       'recursive',
       'optimize',
     ]
+    const lowerPrompt = prompt.toLowerCase()
     complexKeywords.forEach((word) => {
-      if (prompt.toLowerCase().includes(word)) score += 10
+      if (lowerPrompt.includes(word)) score += 10
     })
 
     // Formatting factor
