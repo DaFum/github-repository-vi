@@ -20,6 +20,12 @@ import {
   UploadSimple
 } from '@phosphor-icons/react'
 
+/**
+ * Artifact Vault Component
+ *
+ * Displays and manages stored artifacts (images, chats, workflows).
+ * Provides search, filtering, export, and import capabilities.
+ */
 export function ArtifactVault() {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTab, setActiveTab] = useState<'all' | 'images' | 'chats' | 'workflows'>('all')

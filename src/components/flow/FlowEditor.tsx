@@ -215,6 +215,10 @@ const FlowCanvas = () => {
   )
 }
 
+/**
+ * Main Flow Editor component.
+ * Provides the canvas for designing and executing agent workflows.
+ */
 export const FlowEditor = () => {
   return (
     <ReactFlowProvider>

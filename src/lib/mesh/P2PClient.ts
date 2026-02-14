@@ -3,12 +3,18 @@
 import SimplePeer from 'simple-peer'
 import { Lifecycle } from '../interfaces'
 
+/**
+ * Represents a message exchanged between peers.
+ */
 export type PeerMessage = {
   type: 'handshake' | 'task_request' | 'task_response' | 'error'
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any
 }
 
+/**
+ * Handles Peer-to-Peer communication using SimplePeer.
+ */
 export class P2PClient implements Lifecycle {
   private peer: SimplePeer.Instance | null = null
   private isInitiator: boolean
@@ -19,6 +25,9 @@ export class P2PClient implements Lifecycle {
     this.isInitiator = initiator
   }
 
+  /**
+   * Initializes the P2P client and sets up event listeners.
+   */
   initialize() {
     // Note: In a browser env, we need 'wrtc' polyfill if strictly node, but simple-peer handles browser natively.
     // However, Vite might need defining 'global' or 'process'.
@@ -51,6 +60,9 @@ export class P2PClient implements Lifecycle {
     })
   }
 
+  /**
+   * Destroys the peer connection and cleans up resources.
+   */
   dispose() {
     if (this.peer) {
       this.peer.destroy()
@@ -58,13 +70,20 @@ export class P2PClient implements Lifecycle {
     }
   }
 
-  // To complete the handshake, we need to pass the other peer's signal data here
+  /**
+   * Signals the peer with connection data from the remote peer.
+   * @param data The signal data string.
+   */
   signal(data: string) {
     if (this.peer) {
       this.peer.signal(JSON.parse(data))
     }
   }
 
+  /**
+   * Sends a message to the connected peer.
+   * @param message The message object to send.
+   */
   send(message: PeerMessage) {
     if (this.peer && this.peer.connected) {
       this.peer.send(JSON.stringify(message))
@@ -73,16 +92,32 @@ export class P2PClient implements Lifecycle {
     }
   }
 
+  /**
+   * Sets the callback for when a connection is established.
+   * @param cb The callback function.
+   */
   onConnect(cb: () => void) {
     this.onConnectCallback = cb
   }
 
+  /**
+   * Sets the callback for when data is received.
+   * @param cb The callback function.
+   */
   onData(cb: (data: PeerMessage) => void) {
     this.onDataCallback = cb
   }
 }
 
+/**
+ * Protocol helpers for agent handshake and task exchange.
+ */
 export class AgentHandshakeProtocol {
+  /**
+   * Creates a task request message.
+   * @param taskDescription Description of the task.
+   * @returns A PeerMessage object.
+   */
   static createRequest(taskDescription: string): PeerMessage {
     return {
       type: 'task_request',
@@ -90,6 +125,11 @@ export class AgentHandshakeProtocol {
     }
   }
 
+  /**
+   * Creates a task response message.
+   * @param result The result of the task.
+   * @returns A PeerMessage object.
+   */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static createResponse(result: any): PeerMessage {
     return {
@@ -99,4 +139,8 @@ export class AgentHandshakeProtocol {
   }
 }
 
+/**
+ * Factory to create a P2PClient instance.
+ * @param initiator Whether this client is initiating the connection.
+ */
 export const createP2PClient = (initiator: boolean) => new P2PClient(initiator)

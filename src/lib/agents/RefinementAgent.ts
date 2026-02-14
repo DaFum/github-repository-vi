@@ -12,7 +12,15 @@ interface RefinementResult {
   confidence: number
 }
 
+/**
+ * Agent responsible for refining content through an iterative critique-improve loop.
+ */
 export class RefinementAgent implements SpecializedAgent<RefinementPayload, RefinementResult> {
+  /**
+   * Refines the content based on context until confidence threshold or max iterations is reached.
+   * @param payload The content and context for refinement.
+   * @returns The refined content, number of iterations, and confidence score.
+   */
   async execute({ content, context }: RefinementPayload): Promise<RefinementResult> {
     const MAX_ITERATIONS = 3
     let currentDraft = content

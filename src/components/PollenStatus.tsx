@@ -4,6 +4,10 @@ import { useAetherStore } from '@/lib/store/useAetherStore'
 import { Badge } from '@/components/ui/badge'
 import { Sparkle, Warning, X } from '@phosphor-icons/react'
 
+/**
+ * Component to display the user's current Pollen balance.
+ * Automatically refreshes balance on an interval.
+ */
 export function PollenStatus() {
   const { pollenBalance, pollenStatus, apiKey, refreshBalance } = useAetherStore()
 

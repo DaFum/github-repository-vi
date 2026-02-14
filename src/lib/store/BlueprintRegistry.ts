@@ -11,7 +11,13 @@ const downloadBlob = (blob: Blob, filename: string) => {
   URL.revokeObjectURL(url)
 }
 
+/**
+ * Registry for managing agent blueprints, including import and export functionality.
+ */
 export class BlueprintRegistry {
+  /**
+   * Exports the current flow state as a ZIP archive containing the blueprint JSON and README.
+   */
   static async exportBlueprint() {
     const store = useFlowStore.getState()
     const blueprint = {
@@ -34,6 +40,11 @@ export class BlueprintRegistry {
     downloadBlob(content, `agent-blueprint-${Date.now()}.zip`)
   }
 
+  /**
+   * Imports a blueprint from a ZIP file and hydrates the flow store.
+   * @param file The ZIP file containing the blueprint.
+   * @returns True if import was successful, false otherwise.
+   */
   static async importBlueprint(file: File) {
     const zip = await JSZip.loadAsync(file)
     const blueprintFile = zip.file('blueprint.json')

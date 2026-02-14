@@ -15,6 +15,9 @@ import { cn } from '@/lib/utils'
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: '', dark: '.dark' } as const
 
+/**
+ * Configuration object for defining chart styles, labels, and icons.
+ */
 export type ChartConfig = {
   [k in string]: {
     label?: ReactNode

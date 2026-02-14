@@ -14,6 +14,9 @@ import { registerBuiltInNodes } from './nodes'
 // Example 1: Using Built-in Nodes
 // ============================================
 
+/**
+ * Demonstrates how to register and access built-in nodes from the registry.
+ */
 export function example1_UsingBuiltInNodes() {
   // Register all built-in nodes
   registerBuiltInNodes()
@@ -103,6 +106,9 @@ const CustomNode: NodeDefinition<CustomNodeInput, CustomNodeOutput> = {
 }
 
 // Step 5: Register
+/**
+ * Demonstrates how to define and register a custom node type.
+ */
 export function example2_RegisterCustomNode() {
   nodeRegistry.register(CustomNode)
   console.log('Custom node registered!')
@@ -112,6 +118,9 @@ export function example2_RegisterCustomNode() {
 // Example 3: Runtime Node Registration (MCP-style)
 // ============================================
 
+/**
+ * Demonstrates how to dynamically register a node at runtime, e.g., from an MCP tool definition.
+ */
 export function example3_DynamicRegistration() {
   // Simulate an MCP server exposing a new tool
   const mcpToolSchema = {
@@ -171,6 +180,9 @@ export function example3_DynamicRegistration() {
 // Example 4: Subscribe to Registry Changes
 // ============================================
 
+/**
+ * Demonstrates how to subscribe to changes in the node registry.
+ */
 export function example4_SubscribeToChanges() {
   const unsubscribe = nodeRegistry.subscribe(() => {
     console.log('Registry changed! Total nodes:', nodeRegistry.size)
@@ -191,6 +203,9 @@ export function example4_SubscribeToChanges() {
 // Example 5: Using Factories for Stateful Nodes
 // ============================================
 
+/**
+ * Demonstrates using a factory function to create unique processor instances for each node.
+ */
 export function example5_UsingFactories() {
   let instanceCounter = 0
 
@@ -223,6 +238,9 @@ export function example5_UsingFactories() {
 // Run all examples
 // ============================================
 
+/**
+ * Runs all defined node registry examples.
+ */
 export function runAllExamples() {
   console.log('\n=== Example 1: Using Built-in Nodes ===')
   example1_UsingBuiltInNodes()

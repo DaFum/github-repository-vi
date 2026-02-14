@@ -18,6 +18,9 @@ import { Lifecycle } from '../interfaces'
  * - Provenance tracking
  */
 
+/**
+ * Definition of the graph structure, including nodes and edges.
+ */
 export type GraphDefinition = {
   nodes: Array<{
     id: string
@@ -34,6 +37,9 @@ export type GraphDefinition = {
   }>
 }
 
+/**
+ * Options to configure the graph execution.
+ */
 export type ExecutionOptions = {
   maxConcurrent?: number // Max parallel executions (default: 3)
   maxLoopIterations?: number // Safety counter for loops (default: 10)
@@ -70,10 +76,16 @@ export class GraphEngine implements Lifecycle {
   }
 
   // Lifecycle Interface
+  /**
+   * Initializes and starts the graph engine.
+   */
   initialize(): void {
     this.start()
   }
 
+  /**
+   * Stops the engine and clears listeners.
+   */
   dispose(): void {
     this.stop()
     this.listeners.clear()
@@ -421,6 +433,8 @@ export class GraphEngine implements Lifecycle {
 
   /**
    * Get incoming edges for a node
+   * @param nodeId The target node ID.
+   * @returns List of incoming edges.
    */
   private getIncomingEdges(nodeId: string) {
     return this.graph.edges.filter((e) => e.target === nodeId)
@@ -428,6 +442,8 @@ export class GraphEngine implements Lifecycle {
 
   /**
    * Get outgoing edges for a node
+   * @param nodeId The source node ID.
+   * @returns List of outgoing edges.
    */
   private getOutgoingEdges(nodeId: string) {
     return this.graph.edges.filter((e) => e.source === nodeId)
@@ -474,6 +490,8 @@ export class GraphEngine implements Lifecycle {
 
   /**
    * Subscribe to execution updates
+   * @param listener Callback for execution context updates.
+   * @returns Unsubscribe function.
    */
   subscribe(listener: (context: ExecutionContext) => void): () => void {
     this.listeners.add(listener)
@@ -509,6 +527,8 @@ export class GraphEngine implements Lifecycle {
 
   /**
    * Set environment variable
+   * @param key Variable name.
+   * @param value Variable value.
    */
   setEnv(key: string, value: unknown): void {
     this.context.environment.set(key, value)
@@ -516,6 +536,8 @@ export class GraphEngine implements Lifecycle {
 
   /**
    * Set global memory variable
+   * @param key Variable name.
+   * @param value Variable value.
    */
   setGlobal(key: string, value: unknown): void {
     this.context.memory.set(key, value)

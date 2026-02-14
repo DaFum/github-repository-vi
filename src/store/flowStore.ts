@@ -14,12 +14,18 @@ import {
 } from '@xyflow/react'
 import { ExecutionContext, NodeExecutionState } from '@/lib/graph/types'
 
+/**
+ * Data associated with an agent node in the flow.
+ */
 export type AgentNodeData = {
   label: string
   type: 'agent' | 'tool' | 'trigger'
   config?: Record<string, unknown>
 }
 
+/**
+ * Type alias for a Node in the application.
+ */
 export type AppNode = Node<AgentNodeData>
 
 type FlowState = {
@@ -68,6 +74,9 @@ const initialExecutionContext: ExecutionContext = {
   history: [],
 }
 
+/**
+ * Zustand store for managing the flow editor state, including nodes, edges, and execution context.
+ */
 export const useFlowStore = create<FlowState>((set, get) => ({
   nodes: initialNodes,
   edges: initialEdges,

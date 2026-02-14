@@ -28,6 +28,12 @@ export type VisualizationCommand = {
   data: unknown
 }
 
+/**
+ * HoloChat Component
+ *
+ * An interactive chat interface simulating a holographic terminal.
+ * Supports text messaging, model selection, and visualization rendering.
+ */
 export function HoloChat() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')

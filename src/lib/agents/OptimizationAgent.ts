@@ -12,10 +12,18 @@ interface OptimizationResult {
   optimizationScore: number
 }
 
+/**
+ * Agent responsible for providing optimization recommendations for link usage.
+ */
 export class OptimizationAgent implements SpecializedAgent<
   OptimizationPayload[],
   OptimizationResult
 > {
+  /**
+   * Analyzes link data to provide optimization strategies and a score.
+   * @param links Array of link data payloads.
+   * @returns Optimization result containing recommendations and a score.
+   */
   async execute(links: OptimizationPayload[]): Promise<OptimizationResult> {
     const promptText = `You are an AI optimization agent. Analyze these shortened links and provide strategic recommendations.
 

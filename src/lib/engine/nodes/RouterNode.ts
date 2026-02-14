@@ -28,6 +28,9 @@ const RouterOutputSchema = z.object({
 type RouterOutput = z.infer<typeof RouterOutputSchema>
 
 // Contract
+/**
+ * Defines the contract for the Router node, specifying inputs, outputs, and UI configuration.
+ */
 export const RouterContract: NodeContract<RouterInput, RouterOutput> = {
   type: 'router',
   name: 'Router',
@@ -55,11 +58,22 @@ export const RouterContract: NodeContract<RouterInput, RouterOutput> = {
 }
 
 // Processor
+/**
+ * Processes routing logic by evaluating conditions on input data.
+ */
 export class RouterProcessor implements NodeProcessor<RouterInput, RouterOutput> {
+  /**
+   * Checks if the necessary inputs (value and condition) are present.
+   */
   isReady(inputs: Record<string, unknown>): boolean {
     return 'value' in inputs && 'condition' in inputs
   }
 
+  /**
+   * Evaluates the condition and determines the routing path.
+   * @param inputs The input data to evaluate.
+   * @returns The routing result (true/false path).
+   */
   async execute(
     inputs: RouterInput,
     _config: Record<string, unknown>,
@@ -117,6 +131,9 @@ export class RouterProcessor implements NodeProcessor<RouterInput, RouterOutput>
 }
 
 // Definition
+/**
+ * The complete definition of the Router node.
+ */
 export const RouterNode: NodeDefinition<RouterInput, RouterOutput> = {
   contract: RouterContract,
   processor: new RouterProcessor(),

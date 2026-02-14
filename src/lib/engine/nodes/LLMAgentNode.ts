@@ -27,6 +27,9 @@ const LLMAgentOutputSchema = z.string()
 type LLMAgentOutput = z.infer<typeof LLMAgentOutputSchema>
 
 // Contract
+/**
+ * Defines the contract for the LLM Agent node, including schema and UI metadata.
+ */
 export const LLMAgentContract: NodeContract<LLMAgentInput, LLMAgentOutput> = {
   type: 'llm-agent',
   name: 'LLM Agent',
@@ -54,11 +57,22 @@ export const LLMAgentContract: NodeContract<LLMAgentInput, LLMAgentOutput> = {
 }
 
 // Processor
+/**
+ * Processes LLM interactions by calling the Pollinations API.
+ */
 export class LLMAgentProcessor implements NodeProcessor<LLMAgentInput, LLMAgentOutput> {
+  /**
+   * Checks if the required 'prompt' input is available.
+   */
   isReady(inputs: Record<string, unknown>, _config: Record<string, unknown>): boolean {
     return typeof inputs.prompt === 'string' && inputs.prompt.trim().length > 0
   }
 
+  /**
+   * Sends the prompt to the selected LLM and returns the response.
+   * @param inputs Contains the prompt, system prompt, model selection, etc.
+   * @returns The text response from the model.
+   */
   async execute(
     inputs: LLMAgentInput,
     config: Record<string, unknown>,
@@ -90,6 +104,9 @@ export class LLMAgentProcessor implements NodeProcessor<LLMAgentInput, LLMAgentO
     return response
   }
 
+  /**
+   * Validates the node configuration, ensuring parameters like temperature are within range.
+   */
   validateConfig(config: Record<string, unknown>): boolean {
     if (config.temperature !== undefined) {
       const temp = config.temperature as number
@@ -100,6 +117,9 @@ export class LLMAgentProcessor implements NodeProcessor<LLMAgentInput, LLMAgentO
 }
 
 // Definition
+/**
+ * The complete definition of the LLM Agent node.
+ */
 export const LLMAgentNode: NodeDefinition<LLMAgentInput, LLMAgentOutput> = {
   contract: LLMAgentContract,
   processor: new LLMAgentProcessor(),

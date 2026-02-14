@@ -2,6 +2,9 @@ import { z } from 'zod'
 
 // --- Data Structures ---
 
+/**
+ * Schema for data lineage and provenance tracking.
+ */
 export const ProvenanceSchema = z.object({
   generatedBy: z.string(), // Node ID
   source: z.array(z.string()), // Source Node IDs
@@ -11,6 +14,9 @@ export const ProvenanceSchema = z.object({
 
 export type Provenance = z.infer<typeof ProvenanceSchema>
 
+/**
+ * Schema for execution logs.
+ */
 export const LogEntrySchema = z.object({
   timestamp: z.number(),
   level: z.enum(['info', 'warn', 'error']),
@@ -20,6 +26,9 @@ export const LogEntrySchema = z.object({
 
 export type LogEntry = z.infer<typeof LogEntrySchema>
 
+/**
+ * Schema representing the runtime state of a single node.
+ */
 export const NodeExecutionStateSchema = z.object({
   id: z.string(),
   status: z.enum(['pending', 'ready', 'working', 'completed', 'error', 'skipped']),
@@ -35,6 +44,9 @@ export const NodeExecutionStateSchema = z.object({
 
 export type NodeExecutionState = z.infer<typeof NodeExecutionStateSchema>
 
+/**
+ * Schema for the global graph execution context.
+ */
 export const ExecutionContextSchema = z.object({
   runId: z.string(),
   status: z.enum(['idle', 'running', 'paused', 'completed', 'failed']),
@@ -48,6 +60,9 @@ export type ExecutionContext = z.infer<typeof ExecutionContextSchema>
 
 // --- Definitions ---
 
+/**
+ * Definition interface for node types.
+ */
 export type NodeDefinition = {
   type: string
   label: string
@@ -59,6 +74,9 @@ export type NodeDefinition = {
 
 // --- Interfaces ---
 
+/**
+ * Interface for node execution logic.
+ */
 export interface NodeProcessor {
   isReady(inputs: Record<string, unknown>, config: unknown): boolean
   execute(

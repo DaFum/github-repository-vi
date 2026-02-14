@@ -3,12 +3,18 @@ import { pollinations } from '@/lib/pollinations'
 import { compileExpression } from 'filtrex'
 import { z } from 'zod'
 
+/**
+ * Processor for Agent nodes, handling AI interactions.
+ */
 export class AgentProcessor implements NodeProcessor {
   isReady(_inputs: Record<string, unknown>, _config: unknown): boolean {
     // Agents generally need a prompt or user input
     return true
   }
 
+  /**
+   * Executes the agent logic using Pollinations API.
+   */
   async execute(
     _inputs: Record<string, unknown>,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,11 +36,17 @@ export class AgentProcessor implements NodeProcessor {
   }
 }
 
+/**
+ * Processor for Logic nodes, handling expression evaluation.
+ */
 export class LogicProcessor implements NodeProcessor {
   isReady(_inputs: Record<string, unknown>, _config: unknown): boolean {
     return true
   }
 
+  /**
+   * Executes the logic expression using Filtrex.
+   */
   async execute(
     inputs: Record<string, unknown>,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -56,10 +68,19 @@ export class LogicProcessor implements NodeProcessor {
   }
 }
 
+/**
+ * Registry for managing node types and their processors.
+ */
 export class NodeRegistry {
   private static processors: Map<string, NodeProcessor> = new Map()
   private static definitions: Map<string, NodeDefinition> = new Map()
 
+  /**
+   * Registers a new node type.
+   * @param type The unique identifier for the node type.
+   * @param processor The processor instance for execution logic.
+   * @param definition The schema definition for the node.
+   */
   static register(type: string, processor: NodeProcessor, definition?: NodeDefinition) {
     this.processors.set(type, processor)
     if (definition) {
@@ -67,10 +88,20 @@ export class NodeRegistry {
     }
   }
 
+  /**
+   * Retrieves the processor for a given node type.
+   * @param type The node type identifier.
+   * @returns The registered processor or a default LogicProcessor.
+   */
   static get(type: string): NodeProcessor {
     return this.processors.get(type) || new LogicProcessor() // Default
   }
 
+  /**
+   * Retrieves the definition for a given node type.
+   * @param type The node type identifier.
+   * @returns The node definition or undefined if not found.
+   */
   static getDefinition(type: string): NodeDefinition | undefined {
     return this.definitions.get(type)
   }

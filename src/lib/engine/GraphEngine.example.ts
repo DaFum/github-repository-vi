@@ -12,6 +12,9 @@ registerBuiltInNodes()
 // Example 1: Simple Linear Flow
 // ============================================
 
+/**
+ * Demonstrates a simple linear flow with a single LLM agent node.
+ */
 export function example1_SimpleLinearFlow() {
   console.log('\n=== Example 1: Simple Linear Flow ===')
 
@@ -60,6 +63,9 @@ export function example1_SimpleLinearFlow() {
 // Example 2: Parallel Execution
 // ============================================
 
+/**
+ * Demonstrates multiple nodes executing in parallel.
+ */
 export function example2_ParallelExecution() {
   console.log('\n=== Example 2: Parallel Execution ===')
 
@@ -90,6 +96,9 @@ export function example2_ParallelExecution() {
 // Example 3: Conditional Routing
 // ============================================
 
+/**
+ * Demonstrates conditional routing using a Router node.
+ */
 export function example3_ConditionalRouting() {
   console.log('\n=== Example 3: Conditional Routing ===')
 
@@ -131,6 +140,9 @@ export function example3_ConditionalRouting() {
 // Example 4: Barrier Synchronization
 // ============================================
 
+/**
+ * Demonstrates barrier synchronization where a node waits for multiple inputs.
+ */
 export function example4_BarrierSync() {
   console.log('\n=== Example 4: Barrier Synchronization ===')
 
@@ -169,6 +181,9 @@ export function example4_BarrierSync() {
 // Example 5: Variable Interpolation
 // ============================================
 
+/**
+ * Demonstrates variable interpolation between nodes using global and output values.
+ */
 export function example5_VariableInterpolation() {
   console.log('\n=== Example 5: Variable Interpolation ===')
 
@@ -213,6 +228,9 @@ export function example5_VariableInterpolation() {
 // Example 6: Real-time Progress Tracking
 // ============================================
 
+/**
+ * Demonstrates how to track execution progress across the graph.
+ */
 export function example6_ProgressTracking() {
   console.log('\n=== Example 6: Progress Tracking ===')
 
@@ -251,6 +269,9 @@ export function example6_ProgressTracking() {
 // Example 7: Error Handling & Retries
 // ============================================
 
+/**
+ * Demonstrates error handling and automatic retry logic.
+ */
 export function example7_ErrorHandling() {
   console.log('\n=== Example 7: Error Handling ===')
 
@@ -279,6 +300,9 @@ export function example7_ErrorHandling() {
 // Example 8: Pause & Resume
 // ============================================
 
+/**
+ * Demonstrates pausing and resuming graph execution.
+ */
 export function example8_PauseResume() {
   console.log('\n=== Example 8: Pause & Resume ===')
 
@@ -320,6 +344,9 @@ export function example8_PauseResume() {
 // Run all examples
 // ============================================
 
+/**
+ * Runs all defined graph engine examples.
+ */
 export function runAllExamples() {
   example1_SimpleLinearFlow()
   example2_ParallelExecution()
