@@ -46,6 +46,10 @@ const NodeWrapper = ({
   )
 }
 
+/**
+ * Trigger node component.
+ * Initiates the flow execution.
+ */
 export const TriggerNode = ({ id, data }: NodeProps<AppNode>) => {
   return (
     <NodeWrapper type="trigger" nodeId={id}>
@@ -61,6 +65,10 @@ export const TriggerNode = ({ id, data }: NodeProps<AppNode>) => {
   )
 }
 
+/**
+ * Agent node component.
+ * Represents an AI agent that processes inputs.
+ */
 export const AgentNode = ({ id, data }: NodeProps<AppNode>) => {
   const definition = NodeRegistry.getDefinition('agent')
 
@@ -95,6 +103,10 @@ export const AgentNode = ({ id, data }: NodeProps<AppNode>) => {
   )
 }
 
+/**
+ * Tool node component.
+ * Represents an external tool or utility.
+ */
 export const ToolNode = ({ id, data }: NodeProps<AppNode>) => {
   return (
     <NodeWrapper type="tool" nodeId={id}>
@@ -110,6 +122,9 @@ export const ToolNode = ({ id, data }: NodeProps<AppNode>) => {
   )
 }
 
+/**
+ * Mapping of node types to their React components.
+ */
 export const nodeTypes = {
   trigger: TriggerNode,
   agent: AgentNode,

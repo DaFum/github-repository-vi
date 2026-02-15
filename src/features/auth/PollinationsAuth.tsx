@@ -4,6 +4,10 @@ import { pollinations } from '@/lib/pollinations'
 import { useState, useEffect } from 'react'
 import { Badge } from '@/components/ui/badge'
 
+/**
+ * Component handling Pollinations.ai authentication.
+ * Manages login/logout and displays user balance.
+ */
 export function PollinationsAuth() {
   const [apiKey, setApiKey] = useState<string | null>(pollinations.getApiKey())
   const [balance, setBalance] = useState<number | null>(null)

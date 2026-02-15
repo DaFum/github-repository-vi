@@ -13,6 +13,12 @@ const bootSteps = [
   { text: 'CALIBRATING_VISUAL_SYSTEMS', icon: WifiHigh },
 ]
 
+/**
+ * Boot Sequence Component
+ *
+ * Displays a simulated OS boot animation with status checks and progress indicators.
+ * Calls `onComplete` when the sequence finishes.
+ */
 export function BootSequence({ onComplete }: BootSequenceProps) {
   const [stepIndex, setStepIndex] = useState(0)
 

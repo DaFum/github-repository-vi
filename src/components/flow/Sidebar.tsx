@@ -42,6 +42,12 @@ const SidebarItem = ({ type, label }: SidebarItemProps) => {
   )
 }
 
+/**
+ * Sidebar Component
+ *
+ * Displays a library of available nodes (Triggers, Agents, Tools) that can be dragged onto the canvas.
+ * Uses `dnd-kit` for drag-and-drop functionality.
+ */
 export const Sidebar = () => {
   return (
     <aside className="border-border bg-background/50 z-10 h-full w-64 border-r p-4 backdrop-blur-md">

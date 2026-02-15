@@ -21,6 +21,9 @@ type AetherStore = {
   refreshBalance: () => Promise<void>
 }
 
+/**
+ * Zustand store for managing Aether OS state, including API keys, models, and balances.
+ */
 export const useAetherStore = create<AetherStore>((set, get) => ({
   // Initial State
   apiKey: null,

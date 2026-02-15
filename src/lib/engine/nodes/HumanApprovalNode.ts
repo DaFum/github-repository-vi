@@ -29,6 +29,9 @@ const HumanApprovalOutputSchema = z.object({
 type HumanApprovalOutput = z.infer<typeof HumanApprovalOutputSchema>
 
 // Contract
+/**
+ * Defines the contract for the Human Approval node, including inputs, outputs, and UI configuration.
+ */
 export const HumanApprovalContract: NodeContract<HumanApprovalInput, HumanApprovalOutput> = {
   type: 'human-approval',
   name: 'Human Approval',
@@ -56,14 +59,26 @@ export const HumanApprovalContract: NodeContract<HumanApprovalInput, HumanApprov
 }
 
 // Processor
+/**
+ * Processes human approval requests.
+ * Currently simulates approval with a delay, but intended to integrate with a UI event system.
+ */
 export class HumanApprovalProcessor implements NodeProcessor<
   HumanApprovalInput,
   HumanApprovalOutput
 > {
+  /**
+   * Checks if the required 'message' input is present.
+   */
   isReady(inputs: Record<string, unknown>): boolean {
     return typeof inputs.message === 'string'
   }
 
+  /**
+   * Simulates the approval process.
+   * @param inputs The input data including the message for the user.
+   * @returns A promise resolving to the approval result (approved/rejected).
+   */
   async execute(
     inputs: HumanApprovalInput,
     _config: Record<string, unknown>,
@@ -94,6 +109,9 @@ export class HumanApprovalProcessor implements NodeProcessor<
 }
 
 // Definition
+/**
+ * The complete definition of the Human Approval node, combining contract and processor.
+ */
 export const HumanApprovalNode: NodeDefinition<HumanApprovalInput, HumanApprovalOutput> = {
   contract: HumanApprovalContract,
   processor: new HumanApprovalProcessor(),

@@ -1,7 +1,13 @@
 import { useKV } from '@github/spark/hooks'
 
+/**
+ * Supported artifact types in the vault.
+ */
 export type ArtifactType = 'image' | 'chat' | 'workflow'
 
+/**
+ * Represents a stored artifact, such as an image, chat log, or workflow.
+ */
 export type Artifact = {
   id: string
   type: ArtifactType

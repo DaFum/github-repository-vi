@@ -16,6 +16,12 @@ type RenderPaneProps = {
   seed?: number
 }
 
+/**
+ * RenderPane Component
+ *
+ * Provides a high-quality rendering interface for generating images from prompts.
+ * Includes controls for model selection and download, with visual feedback during generation.
+ */
 export function RenderPane({ prompt, model, onModelChange, seed }: RenderPaneProps) {
   const [renderUrl, setRenderUrl] = useState<string | null>(null)
   const [isRendering, setIsRendering] = useState(false)

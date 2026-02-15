@@ -1,6 +1,14 @@
 import { ExecutionContext } from './types'
 
+/**
+ * Utility for recording execution history and generating data provenance.
+ */
 export class HistoryRecorder {
+  /**
+   * Creates a snapshot of the current execution context.
+   * @param context The current execution context.
+   * @returns A snapshot object containing timestamp, status, and state maps.
+   */
   static createSnapshot(context: ExecutionContext): unknown {
     // Simplified snapshot: clone status and node states
     // In a real system, use structural sharing (immer) for efficiency
@@ -12,6 +20,11 @@ export class HistoryRecorder {
     }
   }
 
+  /**
+   * Records a history delta (snapshot) and appends it to the context history.
+   * Caps the history size to 50 entries.
+   * @param context The execution context to record.
+   */
   static recordDelta(context: ExecutionContext) {
     const snapshot = this.createSnapshot(context)
     context.history.push(snapshot)
@@ -22,6 +35,13 @@ export class HistoryRecorder {
     }
   }
 
+  /**
+   * Generates provenance metadata for a node execution.
+   * Traces source nodes from inputs if available.
+   * @param nodeId The ID of the node generating the output.
+   * @param inputs The inputs used for execution.
+   * @returns Provenance metadata object.
+   */
   static generateProvenance(nodeId: string, inputs: Record<string, unknown>): unknown {
     // Trace source nodes from inputs if they contain provenance
     const sources: string[] = []

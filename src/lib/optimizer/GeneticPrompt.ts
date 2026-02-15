@@ -1,6 +1,15 @@
 import { pollinations } from '@/lib/pollinations'
 
+/**
+ * Implements genetic algorithms to optimize prompts.
+ */
 export class GeneticPrompt {
+  /**
+   * Evolves a prompt over several generations to better achieve a goal.
+   * @param originalPrompt The starting prompt.
+   * @param goal The objective the prompt should achieve.
+   * @returns The evolved, optimized prompt.
+   */
   static async evolve(originalPrompt: string, goal: string): Promise<string> {
     const GENERATIONS = 2 // Short evolution for speed
     let currentPool = [originalPrompt]

@@ -12,7 +12,15 @@ interface AnalyticsResult {
   trends: string[]
 }
 
+/**
+ * Agent responsible for analyzing usage patterns and extracting insights.
+ */
 export class AnalyticsAgent implements SpecializedAgent<AnalyticsPayload[], AnalyticsResult> {
+  /**
+   * Analyzes link usage data to generate insights and trends.
+   * @param links Array of analytics data payloads.
+   * @returns Analysis result containing insights and trends.
+   */
   async execute(links: AnalyticsPayload[]): Promise<AnalyticsResult> {
     const promptText = `You are an AI analytics agent. Analyze these link usage patterns and extract insights.
 

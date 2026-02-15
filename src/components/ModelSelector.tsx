@@ -60,6 +60,10 @@ const CapabilityBadges = ({ capabilities }: { capabilities?: ModelCapability[] }
   )
 }
 
+/**
+ * Component for selecting AI models (text or image) from the available list.
+ * Displays model capabilities and handles loading states.
+ */
 export function ModelSelector({ type, value, onChange, label, placeholder }: ModelSelectorProps) {
   const { textModels, imageModels, isLoadingModels } = useAetherStore()
 

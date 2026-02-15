@@ -1,8 +1,14 @@
+/**
+ * Represents a chat message for the Pollinations API.
+ */
 export type PollinationsMessage = {
   role: 'system' | 'user' | 'assistant'
   content: string
 }
 
+/**
+ * Represents a text generation model available via Pollinations.
+ */
 export type TextModel = {
   name: string
   description: string
@@ -13,6 +19,9 @@ export type TextModel = {
   capabilities?: ModelCapability[]
 }
 
+/**
+ * Represents an image generation model available via Pollinations.
+ */
 export type ImageModel = {
   name: string
   description: string
@@ -21,10 +30,16 @@ export type ImageModel = {
   capabilities?: ModelCapability[]
 }
 
+/**
+ * Capabilities that a model might possess.
+ */
 export type ModelCapability = 'vision' | 'audio' | 'video' | 'code' | 'search' | 'reasoning'
 
 import { Lifecycle } from './interfaces'
 
+/**
+ * Configuration options for Pollinations API requests.
+ */
 export type PollinationsOptions = {
   model?: string
   temperature?: number
@@ -41,6 +56,9 @@ class PollinationsClient implements Lifecycle {
     this.initialize()
   }
 
+  /**
+   * Initializes the client, loading the API key from local storage if available.
+   */
   async initialize(): Promise<void> {
     // Load API key from localStorage if available
     try {
@@ -53,10 +71,17 @@ class PollinationsClient implements Lifecycle {
     }
   }
 
+  /**
+   * Disposes of the client (no-op for this stateless client).
+   */
   dispose() {
     // No-op for stateless client
   }
 
+  /**
+   * Sets the API key for authenticated requests and persists it.
+   * @param key The API key to set.
+   */
   setApiKey(key: string) {
     // Store API key in localStorage for persistence (BYOP)
     //
@@ -82,6 +107,10 @@ class PollinationsClient implements Lifecycle {
     }
   }
 
+  /**
+   * Retrieves the current API key.
+   * @returns The API key or null if not set.
+   */
   getApiKey(): string | null {
     return this.apiKey
   }
@@ -306,6 +335,12 @@ class PollinationsClient implements Lifecycle {
     return Math.min(score, 100)
   }
 
+  /**
+   * Sends a chat message to the Pollinations API and returns the response.
+   * @param messages The conversation history.
+   * @param options Configuration options for the request.
+   * @returns The generated text response.
+   */
   async chat(messages: PollinationsMessage[], options: PollinationsOptions = {}): Promise<string> {
     let { model } = options
     const { temperature = 0.7, jsonMode = false, seed } = options
@@ -427,4 +462,7 @@ class PollinationsClient implements Lifecycle {
 
 export const pollinations = new PollinationsClient()
 
+/**
+ * Factory function to create a new PollinationsClient instance.
+ */
 export const createPollinationsClient = () => new PollinationsClient()

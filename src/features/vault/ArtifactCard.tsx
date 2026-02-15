@@ -20,6 +20,10 @@ type ArtifactCardProps = {
   onRemove: () => void
 }
 
+/**
+ * Component to display a single artifact in the vault grid.
+ * Provides actions like preview, copy data, and delete.
+ */
 export function ArtifactCard({ artifact, onRemove }: ArtifactCardProps) {
   const { navigateToArtifact } = useNavigationStore()
 

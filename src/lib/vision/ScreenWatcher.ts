@@ -1,19 +1,31 @@
 import { Lifecycle } from '../interfaces'
 import { pollinations } from '@/lib/pollinations'
 
+/**
+ * Service that captures screen content and sends it for AI analysis.
+ */
 export class ScreenWatcher implements Lifecycle {
   private stream: MediaStream | null = null
   private intervalId: NodeJS.Timeout | null = null
   private onAnalysisCallback?: (analysis: string) => void
 
+  /**
+   * Initializes the screen watcher by starting capture.
+   */
   async initialize() {
     await this.startCapture()
   }
 
+  /**
+   * Disposes of the screen watcher, stopping capture and analysis loop.
+   */
   dispose() {
     this.stopCapture()
   }
 
+  /**
+   * Requests screen capture permission and starts the analysis loop.
+   */
   async startCapture() {
     try {
       this.stream = await navigator.mediaDevices.getDisplayMedia({
@@ -30,6 +42,9 @@ export class ScreenWatcher implements Lifecycle {
     }
   }
 
+  /**
+   * Stops screen capture and clears the interval.
+   */
   stopCapture() {
     if (this.stream) {
       this.stream.getTracks().forEach((track) => track.stop())
@@ -41,10 +56,17 @@ export class ScreenWatcher implements Lifecycle {
     }
   }
 
+  /**
+   * Registers a callback for analysis results.
+   * @param cb Callback function receiving the analysis text.
+   */
   onAnalysis(cb: (analysis: string) => void) {
     this.onAnalysisCallback = cb
   }
 
+  /**
+   * Captures a frame from the stream and sends it to the vision model.
+   */
   private async analyzeFrame() {
     if (!this.stream) return
 
@@ -91,4 +113,7 @@ export class ScreenWatcher implements Lifecycle {
   }
 }
 
+/**
+ * Factory function to create a new ScreenWatcher instance.
+ */
 export const createScreenWatcher = () => new ScreenWatcher()

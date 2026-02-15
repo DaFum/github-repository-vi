@@ -10,6 +10,9 @@ import {
   SpecializedAgent,
 } from './agents'
 
+/**
+ * Represents a task to be executed by an agent.
+ */
 type AgentTask = {
   id: string
   type: 'categorize' | 'health-check' | 'optimize' | 'analyze' | 'predict' | 'audit' | 'refine'
@@ -22,6 +25,9 @@ type AgentTask = {
   error?: string
 }
 
+/**
+ * Metrics tracking the performance of the agent system.
+ */
 type AgentMetrics = {
   tasksCompleted: number
   tasksFailed: number
@@ -64,11 +70,17 @@ class HyperSmolAgents implements Lifecycle {
     refine: new RefinementAgent(),
   }
 
+  /**
+   * Initializes the agent system.
+   */
   async initialize(): Promise<void> {
     this.isDisposed = false
     console.log('HyperSmolAgents initialized')
   }
 
+  /**
+   * Disposes of the agent system, clearing queues and stopping tasks.
+   */
   async dispose(): Promise<void> {
     this.isDisposed = true
     this.taskQueue = []
@@ -77,6 +89,11 @@ class HyperSmolAgents implements Lifecycle {
     console.log('HyperSmolAgents disposed')
   }
 
+  /**
+   * Subscribes to task updates.
+   * @param listener The callback function to be called on task updates.
+   * @returns A function to unsubscribe.
+   */
   subscribe(listener: AgentEventListener): () => void {
     this.listeners.push(listener)
     return () => {
@@ -94,6 +111,13 @@ class HyperSmolAgents implements Lifecycle {
     })
   }
 
+  /**
+   * Enqueues a task for execution.
+   * @param type The type of task to perform.
+   * @param payload The data required for the task.
+   * @param priority The priority of the task (higher is more important).
+   * @returns The ID of the created task.
+   */
   async enqueueTask(type: AgentTask['type'], payload: unknown, priority = 5): Promise<string> {
     if (this.isDisposed) {
       throw new Error('Agent system is disposed')
@@ -116,6 +140,9 @@ class HyperSmolAgents implements Lifecycle {
     return task.id
   }
 
+  /**
+   * Processes the task queue, starting tasks up to the concurrency limit.
+   */
   private processQueue(): void {
     if (this.isDisposed) return
 
@@ -128,6 +155,10 @@ class HyperSmolAgents implements Lifecycle {
     }
   }
 
+  /**
+   * Executes a single task using the appropriate agent.
+   * @param task The task to execute.
+   */
   private async executeTask(task: AgentTask): Promise<void> {
     const startTime = Date.now()
 
@@ -170,6 +201,10 @@ class HyperSmolAgents implements Lifecycle {
     }
   }
 
+  /**
+   * Updates internal metrics after task completion.
+   * @param taskDuration The time taken to complete the task.
+   */
   private updateMetrics(taskDuration: number): void {
     const totalTasks = this.metrics.tasksCompleted + this.metrics.tasksFailed
     this.metrics.averageTaskTime =
@@ -177,10 +212,18 @@ class HyperSmolAgents implements Lifecycle {
     this.metrics.successRate = (this.metrics.tasksCompleted / totalTasks) * 100
   }
 
+  /**
+   * Retrieves the current system metrics.
+   * @returns A copy of the current metrics.
+   */
   getMetrics(): AgentMetrics {
     return { ...this.metrics }
   }
 
+  /**
+   * Retrieves the current status of the task queue.
+   * @returns An object containing the count of pending and running tasks.
+   */
   getQueueStatus(): { pending: number; running: number } {
     return {
       pending: this.taskQueue.length,
@@ -188,6 +231,9 @@ class HyperSmolAgents implements Lifecycle {
     }
   }
 
+  /**
+   * Adjusts system parameters (like concurrency) based on performance metrics.
+   */
   async selfOptimize(): Promise<void> {
     const metrics = this.getMetrics()
     let changed = false
@@ -208,9 +254,15 @@ class HyperSmolAgents implements Lifecycle {
   }
 }
 
+/**
+ * Global instance of HyperSmolAgents.
+ */
 export const hyperSmolAgents = new HyperSmolAgents()
 
 // Factory function pattern
+/**
+ * Factory function to create a new HyperSmolAgents instance.
+ */
 export const createHyperSmolAgents = () => new HyperSmolAgents()
 
 export type { AgentTask, AgentMetrics }

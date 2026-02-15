@@ -7,7 +7,15 @@ interface AuditResult {
   critique: string
 }
 
+/**
+ * Agent responsible for auditing content for flaws and risks.
+ */
 export class AuditAgent implements SpecializedAgent<string, AuditResult> {
+  /**
+   * Audits the provided content for logical fallacies and safety risks.
+   * @param content The text content to audit.
+   * @returns An audit result containing flaws, risk level, and a critique.
+   */
   async execute(content: string): Promise<AuditResult> {
     const prompt = `Audit the following content/plan for logical fallacies, safety risks, and hidden assumptions. Be ruthless.
 
