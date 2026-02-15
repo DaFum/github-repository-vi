@@ -29,15 +29,17 @@ def check_docstrings(directory):
                         # Check previous lines for docstring
                         has_docstring = False
                         # Look back a few lines (ignoring empty lines)
-                        for j in range(i - 1, -1, -1):
+                        for j in range(i - 1, max(-1, i - 10), -1):
                             prev_line = lines[j].strip()
                             if not prev_line:
                                 continue
                             if prev_line.endswith('*/') or prev_line.startswith('///'):
                                 has_docstring = True
-                            elif prev_line.startswith('//'): # simple comments don't count as docstrings generally, but let's check standard
-                                # usually docstrings are /** ... */
-                                pass
+                                break
+                            # If it's a decorator, continue searching above it.
+                            if prev_line.startswith('@'):
+                                continue
+                            # Otherwise, it's some other code, so stop.
                             break
 
                         total_items += 1
